@@ -1,0 +1,522 @@
+html{	
+    	height: 		102%;		/* force scroll bar on every page */
+	}
+
+body{
+	margin:              	0 auto;
+	background-color:    	#597537;
+	/*background-color:    	#ff7f2a;*/
+	background-image:    	url('./graphics/PNG/background_body.png');
+	background-repeat:   	repeat-y;
+	background-position: 	center top;
+	font-family: 		'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+
+	}
+
+/* main container div */
+#wrapper{
+	width:		  	929px;
+	margin:           	0 auto;
+	border-style:     	solid;
+	border-top-style: 	none;
+	border-bottom-style: 	none;
+	border-width:     	3px;
+	border-color:		#19300e;
+	/*border-color:     	white;*/
+	position: 		relative;
+	}
+
+/* header div */
+#header{
+	margin:           	0 auto;
+	background-color: 	#375315;
+	height:           	178px;
+	background-image:    	url('./graphics/PNG/background_header.png');
+	background-position: 	right bottom;
+	background-repeat:   	no-repeat;
+	color: 			white;
+	font-style: 		italic;
+	}
+
+#header a:link {color: white; text-decoration: none;}
+#header a:visited {color: white; text-decoration: none;}
+#header a:hover {color: #aaaaaa; text-decoration: underline;}
+#header a:focus {color: #aaaaaa; text-decoration: underline;}
+#header a:active {color: #aaaaaa; text-decoration: underline;}
+
+/* navigation div */
+#available_slots{
+	background-color: 	#2a410f;
+	height:           	1.3em;
+	padding-top:	  	0em;
+	padding-left:	  	2.0em;
+	border-top-color: 	#19300e;
+	border-top-style: 	solid;
+	border-top-width: 	2px;
+	border-bottom-color: 	#19300e;
+	border-bottom-style: 	solid;
+	border-bottom-width: 	2px;
+	font-size:		small;
+	width: 			auto;
+	color:			white;
+	position: 		relative;
+	}
+
+/* main content div */
+#content{
+	background-color:	#E5FFBD;/*#FBDEA1;/*#ff9b58;*/
+	padding:	  	3em;
+	color:		  	#0D2701;/*#641e04;*/
+	min-height:		350px;
+	text-align:		left;
+	}
+
+/* footer div */
+#footer{
+	background-color:	#375315;
+	text-align:	  	center;
+	border-top-color: 	#2a410f;
+	border-top-style: 	solid;
+	border-top-width: 	1px;
+	border-bottom-color: 	#19300e;
+	border-bottom-style: 	solid;
+	border-bottom-width: 	2px;
+	font-size:		small;
+	color:			white;
+}
+
+/* heading, size 2 */
+h2{
+	#background-image: 	url('./graphics/PNG/heading_underline.png');
+	#background-repeat: 	repeat-x;
+	#background-position: 	100% 100%;
+	#display:		inline-block;
+	#line-height: 		1.5;
+	#text-decoration: 	underline;
+	}
+
+h4{
+	#background-image: 	url('./graphics/PNG/heading_underline.png');
+	#background-repeat: 	repeat-x;
+	#background-position: 	100% 100%;
+	#display:		inline-block;
+	#line-height: 		1.5;
+	text-decoration: 	underline;
+	}
+	
+p{
+	margin-left:		1em;
+	}
+
+img{
+	border-width:		1px;
+	border-color: 		#375315;
+	} 
+
+/* box, floating right */
+div.floatLeft{
+	float: 			left;
+	margin-right: 		2em;
+	}
+	
+div.floatRight{
+	float: 			right;
+	margin-left: 		2em;
+	}
+	
+div.floatRight, div.floatLeft, div.image{
+	border-style: 		solid;
+	border-width: 		2px;
+	border-color: 		#375315;
+	padding: 		5px;
+	background-color:  	#ADC98D;/*#ffcd8a;*/
+	margin-bottom: 		1em;
+	text-align:	  	center;
+	font-size:		11pt;
+	/*color: 			#375315;*/
+	}
+
+#content .advarsel a:link {color: #992200; text-decoration: underline; font-weight: bolder}
+#content .advarsel a:visited {color: #992200; text-decoration: underline; font-weight: bolder}
+#content .advarsel a:hover {color: black; text-decoration: underline; font-weight: bolder;}
+#content .advarsel a:focus {color: black; text-decoration: underline; font-weight: bolder}
+#content .advarsel a:active {color: black; text-decoration: underline; font-weight: bolder}
+
+div.advarsel{
+	border: 		3px solid #992200;
+	background: 		#ffaaaa; 
+	padding:		10px;
+	color: 			#330000;
+        font-size:		larger;
+	}
+	
+div.feilmelding{
+	border: 		1px solid #CD0A0A;
+	background: 		#fef1ec; 
+	padding:		10px;
+	}
+	
+div.informasjon{
+	border: 		1px solid #ffcc00;
+	background: 		#ffff66; 
+	padding:		10px;
+	}
+
+#content a:link {color: #375315; text-decoration: underline; font-weight: bolder} /*#2a410f;*/
+#content a:visited {color: #375315; text-decoration: underline;  font-weight: bolder} /*#2a410f;*/
+#content a:hover {color: #86be25; text-decoration: underline; font-weight: bolder}
+#content a:focus {color: #86be25; text-decoration: underline; font-weight: bolder}
+#content a:active {color: #86be25; text-decoration: underline; font-weight: bolder}
+
+#content a[href^="http://"] {
+    background-image: url('./graphics/PNG/external.png');
+    background-repeat: no-repeat;
+    background-position: right top;
+    padding-right: 13px;
+}
+
+#content a[href$=".pdf"] {
+    background-image: url('./graphics/PNG/pdf_icon.png');
+    background-repeat: no-repeat;
+    background-position: right top;
+    padding-right: 17px;
+}
+
+#content a[href$=".odt"] {
+    background-image: url('./graphics/PNG/odt_icon.png');
+    background-repeat: no-repeat;
+    background-position: right top;
+    padding-right: 17px;
+}
+
+#content .ledigtime a:link {color: #375315; text-decoration: underline; font-weight: bolder}
+#content .ledigtime a:visited {color: #375315; text-decoration: underline; font-weight: bolder}
+#content .ledigtime a:hover {color: black; text-decoration: underline; font-weight: bolder;}
+#content .ledigtime a:focus {color: black; text-decoration: underline; font-weight: bolder}
+#content .ledigtime a:active {color: black; text-decoration: underline; font-weight: bolder}
+
+#content .fulltime a:link {color: #bfa575; text-decoration: underline;}
+#content .fulltime a:visited {color: #bfa575; text-decoration: underline;} /* #CD0A0A */
+#content .fulltime a:hover {color: #555555; text-decoration: underline;}
+#content .fulltime a:focus {color: #555555; text-decoration: underline;}
+#content .fulltime a:active {color: #555555; text-decoration: underline;}
+
+#content .ledigdropintime a:link {color: #375315; text-decoration: underline; font-weight: bolder}
+#content .ledigdropintime a:visited {color: #375315; text-decoration: underline; font-weight: bolder}
+#content .ledigdropintime a:hover {color: black; text-decoration: underline; font-weight: bolder;}
+#content .ledigdropintime a:focus {color: black; text-decoration: underline; font-weight: bolder}
+#content .ledigdropintime a:active {color: black; text-decoration: underline; font-weight: bolder}
+
+#content .fulldropintime a:link {color: #bfa575; text-decoration: underline;}
+#content .fulldropintime a:visited {color: #bfa575; text-decoration: underline;} /* #CD0A0A */
+#content .fulldropintime a:hover {color: #555555; text-decoration: underline;}
+#content .fulldropintime a:focus {color: #555555; text-decoration: underline;}
+#content .fulldropintime a:active {color: #555555; text-decoration: underline;}
+
+#content ul {
+	list-style-image: url('./graphics/PNG/icon_tennis_ball_green.png');
+	}
+
+.bekreftet{
+	color:			#375315;
+	font-weight: 		bolder;
+	font-style: 		italic;
+	}
+	
+.ubekreftet{
+	color:			#7B9759;
+	font-weight: 		bolder;
+	font-style: 		italic;
+	}
+	
+.kommerikke{
+	color:			#B11505;/*CD0A0A;*/
+	font-weight: 		bolder;
+	font-style: 		italic;
+	}
+	
+.trenertimeoversikt{
+	color:			#CD0A0A;
+	}
+	
+.fastspilleroversikt{
+	font-size:		0.8em;
+	}
+	
+.dropintime{
+	font-size:		0.8em;
+	font-style: 		italic;
+	}
+	
+.passertevent{
+ 	color:		  	#6F8D67;
+ 	}
+
+#content .passertevent a:link {color: #6F8D67; text-decoration: underline;}
+#content .passertevent a:visited {color: #6F8D67; text-decoration: underline;} /* #CD0A0A */
+#content .passertevent a:hover {color: #6F8D67; text-decoration: underline;}
+#content .passertevent a:focus {color: #6F8D67; text-decoration: underline;}
+#content .passertevent a:active {color: #6F8D67; text-decoration: underline;}
+
+ 
+#content .ledigtimeoversikt a:link {color: #375315; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimeoversikt a:visited {color: #375315; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimeoversikt a:hover {color: black; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimeoversikt a:focus {color: black; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimeoversikt a:active {color: black; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+
+#content .ledigtimetreneroversikt a:link {color: #CD0A0A; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimetreneroversikt a:visited {color: #CD0A0A; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimetreneroversikt a:hover {color: black; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimetreneroversikt a:focus {color: black; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+#content .ledigtimetreneroversikt a:active {color: black; text-decoration: underline; font-weight: bolder; font-size: 0.8em; font-style: italic;}
+
+
+fieldset{
+	padding: 		1em;
+	border: 		1px solid #2a410f;
+	line-height: 		2;
+	background:  		#BEDA9E;
+	-moz-border-radius: 	10px;
+	-webkit-border-radius: 	10px;
+	}
+
+legend{
+	border: 		1px solid #2a410f;
+	background:  		#ADC98D;
+	padding-left: 		1em;
+	padding-right: 		1em;
+	font-weight: 		bold;
+	border-radius: 		10px;
+	-moz-border-radius: 	10px;
+	-webkit-border-radius: 	10px;
+	}
+
+label{
+	float: 			left;
+	width: 			14em;
+	cursor: 		pointer;
+	}
+
+input[type="text"] {
+  	width: 			15em;
+	}
+	
+input[type="password"]{
+  	width: 			4em;
+	}
+	
+textarea{
+	width: 			100%;
+	height:			10em;
+	}
+
+input[type="text"], input[type="password"], textarea{
+	border: 		1px solid #4c744f;
+	background-color: 	#ffffbd;
+	color: 			#0D2701;
+        padding: 		1px;
+        margin-top:		3px;
+   	-moz-border-radius: 	3px;
+ 	-webkit-border-radius: 	3px;
+	border-radius: 		3px;
+	}
+
+
+textarea:focus, input[type="text"]:focus, input[type="password"]:focus{
+        border: 		1px solid #2a410f;
+        color: 			#0D2701;
+	}
+
+.required{
+  	font-size: 		0.75em;
+  	color:			#760000;
+	}
+
+button{
+ 	width: 			200px;
+ 	height: 		35px;
+	border: 		1px solid #375315;
+  	-moz-border-radius: 	8px;
+  	-webkit-border-radius: 	8px;
+  	border-radius: 		8px;
+  	background: 		#375315;
+  	color: 			white;
+  	font-size: 		15px;
+	font-weight: 		bold;
+	}
+
+button.login{
+	width: 			23px;
+ 	height: 		23px;
+	background: 		transparent url('./graphics/PNG/ikon_logginn.png') no-repeat center center;
+	opacity:		0.7;
+	filter:			alpha(opacity=70);
+	border-style:		none;
+}
+
+li {padding: 2px 0;}
+
+dt {
+	font-weight: bold; 
+	margin: 15px 40px 5px;
+}
+
+dt:before {
+	content: " ?";
+	font-size: 1.5em;
+	margin-right: 8px;
+	padding: 2px 8px 5px;
+	color:	#ADC98D;
+	background-color: #49612D;
+	font-weight: normal;
+	margin-left: -35px;
+	position: relative;
+	top: 10px;
+	}
+
+dd.one {
+	margin: 15px 40px 5px;
+}
+
+dd.one:before {
+	content: " 1";
+	font-size: 1.5em;
+	margin-right: 8px;
+	padding: 2px 8px 5px;
+	color:	#ADC98D;
+	background-color: #49612D;
+	font-weight: normal;
+	margin-left: -35px;
+	position: relative;
+	top: 10px;
+	}
+	
+dd.two {
+	margin: 15px 40px 5px;
+}
+
+dd.two:before {
+	content: " 2";
+	font-size: 1.5em;
+	margin-right: 8px;
+	padding: 2px 8px 5px;
+	color:	#ADC98D;
+	background-color: #49612D;
+	font-weight: normal;
+	margin-left: -35px;
+	position: relative;
+	top: 10px;
+	}
+	
+dd.three {
+	margin: 15px 40px 5px;
+}
+
+dd.three:before {
+	content: " 3";
+	font-size: 1.5em;
+	margin-right: 8px;
+	padding: 2px 8px 5px;
+	color:	#ADC98D;
+	background-color: #49612D;
+	font-weight: normal;
+	margin-left: -35px;
+	position: relative;
+	top: 10px;
+	}
+
+dd.four {
+	margin: 15px 40px 5px;
+}
+
+dd.four:before {
+	content: " 4";
+	font-size: 1.5em;
+	margin-right: 8px;
+	padding: 2px 8px 5px;
+	color:	#ADC98D;
+	background-color: #49612D;
+	font-weight: normal;
+	margin-left: -35px;
+	position: relative;
+	top: 10px;
+	}
+
+dd.five {
+	margin: 15px 40px 5px;
+}
+
+dd.five:before {
+	content: " 5";
+	font-size: 1.5em;
+	margin-right: 8px;
+	padding: 2px 8px 5px;
+	color:	#ADC98D;
+	background-color: #49612D;
+	font-weight: normal;
+	margin-left: -35px;
+	position: relative;
+	top: 10px;
+	}
+
+
+dd {
+	margin: 25px 70px 0px;
+	padding-bottom: 12px;
+	line-height: 150%;	
+	}
+	
+dd:before {
+	content: " !";
+	font-size: 1.5em;
+	margin-right: 12px;
+	padding: 2px 8px;
+	color:	#49612D;
+	background-color: #ADC98D;
+	margin-left: -35px;
+	position: relative;
+	top: 10px;
+	}
+	
+	
+table {
+	width:			100%;
+	border-spacing: 	0px;
+	text-align: 		center;
+	border:			1px solid #2a410f;
+	background-color:	#E5FFBD; /* IE7 fix */
+	}
+	
+
+td {
+	border:			1px solid #7BA24C;/*eeab68;*/
+}
+
+th
+{
+	background-color:	#375315;
+	color:			white;
+	border:			1px solid #2a410f;
+}
+
+#content .thlink a:link {color: white; text-decoration: underline; font-weight: bolder}
+#content .thlink a:visited {color: white; text-decoration: underline; font-weight: bolder}
+#content .thlink a:hover {color: #86be25; text-decoration: underline; font-weight: bolder;}
+#content .thlink a:focus {color: #86be25; text-decoration: underline; font-weight: bolder}
+#content .thlink a:active {color: #86be25; text-decoration: underline; font-weight: bolder}
+
+#content .tdlink a:link {color: #375315; text-decoration: underline; font-weight: bolder}
+#content .tdlink a:visited {color: #375315; text-decoration: underline; font-weight: bolder}
+#content .tdlink a:hover {color: #86be25; text-decoration: underline; font-weight: bolder;}
+#content .tdlink a:focus {color: #86be25; text-decoration: underline; font-weight: bolder}
+#content .tdlink a:active {color: #86be25; text-decoration: underline; font-weight: bolder}
+
+tr:nth-child(even) 		{background: #ADC98D;}/*ffcd8a;}*/
+tr:nth-child(odd) 		{background: #FFF}
+
+td.expired {
+	background: 		#49612D;/*cc8946; */
+	border-color: 		#49612D;/*cc8946;*/
+	}
+
