@@ -1,0 +1,67 @@
+http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170109T13:00:00&timeid=180&lang=no
+
+http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170109T13:00:00&timeid=180&leggtilvikarid=619&lang=no
+
+
+http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170111T14:00:00&timeid=206&bekrefteid=619&lang=no
+
+http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170111T14:00:00&timeid=206&kommerikkeid=619&lang=no
+
+
+http://org.ntnu.no/tennisgr/logout.php?lang=no
+
+
+--------------wireshark-shit------------------
+
+g
+B\IE1b@n8DP!YrZPPOST /tennisgr/index.php?lang=no HTTP/1.1
+Host: org.ntnu.no
+Connection: keep-alive
+Content-Length: 69
+Cache-Control: max-age=0
+Origin: http://org.ntnu.no
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Referer: http://org.ntnu.no/tennisgr/
+Accept-Encoding: gzip, deflate
+Accept-Language: nb-NO,nb;q=0.8,no;q=0.6,nn;q=0.4,en-US;q=0.2,en;q=0.2,ru;q=0.2
+Cookie: _ga=GA1.2.33422018.1437979052; PHPSESSID=dld0324il6s9soc53p8mtue4s4
+
+email=mikail.vasilyev%40gmail.com&password=4711&lang=no&rememberme=on
+
+
+--------------from SO, modified by wirehark-shit------------------
+
+POST /tennisgr/index.php?lang=no HTTP/1.1
+HOST: org.ntnu.no
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 69
+
+email=mikail.vasilyev%40gmail.com&password=4711&lang=no&rememberme=on
+
+
+
+--------------SUMMARY from wireshark------------------
+
+3239	46.846322	129.241.127.110	129.241.56.68	HTTP	800	POST /tennisgr/index.php?lang=no HTTP/1.1  (application/x-www-form-urlencoded)
+
+Frame 3239: 800 bytes on wire (6400 bits), 800 bytes captured (6400 bits) on interface 0
+Ethernet II, Src: HewlettP_f8:b6:49 (5c:b9:01:f8:b6:49), Dst: CiscoInc_0a:b1:42 (d8:67:d9:0a:b1:42)
+Internet Protocol Version 4, Src: 129.241.127.110, Dst: 129.241.56.68
+Transmission Control Protocol, Src Port: 64901, Dst Port: 80, Seq: 1, Ack: 1, Len: 746
+Hypertext Transfer Protocol
+HTML Form URL Encoded: application/x-www-form-urlencoded
+    Form item: "email" = "mikail.vasilyev@gmail.com"
+        Key: email
+        Value: mikail.vasilyev@gmail.com
+    Form item: "password" = "4711"
+        Key: password
+        Value: 4711
+    Form item: "lang" = "no"
+        Key: lang
+        Value: no
+    Form item: "rememberme" = "on"
+        Key: rememberme
+        Value: on

@@ -1,6 +1,6 @@
 package org.mikhailv.ntnuitennis.data;
 
-import static org.mikhailv.ntnuitennis.data.Constants.Sizes;
+import static org.mikhailv.ntnuitennis.data.Globals.Sizes;
 
 /**
  * Created by MikhailV on 06.01.2017.

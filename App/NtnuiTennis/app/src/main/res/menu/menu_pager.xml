@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:icon="@drawable/ic_refresh"
+        android:title="@string/menu_refresh"
+        app:showAsAction="always"
+        />
+    <item
+        android:icon="@drawable/ic_previous"
+        android:title="@string/menu_prev_week"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:icon="@drawable/ic_next"
+        android:title="@string/menu_next_week"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:icon="@drawable/ic_settings"
+        android:title="@string/menu_settings"
+        app:showAsAction="never"
+        />
+    <item
+        android:icon="@drawable/ic_about"
+        android:title="@string/menu_about"
+        app:showAsAction="never"
+        />
+
+</menu>
