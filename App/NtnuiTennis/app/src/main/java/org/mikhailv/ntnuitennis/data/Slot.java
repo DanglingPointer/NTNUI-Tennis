@@ -3,7 +3,9 @@ package org.mikhailv.ntnuitennis.data;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,11 +69,22 @@ public class Slot
     {
         m_lvl = lvl;
     }
-    public String getName(int i)
+    public String getReservedAt(int i)
     {
         if (i < 0 || m_reserved.length <= i || m_reserved[i] == null)
             return null;
         return m_reserved[i];
+    }
+    public List<String> getReserved()
+    {
+        int firstNullIndex;
+        for (firstNullIndex = 0; firstNullIndex < m_reserved.length; ++firstNullIndex)
+            if (m_reserved[firstNullIndex] == null)
+                break;
+        String[] reservedOnly = new String[firstNullIndex];
+        for(int i = 0; i < firstNullIndex; ++i)
+            reservedOnly[i] = m_reserved[i];
+        return Arrays.asList(reservedOnly);
     }
     public void setName(int i, String name)
     {
@@ -86,7 +99,8 @@ public class Slot
                 return true;
         return false;
     }
-    public boolean isMeAttending(){
+    public boolean isMeAttending()
+    {
         for (String name : m_reserved)
             if (name != null && name.equals(Globals.MY_NAME))
                 return true;

@@ -11,5 +11,5 @@ public final class Globals
         public static final int DAY = 15;
         public static final int WEEK = 8;
     }
-    public static String MY_NAME;
+    public static String MY_NAME = "Mikhail";
 }

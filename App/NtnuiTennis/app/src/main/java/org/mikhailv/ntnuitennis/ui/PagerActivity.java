@@ -2,7 +2,7 @@ package org.mikhailv.ntnuitennis.ui;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +21,7 @@ public class PagerActivity extends AppCompatActivity
         setContentView(R.layout.activity_pager);
         FragmentManager manager = getSupportFragmentManager();
         m_viewPager = (ViewPager)findViewById(R.id.activity_view_pager);
-        m_viewPager.setAdapter(new FragmentPagerAdapter(manager)
+        m_viewPager.setAdapter(new FragmentStatePagerAdapter(manager)
         {
             @Override
             public Fragment getItem(int position)

@@ -13,8 +13,16 @@ public class Week
         // temporary stub
         if (s_current == null) {
             s_current = new Week();
-            for (int i = 0; i < Sizes.WEEK; ++i)
-                s_current.setDay(i, new Day("Day #" + i));
+            for (int i = 0; i < Sizes.WEEK; ++i) {
+                Slot s = new Slot(4);
+                s.setName(0, "Guang");
+                s.setName(1, "Mikhail");
+                s.setLevel("N+*");
+
+                Day d = new Day("Day #" + i);
+                d.setSlot(9, s);
+                s_current.setDay(i, d);
+            }
         }
         return s_current;
     }

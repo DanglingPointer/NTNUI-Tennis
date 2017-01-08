@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.mikhailv.ntnuitennis.R;
@@ -29,7 +29,8 @@ import org.mikhailv.ntnuitennis.data.Week;
 public class DayFragment extends Fragment
 {
     private static final String ARG_DAY = "DayFragment.day";
-    private static final String SAVED_EXPANDED = "DayFragment.expanded"; // expanded slots
+    private static final String SAVED_EXPANDED = "DayFragment.expanded";
+    public static final String TAG_LOG = "MIKHAILS_LOG"; // temp
 
     private SlotAdapter m_adapter;
 
@@ -50,7 +51,7 @@ public class DayFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) // stub
     {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_btn_refresh:
                 return true;
             case R.id.menu_btn_prev:
@@ -76,9 +77,11 @@ public class DayFragment extends Fragment
         int dayIndex = getArguments().getInt(ARG_DAY);
         if (savedInstanceState == null) {
             m_adapter = new SlotAdapter(getActivity(), dayIndex);
+            Log.d(TAG_LOG, "onCreateView called without saved state");
         } else {
             boolean[] expanded = savedInstanceState.getBooleanArray(SAVED_EXPANDED);
             m_adapter = new SlotAdapter(getActivity(), dayIndex, expanded);
+            Log.d(TAG_LOG, "onCreateView called with saved state");
         }
         recyclerView.setAdapter(m_adapter);
 
@@ -94,6 +97,7 @@ public class DayFragment extends Fragment
         super.onSaveInstanceState(outState);
         boolean[] expanded = m_adapter.getExpanded();
         outState.putBooleanArray(SAVED_EXPANDED, expanded);
+        Log.d(TAG_LOG, "onSaveInstanceState called");
     }
 }
 
@@ -101,7 +105,7 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
 {
     private FragmentActivity m_context;
     private int m_dayIndex;
-    private SlotHolder[] m_slotHolders;
+    private final SlotHolder[] m_slotHolders;
     private Boolean[] m_savedState;
 
     public SlotAdapter(FragmentActivity context, int dayIndex)
@@ -129,7 +133,11 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
     {
         int hour = position + 8;
         boolean expanded = false;
-        if (m_savedState != null && m_savedState[position] != null) {
+        if (m_slotHolders[position] != null) {
+            // rebinding after scrolling/updates
+            expanded = m_slotHolders[position].isExpanded();
+        } else if (m_savedState != null && m_savedState[position] != null) {
+            // rebinding when recreating the fragment
             expanded = m_savedState[position];
             m_savedState[position] = null; // invalidate state
         }
@@ -192,7 +200,7 @@ class SlotHolder extends RecyclerView.ViewHolder
                     m_expandBtn.setImageResource(R.drawable.ic_collapse);
                     m_expanded = true;
                 }
-                setReservedText();
+                configReservedText();
             }
         });
         m_detailsBtn.setOnClickListener(new View.OnClickListener()
@@ -208,8 +216,8 @@ class SlotHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View v)
             {
-                // TODO: send http request to take an available spot
-                m_adapter.notifyItemChanged(getAdapterPosition());
+                // TODO: send http request to take an available spot and update the whole table
+                m_adapter.notifyDataSetChanged();
             }
         });
     }
@@ -217,23 +225,20 @@ class SlotHolder extends RecyclerView.ViewHolder
     {
         m_hourText.setText(hour + ":00");
 
-        if ((m_slotData = slot) == null) {
-            setReservedText();
-            m_detailsBtn.setText(null);
-            m_expandBtn.setImageResource(R.drawable.ic_expand);
-            setBtnsEnabled(false);
-            return;
-        }
-
-        setBtnsEnabled(true);
-
         if (m_expanded = expanded) {
             m_expandBtn.setImageResource(R.drawable.ic_collapse);
         } else {
             m_expandBtn.setImageResource(R.drawable.ic_expand);
         }
-        setReservedText();
-        m_attendBtn.setEnabled(slot.hasAvailable() && !slot.isMeAttending());
+        if ((m_slotData = slot) == null) {
+            m_detailsBtn.setText(null);
+            setBtnsEnabled(false);
+        } else {
+            m_detailsBtn.setText(slot.getLevel());
+            setBtnsEnabled(true);
+            m_attendBtn.setEnabled(slot.hasAvailable() && !slot.isMeAttending());
+        }
+        configReservedText();
     }
     public boolean isExpanded()
     {
@@ -252,19 +257,19 @@ class SlotHolder extends RecyclerView.ViewHolder
     /**
      * Sets text if expanded
      */
-    private void setReservedText()
+    private void configReservedText()
     {
         if (m_slotData != null && m_expanded) {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < m_slotData.getSize(); ++i) {
-                sb.append(m_slotData.getName(i));
-                if (i < m_slotData.getSize() - 1) sb.append(", ");
+            for (String name : m_slotData.getReserved()) {
+                sb.append(name);
+                sb.append("\n");
             }
-            m_reservedText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            m_reservedText.setText(sb.toString());
+            m_reservedText.setText(sb.toString().trim());
+            m_reservedText.setVisibility(View.VISIBLE);
         } else {
             m_reservedText.setText(null);
-            m_reservedText.setHeight(0);
+            m_reservedText.setVisibility(View.GONE);
         }
     }
 }
