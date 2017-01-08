@@ -3,26 +3,31 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_btn_refresh"
         android:icon="@drawable/ic_refresh"
         android:title="@string/menu_refresh"
         app:showAsAction="always"
         />
     <item
+        android:id="@+id/menu_btn_prev"
         android:icon="@drawable/ic_previous"
         android:title="@string/menu_prev_week"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         />
     <item
+        android:id="@+id/menu_btn_next"
         android:icon="@drawable/ic_next"
         android:title="@string/menu_next_week"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         />
     <item
+        android:id="@+id/menu_btn_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menu_settings"
         app:showAsAction="never"
         />
     <item
+        android:id="@+id/menu_btn_about"
         android:icon="@drawable/ic_about"
         android:title="@string/menu_about"
         app:showAsAction="never"

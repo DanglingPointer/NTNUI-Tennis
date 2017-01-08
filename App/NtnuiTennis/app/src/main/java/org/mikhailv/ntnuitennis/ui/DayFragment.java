@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -45,6 +46,24 @@ public class DayFragment extends Fragment
     {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_pager, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) // stub
+    {
+        switch (item.getItemId()){
+            case R.id.menu_btn_refresh:
+                return true;
+            case R.id.menu_btn_prev:
+                return true;
+            case R.id.menu_btn_next:
+                return true;
+            case R.id.menu_btn_settings:
+                return true;
+            case R.id.menu_btn_about:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     @Nullable
     @Override
@@ -241,7 +260,7 @@ class SlotHolder extends RecyclerView.ViewHolder
                 sb.append(m_slotData.getName(i));
                 if (i < m_slotData.getSize() - 1) sb.append(", ");
             }
-            m_reservedText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            m_reservedText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             m_reservedText.setText(sb.toString());
         } else {
             m_reservedText.setText(null);
