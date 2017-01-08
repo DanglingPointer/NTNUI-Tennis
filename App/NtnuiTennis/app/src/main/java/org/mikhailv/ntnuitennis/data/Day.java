@@ -19,10 +19,6 @@ public class Day
     {
         return m_date;
     }
-    public void setDate(String date)
-    {
-        m_date = date;
-    }
     public Slot getSlot(int hour)
     {
         int index = hour - 8;
@@ -30,10 +26,11 @@ public class Day
             return null;
         return m_slots[index];
     }
-    public void setSlot(int hour, Slot slot)
+    public Day setSlot(int hour, Slot slot)
     {
         int index = hour - 8;
         if (index >= 0 && index < Sizes.DAY)
             m_slots[index] = slot;
+        return this;
     }
 }

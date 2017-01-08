@@ -1,12 +1,10 @@
 http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170109T13:00:00&timeid=180&lang=no
 
 http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170109T13:00:00&timeid=180&leggtilvikarid=619&lang=no
-
+http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170110T14:00:00&timeid=187&fjernvikarid=619&lang=no
 
 http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170111T14:00:00&timeid=206&bekrefteid=619&lang=no
-
 http://org.ntnu.no/tennisgr/timeinfo.php?spilletid=20170111T14:00:00&timeid=206&kommerikkeid=619&lang=no
-
 
 http://org.ntnu.no/tennisgr/logout.php?lang=no
 

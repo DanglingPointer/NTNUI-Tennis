@@ -236,7 +236,13 @@ class SlotHolder extends RecyclerView.ViewHolder
         } else {
             m_detailsBtn.setText(slot.getLevel());
             setBtnsEnabled(true);
-            m_attendBtn.setEnabled(slot.hasAvailable() && !slot.isMeAttending());
+            if (slot.isMeAttending()) {
+                m_attendBtn.setEnabled(true);
+                m_attendBtn.setText(R.string.slot_btn_attend_not);
+            } else {
+                m_attendBtn.setEnabled(slot.hasAvailable());
+                m_attendBtn.setText(R.string.slot_btn_attend);
+            }
         }
         configReservedText();
     }
