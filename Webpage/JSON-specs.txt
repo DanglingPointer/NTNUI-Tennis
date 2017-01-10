@@ -1,0 +1,16 @@
+{
+"date": "Wed 11/1",
+"time": 14
+"expired":false
+"level": "N+*",
+"max": 4,
+"attending":["Camilla E.", "Lukasz P.", "Mikhail V."],
+"reg-link": null,
+"subst-link": "./timeinfo.php?spilletid=20170111T13:00:00&timeid=205&leggtilvikarid=619&lang=no"
+}
+
+- "attending" inkluderer både vikarer og faste spillere som har bekreftet at de kommer
+- "max" er maks antall plasser
+- "link" er den linken som blir generert når man går inn på enkelte timer, dvs avhengig av hvem som er logget inn (dvs den coockien som blir vedlagt når jeg sender http GET forespørsel, som vanlig)
+- nøyaktig formatering av "date" og "time" er ikke viktig
+- expired er ikke obligatorisk

@@ -3,6 +3,7 @@ package org.mikhailv.ntnuitennis.data;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,20 +14,21 @@ import java.util.List;
 
 public class Slot
 {
-    private String m_lvl;
     private List<Player> m_players;
     private String[] m_reserved;
-    private Uri m_link;
+    private boolean m_expired;
+    private String m_lvl;
+    private URL m_link;
 
     public Slot(int size)
     {
         m_reserved = new String[size];
     }
-    public Uri getLink()
+    public URL getLink()
     {
         return m_link;
     }
-    public Slot setLink(Uri link)
+    public Slot setLink(URL link)
     {
         m_link = link;
         return this;
@@ -42,6 +44,15 @@ public class Slot
     public Slot setLevel(String lvl)
     {
         m_lvl = lvl;
+        return this;
+    }
+    public boolean isExpired()
+    {
+        return m_expired;
+    }
+    public Slot setExpired(boolean expired)
+    {
+        m_expired = expired;
         return this;
     }
     public String getReservedAt(int i)

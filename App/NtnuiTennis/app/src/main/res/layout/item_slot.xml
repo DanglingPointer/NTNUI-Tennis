@@ -48,8 +48,9 @@
                 android:layout_marginLeft="2dp"
                 android:background="@color/lightGreen"
                 android:gravity="center"
-                android:textColor="@color/darkGreen"
                 />
+
+
 
             <ImageButton
                 android:id="@id/slot_btn_expand"

@@ -12,4 +12,5 @@ public final class Globals
         public static final int WEEK = 8;
     }
     public static String MY_NAME = "Mikhail";
+    public static final String TAG_LOG = "MIKHAILS_LOG"; // temp
 }

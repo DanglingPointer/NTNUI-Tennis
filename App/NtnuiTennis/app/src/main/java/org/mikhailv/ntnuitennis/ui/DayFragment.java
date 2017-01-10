@@ -1,5 +1,7 @@
 package org.mikhailv.ntnuitennis.ui;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,7 +32,6 @@ public class DayFragment extends Fragment
 {
     private static final String ARG_DAY = "DayFragment.day";
     private static final String SAVED_EXPANDED = "DayFragment.expanded";
-    public static final String TAG_LOG = "MIKHAILS_LOG"; // temp
 
     private SlotAdapter m_adapter;
 
@@ -77,11 +78,11 @@ public class DayFragment extends Fragment
         int dayIndex = getArguments().getInt(ARG_DAY);
         if (savedInstanceState == null) {
             m_adapter = new SlotAdapter(getActivity(), dayIndex);
-            Log.d(TAG_LOG, "onCreateView called without saved state");
+            Log.d(Globals.TAG_LOG, "onCreateView called without saved state");
         } else {
             boolean[] expanded = savedInstanceState.getBooleanArray(SAVED_EXPANDED);
             m_adapter = new SlotAdapter(getActivity(), dayIndex, expanded);
-            Log.d(TAG_LOG, "onCreateView called with saved state");
+            Log.d(Globals.TAG_LOG, "onCreateView called with saved state");
         }
         recyclerView.setAdapter(m_adapter);
 
@@ -97,7 +98,7 @@ public class DayFragment extends Fragment
         super.onSaveInstanceState(outState);
         boolean[] expanded = m_adapter.getExpanded();
         outState.putBooleanArray(SAVED_EXPANDED, expanded);
-        Log.d(TAG_LOG, "onSaveInstanceState called");
+        Log.d(Globals.TAG_LOG, "onSaveInstanceState called");
     }
 }
 
@@ -235,14 +236,15 @@ class SlotHolder extends RecyclerView.ViewHolder
             setBtnsEnabled(false);
         } else {
             m_detailsBtn.setText(slot.getLevel());
-            setBtnsEnabled(true);
+            setBtnsEnabled(!slot.isExpired());
             if (slot.isMeAttending()) {
-                m_attendBtn.setEnabled(true);
                 m_attendBtn.setText(R.string.slot_btn_attend_not);
             } else {
-                m_attendBtn.setEnabled(slot.hasAvailable());
+                m_attendBtn.setEnabled(slot.hasAvailable() && !slot.isExpired());
                 m_attendBtn.setText(R.string.slot_btn_attend);
             }
+            if (slot.isExpired())
+                setExpiredBackground();
         }
         configReservedText();
     }
@@ -276,6 +278,22 @@ class SlotHolder extends RecyclerView.ViewHolder
         } else {
             m_reservedText.setText(null);
             m_reservedText.setVisibility(View.GONE);
+        }
+    }
+    /**
+     * Sets dark background color for buttons
+     */
+    private void setExpiredBackground()
+    {
+        Context c = m_attendBtn.getContext();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            m_attendBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
+            m_detailsBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
+            m_expandBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
+        } else {
+            m_attendBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
+            m_detailsBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
+            m_expandBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
         }
     }
 }
