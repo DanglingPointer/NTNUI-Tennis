@@ -9,30 +9,18 @@ import static org.mikhailv.ntnuitennis.data.Globals.Sizes;
  * Created by MikhailV on 06.01.2017.
  */
 
-public class Week
+public interface Week
 {
-    public static Week getCurrent()
-    {
-        // temporary stub
-        if (s_current == null) {
-            s_current = new Week();
-            for (int i = 0; i < Sizes.WEEK; ++i) {
-                Day d = new Day("Day #" + i);
-                if (i % 2 == 0) {
-                    Slot s1 = new Slot(4).setName(0, "Guang").setName(1, "Mikhail").setLevel("N+*").setExpired(true);
-                    Slot s2 = new Slot(6).setLevel("M").setName(0, "Guang_1").setName(1, "Guang_2");
-                    d.setSlot(9, s1).setSlot(11, s2);
-                }
-                s_current.setDay(i, d);
-            }
-        }
-        return s_current;
-    }
-    private static Week s_current;
+    Day getDay(int index);
 
+    List<SessionInfo> getSessionsInfo();
+}
+
+class WeekImpl implements Week
+{
     private final Day[] m_days = new Day[Sizes.WEEK];
 
-    public Week()
+    public WeekImpl()
     { }
     public Day getDay(int index)
     {
@@ -42,8 +30,7 @@ public class Week
     }
     public Week setDay(int index, Day day)
     {
-        if (index >= 0 && index < Sizes.WEEK)
-            m_days[index] = day;
+        m_days[index] = day;
         return this;
     }
     public List<SessionInfo> getSessionsInfo()

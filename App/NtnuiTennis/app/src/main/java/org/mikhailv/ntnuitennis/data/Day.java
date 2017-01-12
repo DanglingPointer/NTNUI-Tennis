@@ -6,12 +6,19 @@ import static org.mikhailv.ntnuitennis.data.Globals.Sizes;
  * Created by MikhailV on 06.01.2017.
  */
 
-public class Day
+public interface Day
+{
+    String getDate();
+
+    Slot getSlot(int hour);
+}
+
+class DayImpl implements Day
 {
     private final Slot[] m_slots = new Slot[Sizes.DAY];
     private String m_date;
 
-    public Day(String date)
+    public DayImpl(String date)
     {
         m_date = date;
     }
@@ -26,11 +33,9 @@ public class Day
             return null;
         return m_slots[index];
     }
-    public Day setSlot(int hour, Slot slot)
+    public DayImpl setSlot(int hour, Slot slot)
     {
-        int index = hour - 8;
-        if (index >= 0 && index < Sizes.DAY)
-            m_slots[index] = slot;
+        m_slots[hour - 8] = slot;
         return this;
     }
 }

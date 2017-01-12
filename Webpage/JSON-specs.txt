@@ -1,3 +1,7 @@
+Ok, hvis du kan implementere noe som likner på det som står nedenfor, så blir det supert :)
+
+For hver treningstime i tabellen f.eks.:
+
 {
 "date": "Wed 11/1",
 "time": 14
@@ -9,8 +13,18 @@
 "subst-link": "./timeinfo.php?spilletid=20170111T13:00:00&timeid=205&leggtilvikarid=619&lang=no"
 }
 
-- "attending" inkluderer både vikarer og faste spillere som har bekreftet at de kommer
+- "attending" inkluderer både vikarer og faste spillere som har bekreftet at de kommer (dvs som i "title" i html-tabellen)
 - "max" er maks antall plasser
-- "link" er den linken som blir generert når man går inn på enkelte timer, dvs avhengig av hvem som er logget inn (dvs den coockien som blir vedlagt når jeg sender http GET forespørsel, som vanlig)
-- nøyaktig formatering av "date" og "time" er ikke viktig
-- expired er ikke obligatorisk
+- "reg-link" og "subst-link" er de påmeldingslinkene man får når man går inn på enkelttimer, avhengig av hvem som er logget inn:
+reg-link kan være 1 av 3, f.eks.:
+1) "./timeinfo.php?spilletid=20170111T13:00:00&timeid=205&bekrefteid=619&lang=no"
+2) "./timeinfo.php?spilletid=20170111T13:00:00&timeid=205&kommerikkeid=619&lang=no"
+3) null
+subst-link kan være f.eks.:
+1) "./timeinfo.php?spilletid=20170111T13:00:00&timeid=205&leggtilvikarid=619&lang=no"
+2) "./timeinfo.php?spilletid=20170111T13:00:00&timeid=205&fjernvikarid=619&lang=no"
+3) null
+Siden en av de to linkene alltid blir null, så kan man strengt tatt bare ha en "link" istedenfor "reg-link" og "subst-link". Det avhenger av hva som er lettest for deg å implementere.
+
+Trenger selvfølgelig ikke å være nøyaktig slik jeg beskrev, poenget var bare å vise hva slags info jeg trenger. Rekkefølgen, formateringen osv er ikke viktig så lenge det er json :) 
+Er det mulig å få til noe sånt?

@@ -22,7 +22,6 @@ import android.widget.TextView;
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
-import org.mikhailv.ntnuitennis.data.Week;
 
 /**
  * Created by MikhailV on 07.01.2017.
@@ -87,7 +86,7 @@ public class DayFragment extends Fragment
         recyclerView.setAdapter(m_adapter);
 
         TextView dateText = (TextView)root.findViewById(R.id.day_text_date);
-        dateText.setText(Week.getCurrent().getDay(dayIndex).getDate());
+        dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
 
         setHasOptionsMenu(true);
         return root;
@@ -142,7 +141,7 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
             expanded = m_savedState[position];
             m_savedState[position] = null; // invalidate state
         }
-        holder.bind(Week.getCurrent().getDay(m_dayIndex).getSlot(hour), hour, expanded);
+        holder.bind(Globals.getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour, expanded);
         m_slotHolders[position] = holder;
     }
     @Override
@@ -269,7 +268,7 @@ class SlotHolder extends RecyclerView.ViewHolder
     {
         if (m_slotData != null && m_expanded) {
             StringBuilder sb = new StringBuilder();
-            for (String name : m_slotData.getReserved()) {
+            for (String name : m_slotData.getAttending()) {
                 sb.append(name);
                 sb.append("\n");
             }

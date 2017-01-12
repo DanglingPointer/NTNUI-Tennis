@@ -1,6 +1,5 @@
 package org.mikhailv.ntnuitennis.data;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import java.net.URL;
@@ -12,7 +11,28 @@ import java.util.List;
  * Created by MikhailV on 06.01.2017.
  */
 
-public class Slot
+public interface Slot
+{
+    URL getLink();
+
+    int getSize();
+
+    String getLevel();
+
+    boolean isExpired();
+
+    String getAttendingAt(int i);
+
+    List<String> getAttending();
+
+    boolean hasAvailable();
+
+    boolean isMeAttending();
+
+    void getPlayers(@NonNull List<Player> dropIns, @NonNull List<Player> nonDropIns);
+}
+
+class SlotImpl implements Slot
 {
     private List<Player> m_players;
     private String[] m_reserved;
@@ -20,7 +40,7 @@ public class Slot
     private String m_lvl;
     private URL m_link;
 
-    public Slot(int size)
+    public SlotImpl(int size)
     {
         m_reserved = new String[size];
     }
@@ -28,7 +48,7 @@ public class Slot
     {
         return m_link;
     }
-    public Slot setLink(URL link)
+    public SlotImpl setLink(URL link)
     {
         m_link = link;
         return this;
@@ -41,7 +61,7 @@ public class Slot
     {
         return m_lvl;
     }
-    public Slot setLevel(String lvl)
+    public SlotImpl setLevel(String lvl)
     {
         m_lvl = lvl;
         return this;
@@ -50,18 +70,18 @@ public class Slot
     {
         return m_expired;
     }
-    public Slot setExpired(boolean expired)
+    public SlotImpl setExpired(boolean expired)
     {
         m_expired = expired;
         return this;
     }
-    public String getReservedAt(int i)
+    public String getAttendingAt(int i)
     {
         if (i < 0 || m_reserved.length <= i || m_reserved[i] == null)
             return null;
         return m_reserved[i];
     }
-    public List<String> getReserved()
+    public List<String> getAttending()
     {
         int firstNullIndex;
         for (firstNullIndex = 0; firstNullIndex < m_reserved.length; ++firstNullIndex)
@@ -72,10 +92,9 @@ public class Slot
             reservedOnly[i] = m_reserved[i];
         return Arrays.asList(reservedOnly);
     }
-    public Slot setName(int i, String name)
+    public SlotImpl setName(int i, String name)
     {
-        if (!(i < 0 || m_reserved.length <= i))
-            m_reserved[i] = name;
+        m_reserved[i] = name;
         return this;
     }
     public boolean hasAvailable()
@@ -100,39 +119,11 @@ public class Slot
             else
                 nonDropIns.add(p);
     }
-    public Slot addPlayer(Player player)
+    public SlotImpl addPlayer(Player player)
     {
         if (m_players == null)
             m_players = new ArrayList<>();
         m_players.add(player);
         return this;
     }
-
-    public static class Player
-    {
-        private String m_name;
-        private boolean m_attending;
-        private boolean m_dropIn;
-
-        public Player(String name, boolean attending, boolean dropIn)
-        {
-            this.m_name = name;
-            this.m_attending = attending;
-            this.m_dropIn = dropIn;
-        }
-        public String getName()
-        {
-            return m_name;
-        }
-        public boolean isAttending()
-        {
-            return m_attending;
-        }
-        public boolean isDropIn()
-        {
-            return m_dropIn;
-        }
-    }
 }
-
-
