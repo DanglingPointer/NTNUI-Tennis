@@ -27,7 +27,7 @@ Accept-Encoding: gzip, deflate
 Accept-Language: nb-NO,nb;q=0.8,no;q=0.6,nn;q=0.4,en-US;q=0.2,en;q=0.2,ru;q=0.2
 Cookie: _ga=GA1.2.33422018.1437979052; PHPSESSID=dld0324il6s9soc53p8mtue4s4
 
-email=mikail.vasilyev%40gmail.com&password=4711&lang=no&rememberme=on
+email=mikail.vasilyev%40gmail.com&password=1234&lang=no&rememberme=on
 
 
 --------------from SO, modified by wirehark-shit------------------
@@ -37,7 +37,7 @@ HOST: org.ntnu.no
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 69
 
-email=mikail.vasilyev%40gmail.com&password=4711&lang=no&rememberme=on
+email=mikail.vasilyev%40gmail.com&password=1234&lang=no&rememberme=on
 
 
 
@@ -54,9 +54,9 @@ HTML Form URL Encoded: application/x-www-form-urlencoded
     Form item: "email" = "mikail.vasilyev@gmail.com"
         Key: email
         Value: mikail.vasilyev@gmail.com
-    Form item: "password" = "4711"
+    Form item: "password" = "1234"
         Key: password
-        Value: 4711
+        Value: 1234
     Form item: "lang" = "no"
         Key: lang
         Value: no
