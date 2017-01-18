@@ -27,6 +27,12 @@
         app:showAsAction="never"
         />
     <item
+        android:id="@+id/menu_btn_notifications"
+        android:icon="@drawable/ic_notifications"
+        android:title="@string/menu_notifications"
+        app:showAsAction="never"
+        />
+    <item
         android:id="@+id/menu_btn_about"
         android:icon="@drawable/ic_about"
         android:title="@string/menu_about"

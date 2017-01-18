@@ -29,10 +29,22 @@ import org.mikhailv.ntnuitennis.data.Slot;
 
 public class DayFragment extends Fragment
 {
+    public interface Callbacks
+    {
+        void onNotificationsPressed();
+
+        void onSlotDetailsPressed(int day, Slot slot);
+
+        void onAttendPressed(int day, Slot slot);
+
+        void updateData();
+    }
+
     private static final String ARG_DAY = "DayFragment.day";
     private static final String SAVED_EXPANDED = "DayFragment.expanded";
 
     private SlotAdapter m_adapter;
+    private Callbacks m_callbacks;
 
     public static DayFragment newInstance(int day)
     {
@@ -53,6 +65,8 @@ public class DayFragment extends Fragment
     {
         switch (item.getItemId()) {
             case R.id.menu_btn_refresh:
+                m_callbacks.updateData();
+                m_adapter.notifyDataSetChanged();
                 return true;
             case R.id.menu_btn_prev:
                 return true;
@@ -62,14 +76,40 @@ public class DayFragment extends Fragment
                 return true;
             case R.id.menu_btn_about:
                 return true;
+            case R.id.menu_btn_notifications:
+                m_callbacks.onNotificationsPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+        m_callbacks = (Callbacks)context;
+        Log.d(Globals.TAG_LOG, "onAttach() called");
+    }
+    @Override
+    public void onDetach()
+    {
+        super.onDetach();
+        m_callbacks = null;
+        Log.d(Globals.TAG_LOG, "onDetach() called");
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        m_callbacks.updateData();
+        Log.d(Globals.TAG_LOG, "onResume() called");
     }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
+        setHasOptionsMenu(true);
+
         View root = inflater.inflate(R.layout.fragment_day, container, false);
         RecyclerView recyclerView = (RecyclerView)root.findViewById(R.id.day_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -88,7 +128,7 @@ public class DayFragment extends Fragment
         TextView dateText = (TextView)root.findViewById(R.id.day_text_date);
         dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
 
-        setHasOptionsMenu(true);
+        Log.d(Globals.TAG_LOG, "onCreateView() called");
         return root;
     }
     @Override
@@ -97,7 +137,7 @@ public class DayFragment extends Fragment
         super.onSaveInstanceState(outState);
         boolean[] expanded = m_adapter.getExpanded();
         outState.putBooleanArray(SAVED_EXPANDED, expanded);
-        Log.d(Globals.TAG_LOG, "onSaveInstanceState called");
+        Log.d(Globals.TAG_LOG, "onSaveInstanceState() called");
     }
 }
 
@@ -161,6 +201,14 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
         }
         return temp;
     }
+    void onSlotAttendPressed(Slot slot)
+    {
+        ((DayFragment.Callbacks)m_context).onAttendPressed(m_dayIndex, slot);
+    }
+    void onSlotDetailsPressed(Slot slot)
+    {
+        ((DayFragment.Callbacks)m_context).onSlotDetailsPressed(m_dayIndex, slot);
+    }
 }
 
 class SlotHolder extends RecyclerView.ViewHolder
@@ -174,9 +222,9 @@ class SlotHolder extends RecyclerView.ViewHolder
 
     private boolean m_expanded;
     private Slot m_slotData;
-    private RecyclerView.Adapter<SlotHolder> m_adapter;
+    private final SlotAdapter m_adapter;
 
-    public SlotHolder(View root, RecyclerView.Adapter<SlotHolder> adapter)
+    public SlotHolder(View root, SlotAdapter adapter)
     {
         super(root);
         m_adapter = adapter;
@@ -208,7 +256,7 @@ class SlotHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View v)
             {
-                // TODO: launch a SlotActivity here
+                m_adapter.onSlotDetailsPressed(m_slotData);
             }
         });
         m_attendBtn.setOnClickListener(new View.OnClickListener()
@@ -216,7 +264,7 @@ class SlotHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View v)
             {
-                // TODO: send http request to take an available spot and update the whole table
+                m_adapter.onSlotAttendPressed(m_slotData);
                 m_adapter.notifyDataSetChanged();
             }
         });
