@@ -8,6 +8,6 @@
     <string name="slot_btn_attend">Attend</string>
     <string name="slot_btn_attend_not">Not going</string>
     <string name="menu_notifications">Notifications</string>
-    <string name="notifications_title">Receive notifications from checked hours:</string>
+    <string name="notifications_title">Receive notifications about selected hours:</string>
     <string name="menu_not_save">Save</string>
 </resources>

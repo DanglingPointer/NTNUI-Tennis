@@ -2,7 +2,6 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/darkGreen</item>
         <item name="colorPrimaryDark">@color/extraDarkGreen</item>
         <item name="colorAccent">@color/lightGreen</item>
@@ -10,13 +9,12 @@
     </style>
 
     <style name="DropDownMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <!--<item name="android:popupMenuStyle">@drawable/dropdown_menu_background</item>-->
-        <item name="android:background">?attr/colorPrimary</item>
+        <!-- never change android:background on popup menu! -->
+        <item name="android:colorBackground">?attr/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
         <item name="overlapAnchor">false</item>
     </style>
 
-    <!--<style name="DropDownItemStyle">-->
-        <!--<item name="android:background">@drawable/dropdown_menu_background</item>-->
-    <!--</style>-->
+    <!--Widget.AppCompat.PopupMenu.Overflow-->
 
 </resources>
