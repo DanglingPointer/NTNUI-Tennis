@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.mikhailv.ntnuitennis.R;
@@ -44,6 +45,7 @@ public class DayFragment extends Fragment
     private static final String SAVED_EXPANDED = "DayFragment.expanded";
 
     private SlotAdapter m_adapter;
+    private ProgressBar m_progressBar;
     private Callbacks m_callbacks;
 
     public static DayFragment newInstance(int day)
@@ -125,6 +127,7 @@ public class DayFragment extends Fragment
         }
         recyclerView.setAdapter(m_adapter);
 
+        m_progressBar = (ProgressBar)root.findViewById(R.id.day_progress_bar);
         TextView dateText = (TextView)root.findViewById(R.id.day_text_date);
         dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
 
