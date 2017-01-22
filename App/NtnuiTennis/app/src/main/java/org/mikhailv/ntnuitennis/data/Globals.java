@@ -21,9 +21,10 @@ public final class Globals
         public static final int WEEK = 8;
     }
 
-    public static String MY_NAME = "Mikhail";
+    public static final String MY_NAME = "Mikhail";
     public static final String TAG_LOG = "MIKHAILS_LOG"; // temp
-    public static String FILE_NAME = "config";
+    public static final String FILE_NAME = "config";
+    public static final String HOME_URL = "http://org.ntnu.no/tennisgr/";
 
 
     public static Week getCurrentWeek()
@@ -35,9 +36,9 @@ public final class Globals
                 DayImpl d = new DayImpl("Day #" + i);
                 if (i % 2 == 0) {
                     Slot s1 = new SlotImpl(4).setName(0, "Guang").setName(1, "Mikhail").setLevel("N+*")
-                            .setLink("http://org.ntnu.no/tennisgr/");
+                            .setLink(HOME_URL);
                     Slot s2 = new SlotImpl(6).setLevel("M").setName(0, "Guang_1").setName(1, "Guang_2")
-                            .setLink("http://org.ntnu.no/tennisgr/");
+                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170124T10:00:00&timeid=184&lang=no");
                     d.setSlot(9, s1).setSlot(11, s2);
                 }
                 s_current.setDay(i, d);

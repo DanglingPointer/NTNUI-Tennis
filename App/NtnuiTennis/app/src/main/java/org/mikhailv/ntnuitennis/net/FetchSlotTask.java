@@ -1,15 +1,23 @@
 package org.mikhailv.ntnuitennis.net;
 
-import android.net.ParseException;
 import android.util.Log;
+import android.util.Xml;
 
 import org.mikhailv.ntnuitennis.data.Globals;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -20,7 +28,7 @@ import java.net.URL;
  */
 class FetchSlotTask extends FetchTask
 {
-    private static final int MAX_READ = 25000;
+    private static final int MAX_READ = 50000;
 
     public FetchSlotTask(NetworkCallbacks callbacks)
     {
@@ -67,7 +75,17 @@ class FetchSlotTask extends FetchTask
     @Override
     protected String parse(String rawData) throws ParseException
     {
-        // TODO: extract xml-table from xml-page
+        try {
+            int openingTagIndex = rawData.indexOf("<table>");
+            int closingTagIndex = rawData.indexOf("</table>");
+            rawData = rawData.substring(openingTagIndex, closingTagIndex + 8);
+            SlotParser parser = new SlotParser(rawData);
+            parser.parse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(Globals.TAG_LOG, e.toString());
+            throw new ParseException(e.toString(), 0);
+        }
         return rawData;
     }
     @Override
@@ -94,5 +112,54 @@ class FetchSlotTask extends FetchTask
     {
         if (getCallbacks() != null)
             getCallbacks().onDownloadCanceled();
+    }
+
+    private static class SlotParser
+    {
+        private XmlPullParser m_parser;
+        private List<String> m_data;
+
+        public SlotParser(String rawHtml) throws XmlPullParserException
+        {
+            rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
+                    .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
+                    .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
+                    .replaceAll("&aelig;", "æ");
+            m_data = new ArrayList<>();
+            m_parser = Xml.newPullParser();
+            m_parser.setInput(new StringReader(rawHtml));
+        }
+        public void parse() throws XmlPullParserException, IOException
+        {
+            if (m_parser.nextTag() != XmlPullParser.START_TAG)
+                throw new XmlPullParserException("Malformed raw html table");
+            int depth = 1;
+
+            while (depth != 0) {
+                switch (m_parser.next()) {
+                    case XmlPullParser.START_TAG:
+                        ++depth;
+                        break;
+                    case XmlPullParser.END_TAG:
+                        --depth;
+                        break;
+                    case XmlPullParser.TEXT:
+                        if (depth >= 3) {
+                            String text = m_parser.getText();
+                            m_data.add(text);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            for (String entry : m_data) {
+                Log.d(Globals.TAG_LOG, entry);
+            }
+        }
+        public List<String> getData()
+        {
+            return m_data;
+        }
     }
 }

@@ -1,10 +1,10 @@
 package org.mikhailv.ntnuitennis.net;
 
-import android.net.ParseException;
 import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 
 /**
  * Created by MikhailV on 21.01.2017.

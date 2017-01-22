@@ -91,10 +91,12 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            if (Build.VERSION.SDK_INT >= 24)
+            if (Build.VERSION.SDK_INT >= 24){
                 m_text.setText(Html.fromHtml(htmlPage, Html.FROM_HTML_MODE_COMPACT));
-            else
+            }
+            else {
                 m_text.setText(Html.fromHtml(htmlPage));
+            }
 
             m_progress.setVisibility(View.GONE);
         }

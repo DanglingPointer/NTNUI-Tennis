@@ -15,11 +15,15 @@ import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class PagerActivity extends AppCompatActivity implements DayFragment.Callbacks,
                                                                 NetworkCallbacks
 {
     private ViewPager m_viewPager;
     private NetworkFragment m_networker;
+    private DayFragment[] m_fragments = new DayFragment[Globals.Sizes.WEEK];
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,7 +37,8 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
             @Override
             public Fragment getItem(int position)
             {
-                return DayFragment.newInstance(position);
+                DayFragment f = DayFragment.newInstance(position);
+                return m_fragments[position] = f;
             }
             @Override
             public int getCount()
@@ -58,38 +63,61 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     }
     public void onAttendPressed(int day, Slot slot)
     {
-
+//        if (m_networker!=null)
+//            m_networker.downloadSlot();
     }
     public void updateData()
     {
-
+        try {
+            if (m_networker != null)
+                m_networker.downloadTable(new URL("http://org.ntnu.no/tennisgr/"));
+        } catch (MalformedURLException e) {
+        }
+    }
+    @Override
+    public void eraseMe(DayFragment me)
+    {
+        for (int i = 0; i < m_fragments.length; ++i) {
+            if (m_fragments[i] == me)
+                m_fragments[i] = null;
+        }
     }
     /**
-     * Network callbacks
+     * Forward network callbacks to the current fragment
      */
     @Override
     public void onProgressChanged(int progress)
     {
-
+        DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
+        if (currentFragment != null && currentFragment.isAdded())
+            currentFragment.onProgressChanged(progress);
     }
     @Override
     public void onPreExecute()
     {
-
+        DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
+        if (currentFragment != null && currentFragment.isAdded())
+            currentFragment.onPreExecute();
     }
     @Override
     public void onTableFetched(Exception e)
     {
-
+        DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
+        if (currentFragment != null && currentFragment.isAdded())
+            currentFragment.onTableFetched(e);
     }
     @Override
     public void onSlotFetched(String htmlPage, Exception e)
     {
-
+        DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
+        if (currentFragment != null && currentFragment.isAdded())
+            currentFragment.onSlotFetched(htmlPage, e);
     }
     @Override
     public void onDownloadCanceled()
     {
-
+        DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
+        if (currentFragment != null && currentFragment.isAdded())
+            currentFragment.onDownloadCanceled();
     }
 }

@@ -1,0 +1,75 @@
+<table>
+	<tr>
+		<th style="width: 20%">Timeinformasjon</th>
+		<th style="width: 80%"></th>
+	</tr>
+	<tr>
+		<td style="text-align: left; width=15%">Dato:</td>
+		<td style="text-align: left">Tirsdag&nbsp;24/1</td>
+	</tr>
+	<tr>
+		<td style="text-align: left">Klokkeslett:</td>
+		<td style="text-align: left">10:00-11:00</td>
+	</tr>
+	<tr>
+		<td style="text-align: left">Sted:</td>
+		<td style="text-align: left">
+			<a href="http://kart.gulesider.no/m/96J5S" target="_blank">&Oslash;ya</a>
+		</td>
+	</tr>
+	<tr>
+		<td style="text-align: left">Bane:</td>
+		<td style="text-align: left">A</td>
+	</tr>
+	<tr>
+		<td style="text-align: left">Niv&aring;:</td>
+		<td style="text-align: left">Nybegynner+</td>
+	</tr>
+	<tr>
+		<td style="text-align: left">Ukens tema:</td>
+		<td style="text-align: left"></td>
+	</tr>
+	<tr>
+		<td style="text-align: left" rowspan="4">Faste spillere (4 stk.)</td>
+		<td style="text-align: left; clear:both;">
+			<span style="float:left;">Eirik H.</span>
+			<span style="float: right;">
+				<span class="kommerikke">
+					<abbr title="Status satt av websystemet">(kommer ikke)</abbr>
+				</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td style="text-align: left; clear:both;">
+			<span style="float:left;">Erik Log R.</span>
+			<span style="float: right;">
+				<span class="kommerikke">
+					<abbr title="Status satt av websystemet">(kommer ikke)</abbr>
+				</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td style="text-align: left; clear:both;">
+			<span style="float:left;">Marvel L.</span>
+			<span style="float: right;">
+				<span class="kommerikke">
+					<abbr title="Status satt av websystemet">(kommer ikke)</abbr>
+				</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td style="text-align: left">
+			<i>Fast ledig plass</i>
+		</td>
+	</tr>
+	<tr>
+		<td style="text-align: left" rowspan="2">Vikarer (2 stk.)</td>
+		<td style="text-align: left">Ole S.</td>
+	</tr>
+	<tr>
+		<td style="text-align: left">Vince C.</td>
+	</tr>
+</table>

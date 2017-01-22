@@ -2,9 +2,8 @@ package org.mikhailv.ntnuitennis.data;
 
 import android.content.Context;
 
-import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by MikhailV on 12.01.2017.
@@ -35,7 +34,7 @@ public class TableFactory
         }
         return s;
     }
-    public Day newDay(String date, HashMap<Integer, Slot> slots)
+    public Day newDay(String date, Map<Integer, Slot> slots)
     {
         DayImpl d = new DayImpl(date);
         for (Integer hour : slots.keySet()) {

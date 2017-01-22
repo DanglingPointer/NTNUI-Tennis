@@ -1,6 +1,7 @@
 package org.mikhailv.ntnuitennis.ui;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,16 +20,20 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
+import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
+
+import java.net.URL;
 
 /**
  * Created by MikhailV on 07.01.2017.
  */
 
-public class DayFragment extends Fragment
+public class DayFragment extends Fragment implements NetworkCallbacks
 {
     public interface Callbacks
     {
@@ -39,6 +44,8 @@ public class DayFragment extends Fragment
         void onAttendPressed(int day, Slot slot);
 
         void updateData();
+
+        void eraseMe(DayFragment me);
     }
 
     private static final String ARG_DAY = "DayFragment.day";
@@ -68,7 +75,6 @@ public class DayFragment extends Fragment
         switch (item.getItemId()) {
             case R.id.menu_btn_refresh:
                 m_callbacks.updateData();
-                m_adapter.notifyDataSetChanged();
                 return true;
             case R.id.menu_btn_prev:
                 return true;
@@ -96,6 +102,7 @@ public class DayFragment extends Fragment
     public void onDetach()
     {
         super.onDetach();
+        m_callbacks.eraseMe(this);
         m_callbacks = null;
         Log.d(Globals.TAG_LOG, "onDetach() called");
     }
@@ -103,7 +110,7 @@ public class DayFragment extends Fragment
     public void onResume()
     {
         super.onResume();
-        m_callbacks.updateData();
+//        m_callbacks.updateData();
         Log.d(Globals.TAG_LOG, "onResume() called");
     }
     @Nullable
@@ -141,6 +148,38 @@ public class DayFragment extends Fragment
         boolean[] expanded = m_adapter.getExpanded();
         outState.putBooleanArray(SAVED_EXPANDED, expanded);
         Log.d(Globals.TAG_LOG, "onSaveInstanceState() called");
+    }
+    /**
+     * Network callbacks
+     */
+    @Override
+    public void onProgressChanged(int progress)
+    {
+        m_progressBar.setProgress(progress);
+    }
+    @Override
+    public void onPreExecute()
+    {
+        m_progressBar.setVisibility(View.VISIBLE);
+        m_progressBar.setProgress(0);
+    }
+    @Override
+    public void onTableFetched(Exception e)
+    {
+        m_progressBar.setVisibility(View.GONE);
+        m_adapter.notifyDataSetChanged();
+    }
+    @Override
+    public void onSlotFetched(String htmlPage, Exception e)
+    {
+        m_progressBar.setVisibility(View.GONE);
+        m_adapter.notifyDataSetChanged();
+    }
+    @Override
+    public void onDownloadCanceled()
+    {
+        m_progressBar.setVisibility(View.GONE);
+        Toast.makeText(getActivity(), "Download canceled", Toast.LENGTH_SHORT).show();
     }
 }
 
