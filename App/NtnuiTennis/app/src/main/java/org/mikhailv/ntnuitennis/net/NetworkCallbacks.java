@@ -9,9 +9,9 @@ public interface NetworkCallbacks
 
     void onPreExecute();
 
-    void onTableFetched();
+    void onTableFetched(Exception e);
 
-    void onSlotFetched(String htmlPage);
+    void onSlotFetched(String htmlPage, Exception e);
 
     void onDownloadCanceled();
 }

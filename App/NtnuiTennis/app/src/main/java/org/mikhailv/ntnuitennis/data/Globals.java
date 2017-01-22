@@ -34,8 +34,10 @@ public final class Globals
             for (int i = 0; i < Sizes.WEEK; ++i) {
                 DayImpl d = new DayImpl("Day #" + i);
                 if (i % 2 == 0) {
-                    Slot s1 = new SlotImpl(4).setName(0, "Guang").setName(1, "Mikhail").setLevel("N+*").setExpired(true);
-                    Slot s2 = new SlotImpl(6).setLevel("M").setName(0, "Guang_1").setName(1, "Guang_2");
+                    Slot s1 = new SlotImpl(4).setName(0, "Guang").setName(1, "Mikhail").setLevel("N+*")
+                            .setLink("http://org.ntnu.no/tennisgr/");
+                    Slot s2 = new SlotImpl(6).setLevel("M").setName(0, "Guang_1").setName(1, "Guang_2")
+                            .setLink("http://org.ntnu.no/tennisgr/");
                     d.setSlot(9, s1).setSlot(11, s2);
                 }
                 s_current.setDay(i, d);

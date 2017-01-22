@@ -18,7 +18,7 @@ public class TableFactory
 //    {
 //        m_context = c;
 //    }
-    public Slot newSlot(int size, URL link, String lvl, boolean expired,
+    public Slot newSlot(int size, String link, String lvl, boolean expired,
                         List<String> names, List<Player> players)
     {
         if (size < 0) return null;

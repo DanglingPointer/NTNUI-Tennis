@@ -10,7 +10,7 @@ import java.net.URL;
  * Created by MikhailV on 21.01.2017.
  */
 
-abstract public class FetchTask extends AsyncTask<URL, Integer, String>
+abstract class FetchTask extends AsyncTask<URL, Integer, String>
 {
     private NetworkCallbacks m_callbacks;
     private Exception m_exception;

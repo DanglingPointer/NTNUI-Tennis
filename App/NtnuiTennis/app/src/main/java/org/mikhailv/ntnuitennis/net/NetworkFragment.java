@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -67,13 +68,18 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
 
             // TODO: create FetchTableTask and execute
+            throw new UnsupportedOperationException();
         }
     }
-    public void downloadSlot(URL slotAddress)
+    public void downloadSlot(String slotAddress)
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
-
-            // TODO: create FetchSlotTask and execute
+            m_worker = new FetchSlotTask(this);
+            try {
+                m_worker.execute(new URL(slotAddress));
+            } catch (MalformedURLException e) {
+                m_worker = null;
+            }
         }
     }
     public void authenticate(URL homeAddress, String email, String password, String lang)
@@ -81,10 +87,17 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
 
             // TODO: create AuthenticateTask and execute
+            throw new UnsupportedOperationException();
         }
     }
+    public void cancelDownload()
+    {
+        if (m_worker != null && m_worker.getStatus() == AsyncTask.Status.RUNNING)
+            m_worker.cancel(true);
+    }
     /**
-     * Callbacks from AsyncTasks
+     * Internal callbacks from AsyncTasks.
+     * Necessary because the fragment might be reattached while a task is executing
      */
     @Override
     public void onProgressChanged(int progress)
@@ -99,16 +112,16 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_callbacks.onPreExecute();
     }
     @Override
-    public void onTableFetched()
+    public void onTableFetched(Exception e)
     {
         if (m_callbacks != null)
-            m_callbacks.onTableFetched();
+            m_callbacks.onTableFetched(e);
     }
     @Override
-    public void onSlotFetched(String htmlPage)
+    public void onSlotFetched(String htmlPage, Exception e)
     {
         if (m_callbacks != null)
-            m_callbacks.onSlotFetched(htmlPage);
+            m_callbacks.onSlotFetched(htmlPage, e);
     }
     @Override
     public void onDownloadCanceled()

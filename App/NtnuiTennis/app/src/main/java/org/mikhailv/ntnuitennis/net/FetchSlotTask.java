@@ -1,6 +1,9 @@
 package org.mikhailv.ntnuitennis.net;
 
 import android.net.ParseException;
+import android.util.Log;
+
+import org.mikhailv.ntnuitennis.data.Globals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +15,10 @@ import java.net.URL;
  * Created by MikhailV on 21.01.2017.
  */
 
-public class FetchSlotTask extends FetchTask
+/**
+ * Downloads and parses tml-pages for individual training sessions, and handles attend/substitute
+ */
+class FetchSlotTask extends FetchTask
 {
     private static final int MAX_READ = 25000;
 
@@ -41,14 +47,14 @@ public class FetchSlotTask extends FetchTask
                 InputStreamReader reader = new InputStreamReader(inStream, "UTF-8");
                 char[] buffer = new char[MAX_READ]; // 2^15=32768, charCount = 24938
 
-                int readCount = 0, offset = 0;
-                while (readCount != -1 && offset < MAX_READ) {
+                int lastRead = 0, offset = 0;
+                while (lastRead != -1 && offset < MAX_READ && !isCancelled()) {
                     publishProgress(offset * 100 / MAX_READ);
-                    readCount = reader.read(buffer, offset, MAX_READ - offset);
-                    offset += readCount;
+                    lastRead = reader.read(buffer, offset, MAX_READ - offset);
+                    offset += lastRead;
                 }
                 if (offset != -1)
-                    result = new String(buffer, 0, readCount);
+                    result = new String(buffer, 0, offset);
             }
         } finally {
             if (inStream != null)
@@ -62,19 +68,20 @@ public class FetchSlotTask extends FetchTask
     protected String parse(String rawData) throws ParseException
     {
         // TODO: extract xml-table from xml-page
-        return null;
+        return rawData;
     }
     @Override
     protected void onPreExecute()
     {
-        if (getCallbacks() != null)
+        if (getCallbacks() != null) {
             getCallbacks().onPreExecute();
+        }
     }
     @Override
     protected void onPostExecute(String s)
     {
         if (getCallbacks() != null)
-            getCallbacks().onSlotFetched(s);
+            getCallbacks().onSlotFetched(s, getException());
     }
     @Override
     protected void onProgressUpdate(Integer... values)

@@ -2,7 +2,6 @@ package org.mikhailv.ntnuitennis.data;
 
 import android.support.annotation.NonNull;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public interface Slot
 {
-    URL getLink();
+    String getLink();
 
     int getSize();
 
@@ -38,17 +37,17 @@ class SlotImpl implements Slot
     private String[] m_reserved;
     private boolean m_expired;
     private String m_lvl;
-    private URL m_link;
+    private String m_link;
 
     public SlotImpl(int size)
     {
         m_reserved = new String[size];
     }
-    public URL getLink()
+    public String getLink()
     {
         return m_link;
     }
-    public SlotImpl setLink(URL link)
+    public SlotImpl setLink(String link)
     {
         m_link = link;
         return this;
