@@ -4,15 +4,14 @@ import android.util.Log;
 import android.util.Xml;
 
 import org.mikhailv.ntnuitennis.data.Globals;
+import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -73,20 +72,21 @@ class FetchSlotTask extends FetchTask
         return result;
     }
     @Override
-    protected String parse(String rawData) throws ParseException
+    protected SlotDetailsInfo parse(String rawData) throws ParseException
     {
+        SlotParser parser;
         try {
             int openingTagIndex = rawData.indexOf("<table>");
             int closingTagIndex = rawData.indexOf("</table>");
             rawData = rawData.substring(openingTagIndex, closingTagIndex + 8);
-            SlotParser parser = new SlotParser(rawData);
-            rawData = parser.parse();
+            parser = new SlotParser(rawData);
+            parser.parse();
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(Globals.TAG_LOG, e.toString());
             throw new ParseException(e.toString(), 0);
         }
-        return rawData;
+        return parser;
     }
     @Override
     protected void onPreExecute()
@@ -96,7 +96,7 @@ class FetchSlotTask extends FetchTask
         }
     }
     @Override
-    protected void onPostExecute(String s)
+    protected void onPostExecute(SlotDetailsInfo s)
     {
         if (getCallbacks() != null)
             getCallbacks().onSlotFetched(s, getException());
@@ -114,7 +114,7 @@ class FetchSlotTask extends FetchTask
             getCallbacks().onDownloadCanceled();
     }
 
-    private static class SlotParser
+    private static class SlotParser implements SlotDetailsInfo
     {
         private static final int INFO = 0;
         private static final int REGULARS = 1;
@@ -144,14 +144,13 @@ class FetchSlotTask extends FetchTask
             m_parser = Xml.newPullParser();
             m_parser.setInput(new StringReader(rawHtml));
         }
-        public String parse() throws XmlPullParserException, IOException
+        public void parse() throws XmlPullParserException, IOException
         {
             if (m_parser.nextTag() != XmlPullParser.START_TAG)
                 throw new XmlPullParserException("Malformed raw html table");
             int depth = 1;
 
-            StringBuilder builder = new StringBuilder();
-            boolean addNewLine = false;
+            boolean newLine = false;
 
             int what = INFO;
             while (depth != 0) {
@@ -160,7 +159,7 @@ class FetchSlotTask extends FetchTask
                         ++depth;
                         if (m_parser.getAttributeCount() == 2 &&
                                 m_parser.getAttributeName(1).equals("rowspan")) {
-                            addNewLine = true;
+                            newLine = true;
                             ++what;
                         }
                         if (depth == 2) {
@@ -179,14 +178,10 @@ class FetchSlotTask extends FetchTask
                         break;
                     case XmlPullParser.END_TAG:
                         --depth;
-                        if (depth == 1) {
-                            builder.append('\n');
-                        }
                         break;
                     case XmlPullParser.TEXT:
                         if (depth > 2) {
                             String text = m_parser.getText().trim();
-                            builder.append(text).append(' ');
                             switch (what) {
                                 case INFO:
                                     m_rest.get(m_rest.size() - 1).add(text);
@@ -198,9 +193,8 @@ class FetchSlotTask extends FetchTask
                                     m_substitutes.get(m_substitutes.size() - 1).add(text);
                                     break;
                             }
-                            if (addNewLine) {
-                                builder.append('\n');
-                                addNewLine = false;
+                            if (newLine) {
+                                newLine = false;
                                 switch (what) {
                                     case REGULARS:
                                         m_regulars.add(new ArrayList<String>());
@@ -214,29 +208,95 @@ class FetchSlotTask extends FetchTask
                         break;
                 }
             }
-            for (List<String> line : m_rest) {
-                StringBuilder sb = new StringBuilder();
-                for (String entry : line)
-                    sb.append(entry).append(' ');
-                Log.d(Globals.TAG_LOG, sb.toString());
-            }
-            for (List<String> line : m_regulars) {
-                StringBuilder sb = new StringBuilder();
-                for (String entry : line)
-                    sb.append(entry).append(' ');
-                Log.d(Globals.TAG_LOG, sb.toString());
-            }
-            for (List<String> line : m_substitutes) {
-                StringBuilder sb = new StringBuilder();
-                for (String entry : line)
-                    sb.append(entry).append(' ');
-                Log.d(Globals.TAG_LOG, sb.toString());
-            }
-            return builder.toString();
         }
-        public List<String> getData()
+        @Override
+        public int getInfoSize()
         {
-            return null;
+            return m_rest.size() - 1;
+        }
+        @Override
+        public int getRegularsCount() // NB! includes unoccupied places
+        {
+            return m_regulars.size() - 1;
+        }
+        @Override
+        public int getSubstitutesCount()
+        {
+            return m_substitutes.size() - 1;
+        }
+        @Override
+        public String getInfoTitle()
+        {
+            return m_rest.get(0).get(0);
+        }
+        @Override
+        public String[] getInfoLine(int row)
+        {
+            List<String> line = m_rest.get(row + 1);
+            return line.toArray(new String[line.size()]);
+        }
+        @Override
+        public String getRegularsTitle()
+        {
+            return m_regulars.get(0).get(0);
+        }
+        @Override
+        public String[] getRegularsLine(int row) // row starts from 0, one line for each spot/player
+        {
+            List<String> line = m_regulars.get(row + 1);
+            return line.toArray(new String[line.size()]);
+        }
+        @Override
+        public String getSubstitutesTitle()
+        {
+            return m_substitutes.get(0).get(0);
+        }
+        @Override
+        public String[] getSubstitutesLine(int row)
+        {
+            List<String> line = m_substitutes.get(row + 1);
+            return line.toArray(new String[line.size()]);
         }
     }
 }
+
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Timeinformasjon_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Dato:_Torsdag 26/1_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Klokkeslett:_13:00-14:00_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Sted:_Øya_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Bane:_A_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Nivå:_Nybegynner_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Trener/instruktør:_Odin �stvedt ( 948 46 408)_(kommer)_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Ukens tema:_Ballkontroll_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Faste spillere (6 stk.)_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Margareth B._(kommer ikke)_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Nora Elisabeth S._(kommer ikke)_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Peter Michael �._(kommer)_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Stina S._(kommer)_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Fast ledig plass_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Fast ledig plass_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Vikarer (0 stk.)_
+//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: -_
+//
+//
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Timeinformasjon_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Dato:_Tirsdag 24/1_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Klokkeslett:_10:00-11:00_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Sted:_Øya_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Bane:_A_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Nivå:_Nybegynner+_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Ukens tema:_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Faste spillere (4 stk.)_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Eirik H._(kommer ikke)_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Erik Log R._(kommer ikke)_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Marvel L._(kommer ikke)_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Fast ledig plass_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Vikarer (4 stk.)_
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Ole S._
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Vince C._
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Truls P._
+//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Renate B._

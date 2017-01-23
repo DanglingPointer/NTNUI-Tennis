@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -75,11 +77,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
             m_worker = new FetchSlotTask(this);
-            try {
-                m_worker.execute(new URL(slotAddress));
-            } catch (MalformedURLException e) {
-                m_worker = null;
-            }
+            m_worker.execute(slotAddress);
         }
     }
     public void authenticate(URL homeAddress, String email, String password, String lang)
@@ -118,10 +116,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_callbacks.onTableFetched(e);
     }
     @Override
-    public void onSlotFetched(String htmlPage, Exception e)
+    public void onSlotFetched(SlotDetailsInfo slotInfo, Exception e)
     {
         if (m_callbacks != null)
-            m_callbacks.onSlotFetched(htmlPage, e);
+            m_callbacks.onSlotFetched(slotInfo, e);
     }
     @Override
     public void onDownloadCanceled()

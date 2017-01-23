@@ -12,6 +12,7 @@ import android.util.Log;
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
+import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
@@ -107,11 +108,11 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
             currentFragment.onTableFetched(e);
     }
     @Override
-    public void onSlotFetched(String htmlPage, Exception e)
+    public void onSlotFetched(SlotDetailsInfo slotData, Exception e)
     {
         DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
         if (currentFragment != null && currentFragment.isAdded())
-            currentFragment.onSlotFetched(htmlPage, e);
+            currentFragment.onSlotFetched(slotData, e);
     }
     @Override
     public void onDownloadCanceled()

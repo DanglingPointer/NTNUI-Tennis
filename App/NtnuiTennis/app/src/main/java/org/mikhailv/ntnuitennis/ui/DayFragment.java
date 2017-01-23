@@ -25,6 +25,7 @@ import android.widget.Toast;
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
+import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 
 import java.net.URL;
@@ -170,7 +171,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_adapter.notifyDataSetChanged();
     }
     @Override
-    public void onSlotFetched(String htmlPage, Exception e)
+    public void onSlotFetched(SlotDetailsInfo data, Exception e)
     {
         m_progressBar.setVisibility(View.GONE);
         m_adapter.notifyDataSetChanged();

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
+import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
@@ -85,10 +86,10 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         // Who cares?
     }
     @Override
-    public void onSlotFetched(String htmlPage, Exception e)
+    public void onSlotFetched(SlotDetailsInfo slotData, Exception e)
     {
         if (e != null) {
-            Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
             finish();
         } else {
 //            if (Build.VERSION.SDK_INT >= 24){
@@ -97,7 +98,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
 //            else {
 //                m_text.setText(Html.fromHtml(htmlPage));
 //            }
-            m_text.setText(htmlPage);
+            m_text.setText(slotData.toString()); // temp
 
             m_progress.setVisibility(View.GONE);
         }

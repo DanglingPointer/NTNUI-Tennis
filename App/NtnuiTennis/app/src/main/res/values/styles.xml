@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">@color/extraDarkGreen</item>
         <item name="colorAccent">@color/lightGreen</item>
         <item name="actionBarPopupTheme">@style/DropDownMenuStyle</item>
+        <!--<item name="android:colorBackground">@color/green</item>-->
     </style>
 
     <style name="DropDownMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
