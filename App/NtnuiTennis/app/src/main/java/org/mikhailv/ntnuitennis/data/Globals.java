@@ -36,7 +36,7 @@ public final class Globals
                 DayImpl d = new DayImpl("Day #" + i);
                 if (i % 2 == 0) {
                     Slot s1 = new SlotImpl(4).setName(0, "Guang").setName(1, "Mikhail").setLevel("N+*")
-                            .setLink(HOME_URL);
+                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170126T13:00:00&timeid=188&lang=no");
                     Slot s2 = new SlotImpl(6).setLevel("M").setName(0, "Guang_1").setName(1, "Guang_2")
                             .setLink(HOME_URL + "timeinfo.php?spilletid=20170124T10:00:00&timeid=184&lang=no");
                     d.setSlot(9, s1).setSlot(11, s2);

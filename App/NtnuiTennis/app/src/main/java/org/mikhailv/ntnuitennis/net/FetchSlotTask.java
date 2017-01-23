@@ -124,7 +124,7 @@ class FetchSlotTask extends FetchTask
             rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ");
+                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
             m_data = new ArrayList<>();
             m_parser = Xml.newPullParser();
             m_parser.setInput(new StringReader(rawHtml));
@@ -147,14 +147,12 @@ class FetchSlotTask extends FetchTask
                         if (depth >= 3) {
                             String text = m_parser.getText();
                             m_data.add(text);
+                            Log.d(Globals.TAG_LOG, depth + ": " + text);
                         }
                         break;
                     default:
                         break;
                 }
-            }
-            for (String entry : m_data) {
-                Log.d(Globals.TAG_LOG, entry);
             }
         }
         public List<String> getData()
