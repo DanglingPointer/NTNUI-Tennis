@@ -80,7 +80,7 @@ class FetchSlotTask extends FetchTask
             int closingTagIndex = rawData.indexOf("</table>");
             rawData = rawData.substring(openingTagIndex, closingTagIndex + 8);
             SlotParser parser = new SlotParser(rawData);
-            parser.parse();
+            rawData = parser.parse();
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(Globals.TAG_LOG, e.toString());
@@ -116,8 +116,15 @@ class FetchSlotTask extends FetchTask
 
     private static class SlotParser
     {
+        private static final int INFO = 0;
+        private static final int REGULARS = 1;
+        private static final int SUBSTITUTES = 2;
+
         private XmlPullParser m_parser;
-        private List<String> m_data;
+
+        private List<List<String>> m_regulars;
+        private List<List<String>> m_substitutes;
+        private List<List<String>> m_rest;
 
         public SlotParser(String rawHtml) throws XmlPullParserException
         {
@@ -125,39 +132,111 @@ class FetchSlotTask extends FetchTask
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
                     .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
-            m_data = new ArrayList<>();
+
+            m_regulars = new ArrayList<>();
+            m_regulars.add(new ArrayList<String>());
+
+            m_substitutes = new ArrayList<>();
+            m_substitutes.add(new ArrayList<String>());
+
+            m_rest = new ArrayList<>();
+
             m_parser = Xml.newPullParser();
             m_parser.setInput(new StringReader(rawHtml));
         }
-        public void parse() throws XmlPullParserException, IOException
+        public String parse() throws XmlPullParserException, IOException
         {
             if (m_parser.nextTag() != XmlPullParser.START_TAG)
                 throw new XmlPullParserException("Malformed raw html table");
             int depth = 1;
 
+            StringBuilder builder = new StringBuilder();
+            boolean addNewLine = false;
+
+            int what = INFO;
             while (depth != 0) {
                 switch (m_parser.next()) {
                     case XmlPullParser.START_TAG:
                         ++depth;
+                        if (m_parser.getAttributeCount() == 2 &&
+                                m_parser.getAttributeName(1).equals("rowspan")) {
+                            addNewLine = true;
+                            ++what;
+                        }
+                        if (depth == 2) {
+                            switch (what) {
+                                case INFO:
+                                    m_rest.add(new ArrayList<String>());
+                                    break;
+                                case REGULARS:
+                                    m_regulars.add(new ArrayList<String>());
+                                    break;
+                                case SUBSTITUTES:
+                                    m_substitutes.add(new ArrayList<String>());
+                                    break;
+                            }
+                        }
                         break;
                     case XmlPullParser.END_TAG:
                         --depth;
-                        break;
-                    case XmlPullParser.TEXT:
-                        if (depth >= 3) {
-                            String text = m_parser.getText();
-                            m_data.add(text);
-                            Log.d(Globals.TAG_LOG, depth + ": " + text);
+                        if (depth == 1) {
+                            builder.append('\n');
                         }
                         break;
-                    default:
+                    case XmlPullParser.TEXT:
+                        if (depth > 2) {
+                            String text = m_parser.getText().trim();
+                            builder.append(text).append(' ');
+                            switch (what) {
+                                case INFO:
+                                    m_rest.get(m_rest.size() - 1).add(text);
+                                    break;
+                                case REGULARS:
+                                    m_regulars.get(m_regulars.size() - 1).add(text);
+                                    break;
+                                case SUBSTITUTES:
+                                    m_substitutes.get(m_substitutes.size() - 1).add(text);
+                                    break;
+                            }
+                            if (addNewLine) {
+                                builder.append('\n');
+                                addNewLine = false;
+                                switch (what) {
+                                    case REGULARS:
+                                        m_regulars.add(new ArrayList<String>());
+                                        break;
+                                    case SUBSTITUTES:
+                                        m_substitutes.add(new ArrayList<String>());
+                                        break;
+                                }
+                            }
+                        }
                         break;
                 }
             }
+            for (List<String> line : m_rest) {
+                StringBuilder sb = new StringBuilder();
+                for (String entry : line)
+                    sb.append(entry).append(' ');
+                Log.d(Globals.TAG_LOG, sb.toString());
+            }
+            for (List<String> line : m_regulars) {
+                StringBuilder sb = new StringBuilder();
+                for (String entry : line)
+                    sb.append(entry).append(' ');
+                Log.d(Globals.TAG_LOG, sb.toString());
+            }
+            for (List<String> line : m_substitutes) {
+                StringBuilder sb = new StringBuilder();
+                for (String entry : line)
+                    sb.append(entry).append(' ');
+                Log.d(Globals.TAG_LOG, sb.toString());
+            }
+            return builder.toString();
         }
         public List<String> getData()
         {
-            return m_data;
+            return null;
         }
     }
 }

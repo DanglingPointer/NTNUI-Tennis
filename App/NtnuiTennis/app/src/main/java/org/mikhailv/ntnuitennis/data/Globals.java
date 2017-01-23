@@ -24,7 +24,7 @@ public final class Globals
     public static final String MY_NAME = "Mikhail";
     public static final String TAG_LOG = "MIKHAILS_LOG"; // temp
     public static final String FILE_NAME = "config";
-    public static final String HOME_URL = "http://org.ntnu.no/tennisgr/";
+    public static final String HOME_URL = "http://org.ntnu.no/tennisgr/"; // temp, see strings.xml
 
 
     public static Week getCurrentWeek()

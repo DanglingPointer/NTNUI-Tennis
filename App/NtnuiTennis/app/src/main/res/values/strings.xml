@@ -10,4 +10,5 @@
     <string name="menu_notifications">Notifications</string>
     <string name="notifications_title">Receive notifications about selected hours:</string>
     <string name="menu_not_save">Save</string>
+    <string name="home_url">http://org.ntnu.no/tennisgr/</string>
 </resources>

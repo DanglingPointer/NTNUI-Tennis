@@ -88,15 +88,16 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     public void onSlotFetched(String htmlPage, Exception e)
     {
         if (e != null) {
-            Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error occured", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            if (Build.VERSION.SDK_INT >= 24){
-                m_text.setText(Html.fromHtml(htmlPage, Html.FROM_HTML_MODE_COMPACT));
-            }
-            else {
-                m_text.setText(Html.fromHtml(htmlPage));
-            }
+//            if (Build.VERSION.SDK_INT >= 24){
+//                m_text.setText(Html.fromHtml(htmlPage, Html.FROM_HTML_MODE_COMPACT));
+//            }
+//            else {
+//                m_text.setText(Html.fromHtml(htmlPage));
+//            }
+            m_text.setText(htmlPage);
 
             m_progress.setVisibility(View.GONE);
         }

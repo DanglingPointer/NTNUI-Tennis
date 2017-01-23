@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@color/green"
               android:orientation="vertical">
 
     <ProgressBar
@@ -16,10 +17,13 @@
         android:layout_height="wrap_content"
         android:fillViewport="true"
         android:scrollbars="vertical">
+
         <TextView
             android:id="@+id/activity_slot_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
             />
     </ScrollView>
 </LinearLayout>
