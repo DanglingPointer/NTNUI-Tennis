@@ -2,9 +2,11 @@ package org.mikhailv.ntnuitennis.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,8 @@ import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
 import java.io.Serializable;
+
+import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 /**
  * Created by MikhailV on 22.01.2017.
@@ -70,7 +74,8 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             @Override
             public void onClick(View v)
             {
-                throw new UnsupportedOperationException(); // temp
+                m_networker.downloadSlot(m_attendLink);
+//                m_networker.downloadSlot(getIntent().getStringExtra(EXTRA_URL_INFO)); // temp
             }
         });
         m_rootView = (LinearLayout)findViewById(R.id.activity_slot_linear_layout);
@@ -98,22 +103,27 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     //-----------Helpers----------------------------------------------------------------------------
     private void createLayout(SlotDetailsInfo data)
     {
+        int childrenCount = m_rootView.getChildCount();
+        if (childrenCount > 1) {
+            m_rootView.removeViewsInLayout(1, childrenCount - 1);
+        }
+
         addTitleLine(data.getInfoTitle());
 
         for (int row = 0; row < data.getInfoSize(); ++row) {
-            addDataLine(data.getInfoLine(row));
+            addDataLine(data.getInfoLine(row), false);
         }
 
         addTitleLine(data.getRegularsTitle());
 
         for (int row = 0; row < data.getRegularsCount(); ++row) {
-            addDataLine(data.getRegularsLine(row));
+            addDataLine(data.getRegularsLine(row), true);
         }
 
         addTitleLine(data.getSubstitutesTitle());
 
         for (int row = 0; row < data.getSubstitutesCount(); ++row) {
-            addDataLine(data.getSubstitutesLine(row));
+            addDataLine(data.getSubstitutesLine(row), false);
         }
     }
     private void addTitleLine(String text)
@@ -123,17 +133,18 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         titleText.setText(text);
         m_rootView.addView(titleLineView);
     }
-    private void addDataLine(String[] line)
+    private void addDataLine(String[] line, boolean italic)
     {
         View infoLine = LayoutInflater.from(this).inflate(R.layout.slot_info_line, m_rootView, false);
         TextView leftTextView = (TextView)infoLine.findViewById(R.id.slot_info_text_left);
         TextView rightTextView = (TextView)infoLine.findViewById(R.id.slot_info_text_right);
-        if (line.length == 1) {
-            rightTextView.setText(line[0]);
-        } else {
-            leftTextView.setText(line[0]);
+        if (italic)
+            rightTextView.setTypeface(rightTextView.getTypeface(), Typeface.ITALIC);
+
+        leftTextView.setText(line[0]);
+        if (line.length > 1)
             rightTextView.setText(line[1]);
-        }
+
         m_rootView.addView(infoLine);
     }
     //-----------Network callbacks------------------------------------------------------------------

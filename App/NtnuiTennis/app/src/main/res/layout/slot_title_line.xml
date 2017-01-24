@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="4dp"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
         android:padding="4dp"
         android:background="@color/darkGreen"
         android:textColor="@color/white"/>
