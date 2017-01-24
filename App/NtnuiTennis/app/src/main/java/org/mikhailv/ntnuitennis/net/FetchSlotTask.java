@@ -10,6 +10,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -95,7 +96,7 @@ class FetchSlotTask extends FetchTask
     protected void onPreExecute()
     {
         if (getCallbacks() != null) {
-            getCallbacks().onPreExecute();
+            getCallbacks().onPreDownload();
         }
     }
     @Override
@@ -117,7 +118,7 @@ class FetchSlotTask extends FetchTask
             getCallbacks().onDownloadCanceled();
     }
 
-    private static class SlotParser implements SlotDetailsInfo
+    private static class SlotParser implements SlotDetailsInfo, Serializable
     {
         private static final int INFO = 0;
         private static final int REGULARS = 1;
@@ -187,6 +188,7 @@ class FetchSlotTask extends FetchTask
                 }
             }
             m_parser = null; // allow parser to be collected by GC
+//            test();
         }
 //        void test() // temp
 //        {

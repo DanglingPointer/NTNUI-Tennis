@@ -9,7 +9,7 @@ public interface NetworkCallbacks
 {
     void onProgressChanged(int progress);
 
-    void onPreExecute();
+    void onPreDownload();
 
     void onTableFetched(Exception e);
 

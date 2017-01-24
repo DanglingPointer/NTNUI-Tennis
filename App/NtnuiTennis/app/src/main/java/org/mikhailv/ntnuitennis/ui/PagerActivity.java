@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
@@ -15,9 +14,6 @@ import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class PagerActivity extends AppCompatActivity implements DayFragment.Callbacks,
                                                                 NetworkCallbacks
@@ -58,8 +54,7 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     }
     public void onSlotDetailsPressed(int day, Slot slot)
     {
-        Intent i = new Intent(this, SlotDetailsActivity.class);
-        i.putExtra(SlotDetailsActivity.EXTRA_URL, slot.getLink());
+        Intent i = SlotDetailsActivity.newIntent(this, slot.getLink(), slot.getAttendLink());
         startActivity(i);
     }
     public void onAttendPressed(int day, Slot slot)
@@ -91,11 +86,11 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
             currentFragment.onProgressChanged(progress);
     }
     @Override
-    public void onPreExecute()
+    public void onPreDownload()
     {
         DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
         if (currentFragment != null && currentFragment.isAdded())
-            currentFragment.onPreExecute();
+            currentFragment.onPreDownload();
     }
     @Override
     public void onTableFetched(Exception e)

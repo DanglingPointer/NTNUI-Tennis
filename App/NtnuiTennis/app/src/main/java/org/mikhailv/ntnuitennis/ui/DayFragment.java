@@ -150,7 +150,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_progressBar.setProgress(progress);
     }
     @Override
-    public void onPreExecute()
+    public void onPreDownload()
     {
         m_progressBar.setVisibility(View.VISIBLE);
         m_progressBar.setProgress(0);

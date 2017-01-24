@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -104,10 +103,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_callbacks.onProgressChanged(progress);
     }
     @Override
-    public void onPreExecute()
+    public void onPreDownload()
     {
         if (m_callbacks != null)
-            m_callbacks.onPreExecute();
+            m_callbacks.onPreDownload();
     }
     @Override
     public void onTableFetched(Exception e)

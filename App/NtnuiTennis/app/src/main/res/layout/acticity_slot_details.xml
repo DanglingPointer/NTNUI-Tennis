@@ -10,20 +10,43 @@
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:fillViewport="true"
         android:scrollbars="vertical">
 
-        <TextView
-            android:id="@+id/activity_slot_text"
+        <LinearLayout
+            android:id="@+id/activity_slot_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            />
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/activity_slot_attend_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="16dp"
+                android:text="@string/slot_btn_attend"/>
+
+        </LinearLayout>
+
     </ScrollView>
+    <!--<ScrollView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:fillViewport="true"-->
+    <!--android:scrollbars="vertical">-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/activity_slot_text"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textColor="@color/white"-->
+    <!--android:textSize="20sp"-->
+    <!--/>-->
+    <!--</ScrollView>-->
 </LinearLayout>

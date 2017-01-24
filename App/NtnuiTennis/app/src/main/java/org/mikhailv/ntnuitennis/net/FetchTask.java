@@ -2,10 +2,6 @@ package org.mikhailv.ntnuitennis.net;
 
 import android.os.AsyncTask;
 
-import org.mikhailv.ntnuitennis.data.Slot;
-import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
