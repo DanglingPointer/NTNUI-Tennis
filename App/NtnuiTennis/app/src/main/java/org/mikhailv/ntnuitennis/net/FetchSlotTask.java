@@ -72,7 +72,7 @@ class FetchSlotTask extends FetchTask
         return result;
     }
     @Override
-    protected SlotDetailsInfo parse(String rawData) throws ParseException
+    protected Object parse(String rawData) throws ParseException
     {
         SlotParser parser;
         try {
@@ -96,10 +96,10 @@ class FetchSlotTask extends FetchTask
         }
     }
     @Override
-    protected void onPostExecute(SlotDetailsInfo s)
+    protected void onPostExecute(Object s)
     {
         if (getCallbacks() != null)
-            getCallbacks().onSlotFetched(s, getException());
+            getCallbacks().onSlotFetched((SlotDetailsInfo)s, getException());
     }
     @Override
     protected void onProgressUpdate(Integer... values)
@@ -153,6 +153,7 @@ class FetchSlotTask extends FetchTask
             boolean newLine = false;
 
             int what = INFO;
+            //List<String> currentLine = new ArrayList<>();
             while (depth != 0) {
                 switch (m_parser.next()) {
                     case XmlPullParser.START_TAG:

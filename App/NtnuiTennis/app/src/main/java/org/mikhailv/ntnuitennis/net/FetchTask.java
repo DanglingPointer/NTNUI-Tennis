@@ -13,7 +13,7 @@ import java.text.ParseException;
  * Created by MikhailV on 21.01.2017.
  */
 
-abstract class FetchTask extends AsyncTask<String, Integer, SlotDetailsInfo>
+abstract class FetchTask extends AsyncTask<String, Integer, Object>
 {
     private NetworkCallbacks m_callbacks;
     private Exception m_exception;
@@ -31,12 +31,12 @@ abstract class FetchTask extends AsyncTask<String, Integer, SlotDetailsInfo>
         return m_exception;
     }
     @Override
-    protected SlotDetailsInfo doInBackground(String... params)
+    protected Object doInBackground(String... params)
     {
         if (isCancelled() || params == null || params.length < 1)
             return null;
 
-        SlotDetailsInfo result = null;
+        Object result = null;
         try {
             String rawData = download(new URL(params[0]));
             result = parse(rawData);
@@ -57,5 +57,5 @@ abstract class FetchTask extends AsyncTask<String, Integer, SlotDetailsInfo>
 
     protected abstract String download(URL link) throws IOException;
 
-    protected abstract SlotDetailsInfo parse(String rawData) throws ParseException;
+    protected abstract Object parse(String rawData) throws ParseException;
 }
