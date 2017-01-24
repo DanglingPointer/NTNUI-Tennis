@@ -3,7 +3,6 @@ package org.mikhailv.ntnuitennis.net;
 import android.util.Log;
 import android.util.Xml;
 
-import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -18,6 +17,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+
 /**
  * Created by MikhailV on 21.01.2017.
  */
@@ -28,6 +29,8 @@ import java.util.List;
 class FetchSlotTask extends FetchTask
 {
     private static final int MAX_READ = 50000;
+    private static final int READ_TIMEOUT = 3000;
+    private static final int CONNECT_TIMEOUT = 5000;
 
     public FetchSlotTask(NetworkCallbacks callbacks)
     {
@@ -41,8 +44,8 @@ class FetchSlotTask extends FetchTask
         String result = null;
         try {
             conn = (HttpURLConnection)link.openConnection();
-            conn.setReadTimeout(3000);
-            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(READ_TIMEOUT);
+            conn.setConnectTimeout(CONNECT_TIMEOUT);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             conn.connect();
@@ -83,7 +86,7 @@ class FetchSlotTask extends FetchTask
             parser.parse();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(Globals.TAG_LOG, e.toString());
+            Log.d(TAG_LOG, e.toString());
             throw new ParseException(e.toString(), 0);
         }
         return parser;
@@ -119,12 +122,10 @@ class FetchSlotTask extends FetchTask
         private static final int INFO = 0;
         private static final int REGULARS = 1;
         private static final int SUBSTITUTES = 2;
+        private static final int TITLE = 0;
 
         private XmlPullParser m_parser;
-
-        private List<List<String>> m_regulars;
-        private List<List<String>> m_substitutes;
-        private List<List<String>> m_rest;
+        private List<List<List<String>>> m_data = new ArrayList<>(3);
 
         public SlotParser(String rawHtml) throws XmlPullParserException
         {
@@ -133,171 +134,134 @@ class FetchSlotTask extends FetchTask
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
                     .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
 
-            m_regulars = new ArrayList<>();
-            m_regulars.add(new ArrayList<String>());
-
-            m_substitutes = new ArrayList<>();
-            m_substitutes.add(new ArrayList<String>());
-
-            m_rest = new ArrayList<>();
+            m_data.add(INFO, new ArrayList<List<String>>());
+            m_data.add(REGULARS, new ArrayList<List<String>>());
+            m_data.add(SUBSTITUTES, new ArrayList<List<String>>());
 
             m_parser = Xml.newPullParser();
             m_parser.setInput(new StringReader(rawHtml));
         }
-        public void parse() throws XmlPullParserException, IOException
+        /**
+         * One-shot
+         */
+        public void parse() throws XmlPullParserException, IOException, NullPointerException
         {
             if (m_parser.nextTag() != XmlPullParser.START_TAG)
-                throw new XmlPullParserException("Malformed raw html table");
-            int depth = 1;
+                throw new XmlPullParserException("Malformed raw html slot table");
 
             boolean newLine = false;
-
+            int depth = 1;
             int what = INFO;
-            //List<String> currentLine = new ArrayList<>();
+            List<String> currentLine = null;
+
             while (depth != 0) {
                 switch (m_parser.next()) {
                     case XmlPullParser.START_TAG:
                         ++depth;
-                        if (m_parser.getAttributeCount() == 2 &&
+                        if (m_parser.getName().equals("tr")) {
+                            currentLine = new ArrayList<>();
+                        } else if (m_parser.getAttributeCount() == 2 &&
                                 m_parser.getAttributeName(1).equals("rowspan")) {
                             newLine = true;
                             ++what;
                         }
-                        if (depth == 2) {
-                            switch (what) {
-                                case INFO:
-                                    m_rest.add(new ArrayList<String>());
-                                    break;
-                                case REGULARS:
-                                    m_regulars.add(new ArrayList<String>());
-                                    break;
-                                case SUBSTITUTES:
-                                    m_substitutes.add(new ArrayList<String>());
-                                    break;
-                            }
-                        }
                         break;
                     case XmlPullParser.END_TAG:
                         --depth;
+                        if (m_parser.getName().equals("tr")) {
+                            m_data.get(what).add(currentLine);
+                            currentLine = null; // just in case
+                        }
                         break;
                     case XmlPullParser.TEXT:
                         if (depth > 2) {
                             String text = m_parser.getText().trim();
-                            switch (what) {
-                                case INFO:
-                                    m_rest.get(m_rest.size() - 1).add(text);
-                                    break;
-                                case REGULARS:
-                                    m_regulars.get(m_regulars.size() - 1).add(text);
-                                    break;
-                                case SUBSTITUTES:
-                                    m_substitutes.get(m_substitutes.size() - 1).add(text);
-                                    break;
-                            }
-                            if (newLine) {
-                                newLine = false;
-                                switch (what) {
-                                    case REGULARS:
-                                        m_regulars.add(new ArrayList<String>());
-                                        break;
-                                    case SUBSTITUTES:
-                                        m_substitutes.add(new ArrayList<String>());
-                                        break;
-                                }
-                            }
+                            currentLine.add(text);
+                        }
+                        if (newLine) {
+                            newLine = false;
+                            m_data.get(what).add(currentLine);
+                            currentLine = new ArrayList<>();
                         }
                         break;
                 }
             }
+            m_parser = null; // allow parser to be collected by GC
         }
+//        void test() // temp
+//        {
+//            Log.d(TAG_LOG, "Info title: " + getInfoTitle());
+//            for (int lineNumber = 0; lineNumber < getInfoSize(); lineNumber++) {
+//                StringBuilder sb = new StringBuilder();
+//                String[] line = getInfoLine(lineNumber);
+//                for (String entry : line)
+//                    sb.append(entry).append(' ');
+//                Log.d(TAG_LOG, sb.toString());
+//            }
+//            Log.d(TAG_LOG, "Regulars title: " + getRegularsTitle());
+//            for (int lineNumber = 0; lineNumber < getRegularsCount(); lineNumber++) {
+//                StringBuilder sb = new StringBuilder();
+//                String[] line = getRegularsLine(lineNumber);
+//                for (String entry : line)
+//                    sb.append(entry).append(' ');
+//                Log.d(TAG_LOG, sb.toString());
+//            }
+//            Log.d(TAG_LOG, "Subst title: " + getSubstitutesTitle());
+//            for (int lineNumber = 0; lineNumber < getSubstitutesCount(); lineNumber++) {
+//                StringBuilder sb = new StringBuilder();
+//                String[] line = getSubstitutesLine(lineNumber);
+//                for (String entry : line)
+//                    sb.append(entry).append(' ');
+//                Log.d(TAG_LOG, sb.toString());
+//            }
+//        }
         @Override
-        public int getInfoSize()
+        public int getInfoSize() // row count, doesn't include title
         {
-            return m_rest.size() - 1;
+            return m_data.get(INFO).size() - 1;
         }
         @Override
         public int getRegularsCount() // NB! includes unoccupied places
         {
-            return m_regulars.size() - 1;
+            return m_data.get(REGULARS).size() - 1;
         }
         @Override
         public int getSubstitutesCount()
         {
-            return m_substitutes.size() - 1;
+            return m_data.get(SUBSTITUTES).size() - 1;
         }
         @Override
         public String getInfoTitle()
         {
-            return m_rest.get(0).get(0);
-        }
-        @Override
-        public String[] getInfoLine(int row)
-        {
-            List<String> line = m_rest.get(row + 1);
-            return line.toArray(new String[line.size()]);
+            return m_data.get(INFO).get(TITLE).get(0);
         }
         @Override
         public String getRegularsTitle()
         {
-            return m_regulars.get(0).get(0);
-        }
-        @Override
-        public String[] getRegularsLine(int row) // row starts from 0, one line for each spot/player
-        {
-            List<String> line = m_regulars.get(row + 1);
-            return line.toArray(new String[line.size()]);
+            return m_data.get(REGULARS).get(TITLE).get(0);
         }
         @Override
         public String getSubstitutesTitle()
         {
-            return m_substitutes.get(0).get(0);
+            return m_data.get(SUBSTITUTES).get(TITLE).get(0);
+        }
+        @Override
+        public String[] getInfoLine(int row)
+        {
+            List<String> line = m_data.get(INFO).get(row + 1);
+            return line.toArray(new String[line.size()]);
+        }
+        @Override
+        public String[] getRegularsLine(int row) // row starts from 0, one line for each spot/player
+        {
+            List<String> line = m_data.get(REGULARS).get(row + 1);
+            return line.toArray(new String[line.size()]);
         }
         @Override
         public String[] getSubstitutesLine(int row)
         {
-            List<String> line = m_substitutes.get(row + 1);
+            List<String> line = m_data.get(SUBSTITUTES).get(row + 1);
             return line.toArray(new String[line.size()]);
         }
     }
 }
-
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Timeinformasjon_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Dato:_Torsdag 26/1_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Klokkeslett:_13:00-14:00_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Sted:_Øya_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Bane:_A_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Nivå:_Nybegynner_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Trener/instruktør:_Odin �stvedt ( 948 46 408)_(kommer)_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Ukens tema:_Ballkontroll_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Faste spillere (6 stk.)_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Margareth B._(kommer ikke)_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Nora Elisabeth S._(kommer ikke)_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Peter Michael �._(kommer)_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Stina S._(kommer)_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Fast ledig plass_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Fast ledig plass_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Vikarer (0 stk.)_
-//01-23 23:12:34.649 14349-19546/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: -_
-//
-//
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Timeinformasjon_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Dato:_Tirsdag 24/1_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Klokkeslett:_10:00-11:00_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Sted:_Øya_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Bane:_A_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Nivå:_Nybegynner+_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Ukens tema:_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Faste spillere (4 stk.)_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Eirik H._(kommer ikke)_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Erik Log R._(kommer ikke)_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Marvel L._(kommer ikke)_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Fast ledig plass_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: ~~~~~~~~~~~~~~~~
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Vikarer (4 stk.)_
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Ole S._
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Vince C._
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Truls P._
-//01-23 23:13:05.299 14349-20432/org.mikhailv.ntnuitennis D/MIKHAILS_LOG: Renate B._

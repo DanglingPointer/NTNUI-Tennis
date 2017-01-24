@@ -65,7 +65,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     /**
      * Network commands
      */
-    public void downloadTable(URL homeAddress)
+    public void downloadTable(String homeAddress)
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
 

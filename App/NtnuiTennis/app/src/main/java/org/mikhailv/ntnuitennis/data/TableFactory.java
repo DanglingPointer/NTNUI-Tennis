@@ -17,13 +17,13 @@ public class TableFactory
 //    {
 //        m_context = c;
 //    }
-    public Slot newSlot(int size, String link, String lvl, boolean expired,
+    public Slot newSlot(int size, String link, String attendLink, String lvl, boolean expired,
                         List<String> names, List<Player> players)
     {
         if (size < 0) return null;
 
         SlotImpl s = new SlotImpl(size);
-        s.setLink(link).setLevel(lvl).setExpired(expired);
+        s.setLink(link).setAttendLink(attendLink).setLevel(lvl).setExpired(expired);
         if (names != null && names.size() <= size) {
             for (int i = 0; i < names.size(); ++i)
                 s.setName(i, names.get(i));

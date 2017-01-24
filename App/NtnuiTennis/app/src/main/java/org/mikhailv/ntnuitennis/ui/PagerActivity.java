@@ -64,16 +64,13 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     }
     public void onAttendPressed(int day, Slot slot)
     {
-//        if (m_networker!=null)
-//            m_networker.downloadSlot();
+        if (m_networker != null)
+            m_networker.downloadSlot(slot.getAttendLink());
     }
     public void updateData()
     {
-        try {
-            if (m_networker != null)
-                m_networker.downloadTable(new URL("http://org.ntnu.no/tennisgr/"));
-        } catch (MalformedURLException e) {
-        }
+        if (m_networker != null)
+            m_networker.downloadTable(Globals.HOME_URL);
     }
     @Override
     public void eraseMe(DayFragment me)

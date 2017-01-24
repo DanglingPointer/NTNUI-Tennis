@@ -1,7 +1,6 @@
 package org.mikhailv.ntnuitennis.ui;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,8 +26,6 @@ import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
-
-import java.net.URL;
 
 /**
  * Created by MikhailV on 07.01.2017.
@@ -97,7 +94,6 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     {
         super.onAttach(context);
         m_callbacks = (Callbacks)context;
-        Log.d(Globals.TAG_LOG, "onAttach() called");
     }
     @Override
     public void onDetach()
@@ -105,14 +101,11 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         super.onDetach();
         m_callbacks.eraseMe(this);
         m_callbacks = null;
-        Log.d(Globals.TAG_LOG, "onDetach() called");
     }
     @Override
     public void onResume()
     {
         super.onResume();
-//        m_callbacks.updateData();
-        Log.d(Globals.TAG_LOG, "onResume() called");
     }
     @Nullable
     @Override
@@ -139,7 +132,6 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         TextView dateText = (TextView)root.findViewById(R.id.day_text_date);
         dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
 
-        Log.d(Globals.TAG_LOG, "onCreateView() called");
         return root;
     }
     @Override
@@ -148,7 +140,6 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         super.onSaveInstanceState(outState);
         boolean[] expanded = m_adapter.getExpanded();
         outState.putBooleanArray(SAVED_EXPANDED, expanded);
-        Log.d(Globals.TAG_LOG, "onSaveInstanceState() called");
     }
     /**
      * Network callbacks
@@ -174,7 +165,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     public void onSlotFetched(SlotDetailsInfo data, Exception e)
     {
         m_progressBar.setVisibility(View.GONE);
-        m_adapter.notifyDataSetChanged();
+        m_callbacks.updateData(); // refresh table after finished 'attend'
     }
     @Override
     public void onDownloadCanceled()
@@ -308,7 +299,6 @@ class SlotHolder extends RecyclerView.ViewHolder
             public void onClick(View v)
             {
                 m_adapter.onSlotAttendPressed(m_slotData);
-                m_adapter.notifyDataSetChanged();
             }
         });
     }

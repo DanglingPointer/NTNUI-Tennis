@@ -14,6 +14,8 @@ public interface Slot
 {
     String getLink();
 
+    String getAttendLink();
+
     int getSize();
 
     String getLevel();
@@ -38,6 +40,7 @@ class SlotImpl implements Slot
     private boolean m_expired;
     private String m_lvl;
     private String m_link;
+    private String m_attendLink;
 
     public SlotImpl(int size)
     {
@@ -50,6 +53,16 @@ class SlotImpl implements Slot
     public SlotImpl setLink(String link)
     {
         m_link = link;
+        return this;
+    }
+    @Override
+    public String getAttendLink()
+    {
+        return m_attendLink;
+    }
+    public SlotImpl setAttendLink(String link)
+    {
+        m_attendLink = link;
         return this;
     }
     public int getSize()
