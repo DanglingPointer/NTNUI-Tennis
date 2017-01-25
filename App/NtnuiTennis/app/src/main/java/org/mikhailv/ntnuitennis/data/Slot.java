@@ -1,8 +1,5 @@
 package org.mikhailv.ntnuitennis.data;
 
-import android.support.annotation.NonNull;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,26 +13,19 @@ public interface Slot
 
     String getAttendLink();
 
-    int getSize();
-
     String getLevel();
 
     boolean isExpired();
-
-    String getAttendingAt(int i);
 
     List<String> getAttending();
 
     boolean hasAvailable();
 
     boolean isMeAttending();
-
-    void getPlayers(@NonNull List<Player> dropIns, @NonNull List<Player> nonDropIns);
 }
 
 class SlotImpl implements Slot
 {
-    private List<Player> m_players;
     private String[] m_reserved;
     private boolean m_expired;
     private String m_lvl;
@@ -65,10 +55,6 @@ class SlotImpl implements Slot
         m_attendLink = link;
         return this;
     }
-    public int getSize()
-    {
-        return m_reserved.length;
-    }
     public String getLevel()
     {
         return m_lvl;
@@ -86,12 +72,6 @@ class SlotImpl implements Slot
     {
         m_expired = expired;
         return this;
-    }
-    public String getAttendingAt(int i)
-    {
-        if (i < 0 || m_reserved.length <= i || m_reserved[i] == null)
-            return null;
-        return m_reserved[i];
     }
     public List<String> getAttending()
     {
@@ -122,20 +102,5 @@ class SlotImpl implements Slot
             if (name != null && name.equals(Globals.MY_NAME))
                 return true;
         return false;
-    }
-    public void getPlayers(@NonNull List<Player> dropIns, @NonNull List<Player> nonDropIns)
-    {
-        for (Player p : m_players)
-            if (p.isDropIn())
-                dropIns.add(p);
-            else
-                nonDropIns.add(p);
-    }
-    public SlotImpl addPlayer(Player player)
-    {
-        if (m_players == null)
-            m_players = new ArrayList<>();
-        m_players.add(player);
-        return this;
     }
 }

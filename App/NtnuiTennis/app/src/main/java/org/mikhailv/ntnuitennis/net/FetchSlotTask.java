@@ -25,11 +25,12 @@ import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
  */
 
 /**
- * Downloads and parses tml-pages for individual training sessions, and handles attend/substitute
+ * Downloads and parses html-pages for individual training sessions, and handles attend/substitute
  */
 class FetchSlotTask extends FetchTask
 {
-    private static final int MAX_READ = 50000;
+    private static final int BUFFER_SIZE = 20000;
+    private static final int MAX_READ = 2000;
     private static final int READ_TIMEOUT = 3000;
     private static final int CONNECT_TIMEOUT = 5000;
 
@@ -56,16 +57,16 @@ class FetchSlotTask extends FetchTask
             inStream = conn.getInputStream();
             if (inStream != null) {
                 InputStreamReader reader = new InputStreamReader(inStream, "UTF-8");
-                char[] buffer = new char[MAX_READ]; // 2^15=32768, charCount = 24938
+                char[] buffer = new char[BUFFER_SIZE]; // 2^15=32768, charCount = 24938
 
                 int lastRead = 0, offset = 0;
-                while (lastRead != -1 && offset < MAX_READ && !isCancelled()) {
-                    publishProgress(offset * 100 / MAX_READ);
-                    lastRead = reader.read(buffer, offset, MAX_READ - offset);
+                while (lastRead != -1 && offset < BUFFER_SIZE && !isCancelled()) {
+                    publishProgress(offset * 100 / 16000);
+                    lastRead = reader.read(buffer, offset, Math.min(MAX_READ, BUFFER_SIZE - offset));
                     offset += lastRead;
                 }
                 if (offset != -1)
-                    result = new String(buffer, 0, offset);
+                    result = new String(buffer, 0, offset + 1); // last read decrements offset
             }
         } finally {
             if (inStream != null)
@@ -120,9 +121,9 @@ class FetchSlotTask extends FetchTask
 
     private static class SlotParser implements SlotDetailsInfo, Serializable
     {
-        private static final int INFO = 0;
-        private static final int REGULARS = 1;
-        private static final int SUBSTITUTES = 2;
+        private static final int IND_INFO = 0;      // session info
+        private static final int IND_REGS = 1;      // regular players
+        private static final int IND_SUBST = 2;     // substitutes
         private static final int TITLE = 0;
 
         private XmlPullParser m_parser;
@@ -135,9 +136,9 @@ class FetchSlotTask extends FetchTask
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
                     .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
 
-            m_data.add(INFO, new ArrayList<List<String>>());
-            m_data.add(REGULARS, new ArrayList<List<String>>());
-            m_data.add(SUBSTITUTES, new ArrayList<List<String>>());
+            m_data.add(IND_INFO, new ArrayList<List<String>>());
+            m_data.add(IND_REGS, new ArrayList<List<String>>());
+            m_data.add(IND_SUBST, new ArrayList<List<String>>());
 
             m_parser = Xml.newPullParser();
             m_parser.setInput(new StringReader(rawHtml));
@@ -152,7 +153,7 @@ class FetchSlotTask extends FetchTask
 
             boolean newLine = false;
             int depth = 1;
-            int what = INFO;
+            int what = IND_INFO;
             List<String> currentLine = null;
 
             while (depth != 0) {
@@ -190,7 +191,7 @@ class FetchSlotTask extends FetchTask
             m_parser = null; // allow parser to be collected by GC
 //            test();
         }
-//        void test() // temp
+        //        void test() // temp
 //        {
 //            Log.d(TAG_LOG, "Info title: " + getInfoTitle());
 //            for (int lineNumber = 0; lineNumber < getInfoSize(); lineNumber++) {
@@ -220,49 +221,49 @@ class FetchSlotTask extends FetchTask
         @Override
         public int getInfoSize() // row count, doesn't include title
         {
-            return m_data.get(INFO).size() - 1;
+            return m_data.get(IND_INFO).size() - 1;
         }
         @Override
         public int getRegularsCount() // NB! includes unoccupied places
         {
-            return m_data.get(REGULARS).size() - 1;
+            return m_data.get(IND_REGS).size() - 1;
         }
         @Override
         public int getSubstitutesCount()
         {
-            return m_data.get(SUBSTITUTES).size() - 1;
+            return m_data.get(IND_SUBST).size() - 1;
         }
         @Override
         public String getInfoTitle()
         {
-            return m_data.get(INFO).get(TITLE).get(0);
+            return m_data.get(IND_INFO).get(TITLE).get(0);
         }
         @Override
         public String getRegularsTitle()
         {
-            return m_data.get(REGULARS).get(TITLE).get(0);
+            return m_data.get(IND_REGS).get(TITLE).get(0);
         }
         @Override
         public String getSubstitutesTitle()
         {
-            return m_data.get(SUBSTITUTES).get(TITLE).get(0);
+            return m_data.get(IND_SUBST).get(TITLE).get(0);
         }
         @Override
         public String[] getInfoLine(int row)
         {
-            List<String> line = m_data.get(INFO).get(row + 1);
+            List<String> line = m_data.get(IND_INFO).get(row + 1);
             return line.toArray(new String[line.size()]);
         }
         @Override
         public String[] getRegularsLine(int row) // row starts from 0, one line for each spot/player
         {
-            List<String> line = m_data.get(REGULARS).get(row + 1);
+            List<String> line = m_data.get(IND_REGS).get(row + 1);
             return line.toArray(new String[line.size()]);
         }
         @Override
         public String[] getSubstitutesLine(int row)
         {
-            List<String> line = m_data.get(SUBSTITUTES).get(row + 1);
+            List<String> line = m_data.get(IND_SUBST).get(row + 1);
             return line.toArray(new String[line.size()]);
         }
     }

@@ -30,6 +30,7 @@ import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 public class SlotDetailsActivity extends AppCompatActivity implements NetworkCallbacks
 {
+    // Should take day and hour and find links through the right Slot in Globals
     public static Intent newIntent(Context context, String infoLink, String attendLink)
     {
         Intent i = new Intent(context, SlotDetailsActivity.class);
@@ -75,7 +76,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             public void onClick(View v)
             {
                 m_networker.downloadSlot(m_attendLink);
-//                m_networker.downloadSlot(getIntent().getStringExtra(EXTRA_URL_INFO)); // temp
             }
         });
         m_rootView = (LinearLayout)findViewById(R.id.activity_slot_linear_layout);
@@ -83,6 +83,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         if (savedInstanceState == null) {
             String link = getIntent().getStringExtra(EXTRA_URL_INFO);
             m_networker.downloadSlot(link);
+            m_progress.setVisibility(View.VISIBLE); // onPreDownload wouldn't work yet at this point
         } else {
             m_data = (SlotDetailsInfo)savedInstanceState.getSerializable(SAVED_DATA);
             createLayout(m_data);
@@ -123,7 +124,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         addTitleLine(data.getSubstitutesTitle());
 
         for (int row = 0; row < data.getSubstitutesCount(); ++row) {
-            addDataLine(data.getSubstitutesLine(row), false);
+            addDataLine(data.getSubstitutesLine(row), true);
         }
     }
     private void addTitleLine(String text)
@@ -141,9 +142,15 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         if (italic)
             rightTextView.setTypeface(rightTextView.getTypeface(), Typeface.ITALIC);
 
-        leftTextView.setText(line[0]);
-        if (line.length > 1)
-            rightTextView.setText(line[1]);
+        String left = line[0];
+        String right = (line.length > 1) ? line[1] : null;
+
+        if (line.length > 2) {
+            for (int i = 2; i < line.length; ++i)
+                right += ('\n' + line[i]);
+        }
+        leftTextView.setText(left);
+        rightTextView.setText(right);
 
         m_rootView.addView(infoLine);
     }
@@ -152,6 +159,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     public void onProgressChanged(int progress)
     {
         m_progress.setProgress(progress);
+        Log.d(TAG_LOG, "Progress: " + progress);
     }
     @Override
     public void onPreDownload()
@@ -168,7 +176,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     public void onSlotFetched(SlotDetailsInfo slotData, Exception e)
     {
         if (e != null) {
-            Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             finish();
         } else {
             createLayout(slotData);

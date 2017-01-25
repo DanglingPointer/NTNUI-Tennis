@@ -18,7 +18,7 @@ public class TableFactory
 //        m_context = c;
 //    }
     public Slot newSlot(int size, String link, String attendLink, String lvl, boolean expired,
-                        List<String> names, List<Player> players)
+                        List<String> names)
     {
         if (size < 0) return null;
 
@@ -27,10 +27,6 @@ public class TableFactory
         if (names != null && names.size() <= size) {
             for (int i = 0; i < names.size(); ++i)
                 s.setName(i, names.get(i));
-        }
-        if (players != null) {
-            for (Player p : players)
-                s.addPlayer(p);
         }
         return s;
     }
