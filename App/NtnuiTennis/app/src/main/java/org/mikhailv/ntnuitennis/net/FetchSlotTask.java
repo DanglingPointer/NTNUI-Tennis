@@ -57,7 +57,7 @@ class FetchSlotTask extends FetchTask
             inStream = conn.getInputStream();
             if (inStream != null) {
                 InputStreamReader reader = new InputStreamReader(inStream, "UTF-8");
-                char[] buffer = new char[BUFFER_SIZE]; // 2^15=32768, charCount = 24938
+                char[] buffer = new char[BUFFER_SIZE]; // 2^15=32768
 
                 int lastRead = 0, offset = 0;
                 while (lastRead != -1 && offset < BUFFER_SIZE && !isCancelled()) {

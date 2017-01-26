@@ -1,0 +1,348 @@
+<table>
+	<tr>
+		<th style="width:8%"></th>
+		<th style="width:11.5%">Tor&nbsp;26/1</th>
+		<th style="width:11.5%">Fre&nbsp;27/1</th>
+		<th style="width:11.5%">L&oslash;r&nbsp;28/1</th>
+		<th style="width:11.5%">S&oslash;n&nbsp;29/1</th>
+		<th style="width:11.5%">Man&nbsp;30/1</th>
+		<th style="width:11.5%">Tir&nbsp;31/1</th>
+		<th style="width:11.5%">Ons&nbsp;1/2</th>
+		<th style="width:11.5%">Tor&nbsp;2/2</th>
+	</tr>
+	<tr>
+		<td>8:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170130T8:00:00&amp;timeid=176&amp;lang=no">M*</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;2/4 reservert:&lt;/strong&gt;&lt;br/&gt;Birgitte T.&lt;br/&gt;Maja Zhang O.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170131T8:00:00&amp;timeid=182&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;1/4 reservert:&lt;/strong&gt;&lt;br/&gt;Jacob K.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170201T8:00:00&amp;timeid=201&amp;lang=no">M+</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>9:00</td>
+		<td class="expired"></td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;4/4 reservert:&lt;/strong&gt;&lt;br/&gt;Amalie M.&lt;br/&gt;Renate B.&lt;br/&gt;Marino Bråthen G.&lt;br/&gt;Vilde Vinnes J.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170127T9:00:00&amp;timeid=191&amp;lang=no">N</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;3/4 reservert:&lt;/strong&gt;&lt;br/&gt;Eirik S.&lt;br/&gt;Oscar B.&lt;br/&gt;Matias F.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170130T9:00:00&amp;timeid=177&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;1/8 reservert:&lt;/strong&gt;&lt;br/&gt;Sindre F.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170131T9:00:00&amp;timeid=183&amp;lang=no">N*</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;3/4 reservert:&lt;/strong&gt;&lt;br/&gt;Sunniva F.&lt;br/&gt;Maja Zhang O.&lt;br/&gt;Aimee L.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170201T9:00:00&amp;timeid=202&amp;lang=no">D</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>10:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;1/4 reservert:&lt;/strong&gt;&lt;br/&gt;Aimee L.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170130T10:00:00&amp;timeid=178&amp;lang=no">M+</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;2/4 reservert:&lt;/strong&gt;&lt;br/&gt;Erik Log R.&lt;br/&gt;Eirik H.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170131T10:00:00&amp;timeid=184&amp;lang=no">N+</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170201T10:00:00&amp;timeid=203&amp;lang=no">N*</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>11:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170130T11:00:00&amp;timeid=179&amp;lang=no">N</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170131T11:00:00&amp;timeid=185&amp;lang=no">M</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170201T11:00:00&amp;timeid=204&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>12:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>13:00</td>
+		<td class="expired">
+			<span class="available_tip" title="&lt;strong&gt;4/6 reservert:&lt;/strong&gt;&lt;br/&gt;Margareth B.&lt;br/&gt;Bjørnar H.&lt;br/&gt;Jørund A.&lt;br/&gt;Stina S.">
+				<span class="ledigtime">N*</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;4/4 reservert:&lt;/strong&gt;&lt;br/&gt;Vince C.&lt;br/&gt;Johanna T.&lt;br/&gt;Camilla E.&lt;br/&gt;Simon R.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170127T13:00:00&amp;timeid=192&amp;lang=no">M</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;6/6 reservert:&lt;/strong&gt;&lt;br/&gt;Marianne F.&lt;br/&gt;Erik S.&lt;br/&gt;Camilla E.&lt;br/&gt;Ole Fjellstad H.&lt;br/&gt;Suzanne W.&lt;br/&gt;Guangcheng H.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170130T13:00:00&amp;timeid=180&amp;lang=no">N+*</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170131T13:00:00&amp;timeid=186&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170201T13:00:00&amp;timeid=205&amp;lang=no">M</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170202T13:00:00&amp;timeid=188&amp;lang=no">N*</a>
+				</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td>14:00</td>
+		<td class="expired">
+			<span class="available_tip" title="&lt;strong&gt;2/4 reservert:&lt;/strong&gt;&lt;br/&gt;Sondre B.&lt;br/&gt;Odin Ø.">
+				<span class="ledigtime">E</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;4/4 reservert:&lt;/strong&gt;&lt;br/&gt;Per Kristian S.&lt;br/&gt;Ole Marius F.&lt;br/&gt;Ole Fjellstad H.&lt;br/&gt;Eirik H.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170127T14:00:00&amp;timeid=166&amp;lang=no">N+</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;1/4 reservert:&lt;/strong&gt;&lt;br/&gt;Atle W.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170130T14:00:00&amp;timeid=190&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170131T14:00:00&amp;timeid=187&amp;lang=no">M+</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170201T14:00:00&amp;timeid=206&amp;lang=no">N+</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;1/4 reservert:&lt;/strong&gt;&lt;br/&gt;Bjørn K.">
+				<span class="fulltime">
+					<a href="./timeinfo.php?spilletid=20170202T14:00:00&amp;timeid=207&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td>15:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>16:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>17:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>18:00</td>
+		<td class="expired"></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>19:00</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>20:00</td>
+		<td></td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;4/4 reservert:&lt;/strong&gt;&lt;br/&gt;Lars F.&lt;br/&gt;Sondre B.&lt;br/&gt;Jarle B.&lt;br/&gt;Jakob S.">
+				<span class="fulldropintime">
+					<a href="./timeinfo.php?spilletid=20170128T20:00:00&amp;timeid=194&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>21:00</td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;i&gt;Ingen p&aring;meldt&lt;/i&gt;">
+				<span class="ledigtime">
+					<a href="./timeinfo.php?spilletid=20170127T21:00:00&amp;timeid=167&amp;lang=no">D</a>
+				</span>
+			</span>
+		</td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;4/4 reservert:&lt;/strong&gt;&lt;br/&gt;Lars F.&lt;br/&gt;Sondre B.&lt;br/&gt;Jarle B.&lt;br/&gt;Jakob S.">
+				<span class="fulldropintime">
+					<a href="./timeinfo.php?spilletid=20170128T21:00:00&amp;timeid=195&amp;lang=no">M+</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>22:00</td>
+		<td></td>
+		<td>
+			<span class="available_tip" title="&lt;strong&gt;4/4 reservert:&lt;/strong&gt;&lt;br/&gt;Sondre B.&lt;br/&gt;Lars F.&lt;br/&gt;Jarle B.&lt;br/&gt;Eirik S.">
+				<span class="fulldropintime">
+					<a href="./timeinfo.php?spilletid=20170127T22:00:00&amp;timeid=193&amp;lang=no">E</a>
+				</span>
+			</span>
+		</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
