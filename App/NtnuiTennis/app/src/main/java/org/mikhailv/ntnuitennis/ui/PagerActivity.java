@@ -61,6 +61,7 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     {
         if (m_networker != null)
             m_networker.downloadSlot(slot.getAttendLink());
+
     }
     public void updateData()
     {

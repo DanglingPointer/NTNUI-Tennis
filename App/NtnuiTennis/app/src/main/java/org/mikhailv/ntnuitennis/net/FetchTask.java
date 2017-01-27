@@ -12,6 +12,11 @@ import java.text.ParseException;
 
 abstract class FetchTask extends AsyncTask<String, Integer, Object>
 {
+    protected static final int BUFFER_SIZE = 20000;
+    protected static final int MAX_READ = 2000;
+    protected static final int READ_TIMEOUT = 10000;
+    protected static final int CONNECT_TIMEOUT = 15000;
+
     private NetworkCallbacks m_callbacks;
     private Exception m_exception;
 

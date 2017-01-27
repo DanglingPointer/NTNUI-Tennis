@@ -1,5 +1,6 @@
 package org.mikhailv.ntnuitennis.net;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
 
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -29,11 +31,6 @@ import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
  */
 class FetchSlotTask extends FetchTask
 {
-    private static final int BUFFER_SIZE = 20000;
-    private static final int MAX_READ = 2000;
-    private static final int READ_TIMEOUT = 3000;
-    private static final int CONNECT_TIMEOUT = 5000;
-
     public FetchSlotTask(NetworkCallbacks callbacks)
     {
         super(callbacks);
@@ -50,6 +47,13 @@ class FetchSlotTask extends FetchTask
             conn.setConnectTimeout(CONNECT_TIMEOUT);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
+
+            CookieManager cm = NetworkFragment.cookieManager;
+            if (cm.getCookieStore().getCookies().size() > 0) {
+                conn.setRequestProperty("Cookie",
+                        TextUtils.join(";",  cm.getCookieStore().getCookies()));
+            }
+
             conn.connect();
             int response = conn.getResponseCode();
             if (response != HttpURLConnection.HTTP_OK)
@@ -67,10 +71,9 @@ class FetchSlotTask extends FetchTask
                 }
                 if (offset != -1)
                     result = new String(buffer, 0, offset + 1); // last read decrements offset
+                inStream.close();
             }
         } finally {
-            if (inStream != null)
-                inStream.close();
             if (conn != null)
                 conn.disconnect();
         }
@@ -79,6 +82,7 @@ class FetchSlotTask extends FetchTask
     @Override
     protected Object parse(String rawData) throws ParseException
     {
+        Log.i(TAG_LOG, rawData);
         SlotParser parser;
         try {
             int openingTagIndex = rawData.indexOf("<table>");

@@ -7,8 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.URL;
 
 /**
@@ -21,6 +24,13 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
 
     private NetworkCallbacks m_callbacks;
     private FetchTask m_worker;
+
+    static CookieManager cookieManager;
+
+    static {
+        cookieManager = new CookieManager();
+        CookieHandler.setDefault(cookieManager);
+    }
 
     public static NetworkFragment addInstance(FragmentManager fm)
     {
@@ -39,6 +49,8 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+        authenticate(Globals.HOME_URL, "mikail.vasilyev@gmail.com", "1234", "no");
     }
     @Override
     public void onAttach(Context context)
@@ -79,12 +91,11 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_worker.execute(slotAddress);
         }
     }
-    public void authenticate(URL homeAddress, String email, String password, String lang)
+    public void authenticate(String homeURL, String email, String password, String lang)
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
-
-            // TODO: create AuthenticateTask and execute
-            throw new UnsupportedOperationException();
+            m_worker = new AuthenticateTask(this, email, password, lang);
+            m_worker.execute(homeURL);
         }
     }
     public void cancelDownload()
