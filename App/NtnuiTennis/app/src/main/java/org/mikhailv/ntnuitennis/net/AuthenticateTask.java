@@ -22,6 +22,7 @@ class AuthenticateTask extends FetchTask
     private static final String REMEMBER_KEY = "rememberme";
 
     private static final String COOKIES_HEADER = "Set-Cookie";
+    private static final String ENCODING = "UTF-8";
 
     private String m_postArgs;
 
@@ -31,14 +32,14 @@ class AuthenticateTask extends FetchTask
         StringBuilder sb = new StringBuilder();
 
         try {
-            sb.append(URLEncoder.encode(EMAIL_KEY, "UTF-8")).append('=')
-                    .append(URLEncoder.encode(email, "UTF-8")).append('&');
-            sb.append(URLEncoder.encode(PASSWORD_KEY, "UTF-8")).append("=")
-                    .append(URLEncoder.encode(password, "UTF-8")).append('&');
-            sb.append(URLEncoder.encode(LANG_KEY, "UTF-8")).append("=")
-                    .append(URLEncoder.encode(lang, "UTF-8")).append('&');
-            sb.append(URLEncoder.encode(REMEMBER_KEY, "UTF-8")).append("=")
-                    .append(URLEncoder.encode("on", "UTF-8"));
+            sb.append(URLEncoder.encode(EMAIL_KEY, ENCODING)).append('=')
+                    .append(URLEncoder.encode(email, ENCODING)).append('&');
+            sb.append(URLEncoder.encode(PASSWORD_KEY, ENCODING)).append("=")
+                    .append(URLEncoder.encode(password, ENCODING)).append('&');
+            sb.append(URLEncoder.encode(LANG_KEY, ENCODING)).append("=")
+                    .append(URLEncoder.encode(lang, ENCODING)).append('&');
+            sb.append(URLEncoder.encode(REMEMBER_KEY, ENCODING)).append("=")
+                    .append(URLEncoder.encode("on", ENCODING));
         } catch (UnsupportedEncodingException e) {}
 
         m_postArgs = sb.toString();
@@ -56,7 +57,7 @@ class AuthenticateTask extends FetchTask
             conn.connect();
 
             OutputStream os = conn.getOutputStream();
-            OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
+            OutputStreamWriter writer = new OutputStreamWriter(os, ENCODING);
             writer.write(m_postArgs);
             writer.flush();
 
@@ -72,6 +73,7 @@ class AuthenticateTask extends FetchTask
             if (cookiesHeader == null)
                 throw new IOException("No cookies received from server");
 
+            NetworkFragment.cookieManager.getCookieStore().removeAll();
             for (String cookieString : cookiesHeader) {
                 List<HttpCookie> cookies = HttpCookie.parse(cookieString);
                 for (HttpCookie cookie : cookies)

@@ -1,5 +1,6 @@
 package org.mikhailv.ntnuitennis.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,15 +27,15 @@ public interface Slot
 
 class SlotImpl implements Slot
 {
-    private String[] m_reserved;
+    private List<String> m_reserved;
     private boolean m_expired;
     private String m_lvl;
     private String m_link;
     private String m_attendLink;
 
-    public SlotImpl(int size)
+    public SlotImpl()
     {
-        m_reserved = new String[size];
+        m_reserved = new ArrayList<>();
     }
     public String getLink()
     {
@@ -75,18 +76,11 @@ class SlotImpl implements Slot
     }
     public List<String> getAttending()
     {
-        int firstNullIndex;
-        for (firstNullIndex = 0; firstNullIndex < m_reserved.length; ++firstNullIndex)
-            if (m_reserved[firstNullIndex] == null)
-                break;
-        String[] reservedOnly = new String[firstNullIndex];
-        for (int i = 0; i < firstNullIndex; ++i)
-            reservedOnly[i] = m_reserved[i];
-        return Arrays.asList(reservedOnly);
+        return m_reserved;
     }
-    public SlotImpl setName(int i, String name)
+    public SlotImpl addName(String name)
     {
-        m_reserved[i] = name;
+        m_reserved.add(name);
         return this;
     }
     public boolean hasAvailable()
