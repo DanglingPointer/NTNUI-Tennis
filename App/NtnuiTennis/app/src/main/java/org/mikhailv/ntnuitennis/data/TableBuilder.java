@@ -56,7 +56,10 @@ public class TableBuilder
         for (int dayIndex = 0; dayIndex < Globals.Sizes.WEEK; ++dayIndex) {
             DayImpl day = new DayImpl(m_days.get(dayIndex));
             for (int slotIndex = 0; slotIndex < Globals.Sizes.DAY; ++slotIndex) {
-                day.setSlot(slotIndex + START_HOUR, m_slotData[dayIndex][slotIndex]);
+                Slot s = m_slotData[dayIndex][slotIndex];
+                if (s == null)
+                    s = new SlotImpl();
+                day.setSlot(slotIndex + START_HOUR, s);
             }
             week.setDay(dayIndex, day);
         }
