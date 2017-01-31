@@ -12,7 +12,6 @@ import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
-import java.net.URL;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -23,7 +22,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     private static final String TAG = "NetworkFragment.Tag";
 
     private NetworkCallbacks m_callbacks;
-    private FetchTask m_worker;
+    private NetworkTask m_worker;
 
     static CookieManager cookieManager;
 

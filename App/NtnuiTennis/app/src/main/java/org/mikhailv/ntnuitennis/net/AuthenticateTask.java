@@ -14,7 +14,7 @@ import java.util.List;
  * Created by MikhailV on 27.01.2017.
  */
 
-class AuthenticateTask extends FetchTask
+class AuthenticateTask extends NetworkTask
 {
     private static final String EMAIL_KEY = "email";
     private static final String PASSWORD_KEY = "password";
@@ -45,7 +45,7 @@ class AuthenticateTask extends FetchTask
         m_postArgs = sb.toString();
     }
     @Override
-    protected String download(URL link) throws IOException
+    protected Object download(URL link) throws IOException
     {
         HttpURLConnection conn = null;
         try {
@@ -84,11 +84,6 @@ class AuthenticateTask extends FetchTask
             if (conn != null)
                 conn.disconnect();
         }
-        return null;
-    }
-    @Override
-    protected Object parse(String rawData)
-    {
         return null;
     }
 //    @Override
