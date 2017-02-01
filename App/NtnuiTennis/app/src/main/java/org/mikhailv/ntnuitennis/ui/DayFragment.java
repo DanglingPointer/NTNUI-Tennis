@@ -158,6 +158,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onTableFetched(Exception e)
     {
+        // TODO: add Week to arguments, and forward it to the Manager
         m_progressBar.setVisibility(View.GONE);
         m_adapter.notifyDataSetChanged();
     }

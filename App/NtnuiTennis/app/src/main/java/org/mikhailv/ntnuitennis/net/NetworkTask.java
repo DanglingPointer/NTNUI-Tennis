@@ -38,7 +38,8 @@ public abstract class NetworkTask extends AsyncTask<String, Integer, Object>
 
         Object result = null;
         try {
-            result = download(new URL(params[0]));
+            if (!isCancelled())
+                result = download(new URL(params[0]));
         } catch (ParseException e) {
             m_exception = e;
             e.printStackTrace();

@@ -5,6 +5,7 @@ import android.util.Xml;
 
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.TableBuilder;
+import org.mikhailv.ntnuitennis.data.Week;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -62,7 +63,7 @@ class FetchTableTask extends FetchTask
                             ++day;
 
                         tag = new Tag();
-                        tag.name = parser.getName();
+                        tag.name = name;
                         for (int i = 0; i < parser.getAttributeCount(); ++i)
                             tag.attributes
                                     .put(parser.getAttributeName(i), parser.getAttributeValue(i));
@@ -82,21 +83,24 @@ class FetchTableTask extends FetchTask
 
                         String tip = tag.attributes.get("title");
                         if (tip != null) {
-                            tip.replaceAll("&lt;strong&gt;", "")
+                            tip = tip.replaceAll("&lt;strong&gt;", "")
                                     .replaceAll("&lt;/strong&gt;", "")
                                     .replaceAll("&lt;br/&gt;", "\n")
                                     .replaceAll("&lt;i&gt;", "")
                                     .replaceAll("&lt;/i&gt;", "");
                             builder.addNames(day, hour, Arrays.asList(tip.split("\n")));
                         }
+
                         break;
 
                     case XmlPullParser.END_TAG:
 
                         --depth;
-                        if (tag!= null && tag.name.equals("tr")) {
+                        if (tag != null && tag.name.equals("tr")) {
                             day = 0;
                         }
+                        tag = null;
+
                         break;
 
                     case XmlPullParser.TEXT:
@@ -132,7 +136,7 @@ class FetchTableTask extends FetchTask
     protected void onPostExecute(Object o)
     {
         if (getCallbacks() != null)
-            getCallbacks().onTableFetched(getException());
+            getCallbacks().onTableFetched((Week)o, getException());
     }
     private static class Tag
     {

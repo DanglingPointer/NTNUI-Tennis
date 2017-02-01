@@ -12,6 +12,7 @@ import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
@@ -94,11 +95,11 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
             currentFragment.onPreDownload();
     }
     @Override
-    public void onTableFetched(Exception e)
+    public void onTableFetched(Week week, Exception e)
     {
         DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
         if (currentFragment != null && currentFragment.isAdded())
-            currentFragment.onTableFetched(e);
+            currentFragment.onTableFetched(week, e);
     }
     @Override
     public void onSlotFetched(SlotDetailsInfo slotData, Exception e)

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
@@ -168,7 +169,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         m_progress.setProgress(0);
     }
     @Override
-    public void onTableFetched(Exception e)
+    public void onTableFetched(Week week, Exception e)
     {
         // Who cares?
     }

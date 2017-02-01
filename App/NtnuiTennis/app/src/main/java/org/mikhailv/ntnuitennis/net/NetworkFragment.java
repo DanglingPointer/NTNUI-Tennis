@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+import org.mikhailv.ntnuitennis.data.Week;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -119,10 +120,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_callbacks.onPreDownload();
     }
     @Override
-    public void onTableFetched(Exception e)
+    public void onTableFetched(Week week, Exception e)
     {
         if (m_callbacks != null)
-            m_callbacks.onTableFetched(e);
+            m_callbacks.onTableFetched(week, e);
     }
     @Override
     public void onSlotFetched(SlotDetailsInfo slotInfo, Exception e)
