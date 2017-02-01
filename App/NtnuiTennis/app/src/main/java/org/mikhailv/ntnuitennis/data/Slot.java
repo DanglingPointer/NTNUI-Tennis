@@ -12,15 +12,13 @@ public interface Slot
 {
     String getLink();
 
-    String getAttendLink();
-
     String getLevel();
 
     boolean isExpired();
 
-    List<String> getAttending();
+    //boolean hasAvailable();
 
-    boolean hasAvailable();
+    List<String> getAttending();
 
     boolean isMeAttending();
 }
@@ -29,13 +27,15 @@ class SlotImpl implements Slot
 {
     private List<String> m_reserved;
     private boolean m_expired;
+    private boolean m_hasAvailable;
     private String m_lvl;
     private String m_link;
-    private String m_attendLink;
 
     public SlotImpl()
     {
         m_reserved = new ArrayList<>();
+        m_expired = false;
+        m_hasAvailable = true;
     }
     public String getLink()
     {
@@ -44,16 +44,6 @@ class SlotImpl implements Slot
     public SlotImpl setLink(String link)
     {
         m_link = link;
-        return this;
-    }
-    @Override
-    public String getAttendLink()
-    {
-        return m_attendLink;
-    }
-    public SlotImpl setAttendLink(String link)
-    {
-        m_attendLink = link;
         return this;
     }
     public String getLevel()
@@ -74,6 +64,14 @@ class SlotImpl implements Slot
         m_expired = expired;
         return this;
     }
+    public boolean hasAvailable()
+    {
+        return m_hasAvailable;
+    }
+    public SlotImpl setAvailable(boolean hasAvailable)
+    {
+        m_hasAvailable = hasAvailable;
+    }
     public List<String> getAttending()
     {
         return m_reserved;
@@ -82,13 +80,6 @@ class SlotImpl implements Slot
     {
         m_reserved.add(name);
         return this;
-    }
-    public boolean hasAvailable()
-    {
-        for (String name : m_reserved)
-            if (name == null)
-                return true;
-        return false;
     }
     public boolean isMeAttending()
     {

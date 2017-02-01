@@ -36,11 +36,11 @@ public final class Globals
                 DayImpl d = new DayImpl("Day #" + i);
                 if (i % 2 == 0) {
                     Slot s1 = new SlotImpl().addName("Guang").addName("Mikhail").setLevel("N+*")
-                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&lang=no")
-                            .setAttendLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&leggtilvikarid=619&lang=no");
+                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&lang=no");
+//                            .setAttendLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&leggtilvikarid=619&lang=no");
                     Slot s2 = new SlotImpl().setLevel("M").addName("Guang_1").addName("Guang_2")
-                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&lang=no")
-                            .setAttendLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&leggtilvikarid=619&lang=no");
+                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&lang=no");
+//                            .setAttendLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&leggtilvikarid=619&lang=no");
                     d.setSlot(9, s1).setSlot(11, s2);
                 }
                 s_current.setDay(i, d);

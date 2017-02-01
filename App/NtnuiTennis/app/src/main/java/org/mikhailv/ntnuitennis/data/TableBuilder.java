@@ -45,6 +45,11 @@ public class TableBuilder
         get(day, hour).setExpired(expired);
         return this;
     }
+    public TableBuilder addHasAvailable(int day, int hour, boolean hasAvailable)
+    {
+        get(day, hour).setAvailable(hasAvailable);
+        return this;
+    }
     public TableBuilder addDayName(String name)
     {
         m_days.add(name);
