@@ -96,8 +96,8 @@ class FetchTableTask extends FetchTask
                     case XmlPullParser.END_TAG:
 
                         --depth;
-                        if (tag != null && tag.name.equals("tr")) {
-                            day = 0;
+                        if (parser.getName().equals("tr")) {
+                            day = -2;
                         }
                         tag = null;
 
