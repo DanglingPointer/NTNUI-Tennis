@@ -59,14 +59,15 @@ class FetchTableTask extends FetchTask
 
                         String name = parser.getName();
                         ++depth;
-                        if (name.equals("td"))
+                        if (name.equals("td") || name.equals("th"))
                             ++day;
 
                         tag = new Tag();
                         tag.name = name;
-                        for (int i = 0; i < parser.getAttributeCount(); ++i)
+                        for (int i = 0; i < parser.getAttributeCount(); ++i) {
                             tag.attributes
                                     .put(parser.getAttributeName(i), parser.getAttributeValue(i));
+                        }
 
                         String link = tag.attributes.get("href");
                         if (link != null) {
@@ -105,7 +106,7 @@ class FetchTableTask extends FetchTask
 
                     case XmlPullParser.TEXT:
 
-                        if (depth < 3 || tag == null || tag.name.equals("tr"))
+                        if (depth < 3 || tag == null)
                             break;
 
                         String text = parser.getText().trim();
