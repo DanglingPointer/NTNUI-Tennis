@@ -60,9 +60,7 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     }
     public void onAttendPressed(int day, Slot slot)
     {
-        if (m_networker != null)
-            m_networker.downloadSlot(slot.getAttendLink());
-
+        // nothing to be done here
     }
     public void updateData()
     {

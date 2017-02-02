@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,8 @@ import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
+
+import java.util.List;
 
 /**
  * Created by MikhailV on 07.01.2017.
@@ -236,10 +239,6 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
         }
         return temp;
     }
-    void onSlotAttendPressed(Slot slot)
-    {
-        ((DayFragment.Callbacks)m_context).onAttendPressed(m_dayIndex, slot);
-    }
     void onSlotDetailsPressed(Slot slot)
     {
         ((DayFragment.Callbacks)m_context).onSlotDetailsPressed(m_dayIndex, slot);
@@ -251,7 +250,6 @@ class SlotHolder extends RecyclerView.ViewHolder
     private TextView m_hourText;
     private TextView m_reservedText;
 
-    private Button m_attendBtn;
     private ImageButton m_expandBtn;
     private Button m_detailsBtn;
 
@@ -267,7 +265,6 @@ class SlotHolder extends RecyclerView.ViewHolder
         m_hourText = (TextView)root.findViewById(R.id.slot_text_hour);
         m_reservedText = (TextView)root.findViewById(R.id.slot_text_reserved);
 
-        m_attendBtn = (Button)root.findViewById(R.id.slot_btn_attend);
         m_expandBtn = (ImageButton)root.findViewById(R.id.slot_btn_expand);
         m_detailsBtn = (Button)root.findViewById(R.id.slot_btn_details);
 
@@ -294,14 +291,6 @@ class SlotHolder extends RecyclerView.ViewHolder
                 m_adapter.onSlotDetailsPressed(m_slotData);
             }
         });
-        m_attendBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                m_adapter.onSlotAttendPressed(m_slotData);
-            }
-        });
     }
     public void bind(Slot slot, int hour, boolean expanded)
     {
@@ -312,21 +301,15 @@ class SlotHolder extends RecyclerView.ViewHolder
         } else {
             m_expandBtn.setImageResource(R.drawable.ic_expand);
         }
-        if ((m_slotData = slot) == null) {
-            m_detailsBtn.setText(null);
-            setBtnsEnabled(false);
-        } else {
-            m_detailsBtn.setText(slot.getLevel());
-            setBtnsEnabled(!slot.isExpired());
-            if (slot.isMeAttending()) {
-                m_attendBtn.setText(R.string.slot_btn_attend_not);
-            } else {
-                m_attendBtn.setEnabled(slot.hasAvailable() && !slot.isExpired());
-                m_attendBtn.setText(R.string.slot_btn_attend);
-            }
-            if (slot.isExpired())
-                setExpiredBackground();
-        }
+        m_slotData = slot;
+
+        setBtnsEnabled(m_slotData.getLink() != null && !m_slotData.isExpired());
+        m_detailsBtn.setText(slot.getLevel());
+        if (slot.isExpired())
+            setExpiredBackground();
+        if (!slot.hasAvailable())
+            setNoavailableTextColor();
+
         configReservedText();
     }
     public boolean isExpanded()
@@ -339,7 +322,6 @@ class SlotHolder extends RecyclerView.ViewHolder
      */
     private void setBtnsEnabled(boolean enabled)
     {
-        m_attendBtn.setEnabled(enabled);
         m_expandBtn.setEnabled(enabled);
         m_detailsBtn.setEnabled(enabled);
     }
@@ -348,13 +330,10 @@ class SlotHolder extends RecyclerView.ViewHolder
      */
     private void configReservedText()
     {
-        if (m_slotData != null && m_expanded) {
-            StringBuilder sb = new StringBuilder();
-            for (String name : m_slotData.getAttending()) {
-                sb.append(name);
-                sb.append("\n");
-            }
-            m_reservedText.setText(sb.toString().trim());
+        List<String> names = m_slotData.getAttending();
+        if (names != null && m_expanded) {
+            String text = TextUtils.join("\n", names);
+            m_reservedText.setText(text);
             m_reservedText.setVisibility(View.VISIBLE);
         } else {
             m_reservedText.setText(null);
@@ -366,15 +345,25 @@ class SlotHolder extends RecyclerView.ViewHolder
      */
     private void setExpiredBackground()
     {
-        Context c = m_attendBtn.getContext();
+        Context c = m_detailsBtn.getContext();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            m_attendBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
             m_detailsBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
             m_expandBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
         } else {
-            m_attendBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
             m_detailsBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
             m_expandBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
+        }
+    }
+    /**
+     * Sets gray text color
+     */
+    private void setNoavailableTextColor()
+    {
+        Context c = m_detailsBtn.getContext();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            m_detailsBtn.setTextColor(c.getColor(R.color.gray));
+        } else {
+            m_detailsBtn.setTextColor(c.getResources().getColor(R.color.gray));
         }
     }
 }

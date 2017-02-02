@@ -55,6 +55,9 @@ public class TableBuilder
         m_days.add(name);
         return this;
     }
+    /**
+     * Can be used as dummy
+     */
     public Week getWeek()
     {
         WeekImpl week = new WeekImpl();

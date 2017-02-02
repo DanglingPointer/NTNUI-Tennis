@@ -24,46 +24,33 @@
         android:layout_weight="4"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <Button
-                android:id="@+id/slot_btn_attend"
-                android:text="@string/slot_btn_attend"
-                android:layout_width="wrap_content"
+                android:id="@+id/slot_btn_details"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/slot_btn_details"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="2dp"
-                android:background="@color/lightGreen"
-                />
-
-            <Button
-                android:id="@id/slot_btn_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/slot_btn_expand"
-                android:layout_toRightOf="@id/slot_btn_attend"
+                android:layout_weight="3"
                 android:layout_marginLeft="2dp"
                 android:background="@color/lightGreen"
                 android:gravity="center"
+                android:textColor="@color/extraDarkGreen"
                 />
 
-
-
             <ImageButton
-                android:id="@id/slot_btn_expand"
-                android:layout_width="wrap_content"
+                android:id="@+id/slot_btn_expand"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_alignBottom="@id/slot_btn_details"
-                android:layout_alignParentRight="true"
+                android:layout_weight="1"
                 android:layout_marginLeft="2dp"
                 android:background="@color/lightGreen"
                 android:src="@drawable/ic_expand"
                 />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/slot_text_reserved"
@@ -76,6 +63,7 @@
             android:gravity="left|top"
             android:background="@color/white"
             android:visibility="gone"
+            android:textStyle="italic"
             />
 
     </LinearLayout>

@@ -37,7 +37,8 @@ class FetchTableTask extends FetchTask
             rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
+                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
+                    .replaceAll("&amp;", "&");
 
             TableBuilder builder = new TableBuilder(8, Globals.Sizes.WEEK, Globals.Sizes.DAY);
             XmlPullParser parser = Xml.newPullParser();
@@ -48,7 +49,7 @@ class FetchTableTask extends FetchTask
 
             int depth = 1;
             int day = -2;       // day = index of last <td> or <th>
-            int hour = -1;      // any illegal value will do
+            int hour = -1;      // any invalid value will do
             Tag tag = null;
 
             while (depth != 0) {

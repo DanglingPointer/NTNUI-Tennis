@@ -69,7 +69,8 @@ class FetchSlotTask extends FetchTask
             rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
+                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
+                    .replaceAll("&amp;", "&");
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());
             m_data.add(IND_REGS, new ArrayList<List<String>>());

@@ -9,5 +9,6 @@
     <color name="green">#597537</color>
     <color name="darkGreen">#375315</color>
     <color name="extraDarkGreen">#0D2701</color>
+    <color name="gray">#999d97</color>
     <!--<color name="borderGreen">#2a410f</color>-->
 </resources>

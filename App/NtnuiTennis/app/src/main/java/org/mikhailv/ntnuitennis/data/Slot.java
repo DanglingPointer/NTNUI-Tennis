@@ -16,11 +16,9 @@ public interface Slot
 
     boolean isExpired();
 
-    //boolean hasAvailable();
+    boolean hasAvailable();
 
     List<String> getAttending();
-
-    boolean isMeAttending();
 }
 
 class SlotImpl implements Slot
@@ -71,6 +69,7 @@ class SlotImpl implements Slot
     public SlotImpl setAvailable(boolean hasAvailable)
     {
         m_hasAvailable = hasAvailable;
+        return this;
     }
     public List<String> getAttending()
     {
@@ -80,12 +79,5 @@ class SlotImpl implements Slot
     {
         m_reserved.add(name);
         return this;
-    }
-    public boolean isMeAttending()
-    {
-        for (String name : m_reserved)
-            if (name != null && name.equals(Globals.MY_NAME))
-                return true;
-        return false;
     }
 }
