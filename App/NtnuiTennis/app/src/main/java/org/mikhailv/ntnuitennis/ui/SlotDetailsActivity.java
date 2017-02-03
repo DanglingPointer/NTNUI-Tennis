@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.R;
+import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
@@ -32,16 +33,16 @@ import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 public class SlotDetailsActivity extends AppCompatActivity implements NetworkCallbacks
 {
     // Should take day and hour and find links through the right Slot in Globals
-    public static Intent newIntent(Context context, String infoLink, String attendLink)
+    public static Intent newIntent(Context context, String infoLink, int pagerPosition)
     {
         Intent i = new Intent(context, SlotDetailsActivity.class);
-        i.putExtra(EXTRA_URL_ATTEND, attendLink);
         i.putExtra(EXTRA_URL_INFO, infoLink);
+        i.putExtra(EXTRA_PAGER_POSITION, pagerPosition);
         return i;
     }
 
     private static final String EXTRA_URL_INFO = "SlotDetailsActivity.URL_INFO";
-    private static final String EXTRA_URL_ATTEND = "SlotDetailsActivity.URL_ATTEND";
+    private static final String EXTRA_PAGER_POSITION = "SlotDetailsActivity.PAGER_POSITION";
     private static final String SAVED_DATA = "SlotDetailsActivity.Data";
 
     private ProgressBar m_progress;
@@ -50,33 +51,32 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
 
     private NetworkFragment m_networker;
     private SlotDetailsInfo m_data;
-    private String m_attendLink;
 
+
+    public static int getPagerPosition(Intent i)
+    {
+        return i.getIntExtra(EXTRA_PAGER_POSITION, 0);
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acticity_slot_details);
 
-        m_attendLink = getIntent().getStringExtra(EXTRA_URL_ATTEND);
         m_data = null;
         m_networker = NetworkFragment.addInstance(getSupportFragmentManager());
         m_progress = (ProgressBar)findViewById(R.id.activity_slot_progress);
 
         m_attendBtn = (Button)findViewById(R.id.activity_slot_attend_btn);
-        m_attendBtn.setEnabled(m_attendLink != null);
-        if (m_attendLink != null) {
-            if (m_attendLink.contains("kommerikke") || m_attendLink.contains("fjern"))
-                m_attendBtn.setText(R.string.slot_btn_attend_not);
-            else
-                m_attendBtn.setText(R.string.slot_btn_attend);
-        }
+        m_attendBtn.setEnabled(false);
         m_attendBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                m_networker.downloadSlot(m_attendLink);
+                if (m_data != null) {
+                    m_networker.downloadSlot(m_data.getAttendingLink());
+                }
             }
         });
         m_rootView = (LinearLayout)findViewById(R.id.activity_slot_linear_layout);
@@ -89,6 +89,10 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             m_data = (SlotDetailsInfo)savedInstanceState.getSerializable(SAVED_DATA);
             createLayout(m_data);
         }
+
+        Intent i = new Intent();
+        i.putExtra(EXTRA_PAGER_POSITION, getIntent().getIntExtra(EXTRA_PAGER_POSITION, 0));
+        setResult(RESULT_OK, i);
     }
     @Override
     protected void onSaveInstanceState(Bundle outState)
@@ -183,6 +187,17 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             createLayout(slotData);
             m_data = slotData;
             m_progress.setVisibility(View.GONE);
+
+            if (m_data.getAttendingLink() != null) {
+                m_attendBtn.setEnabled(true);
+
+                if (m_data.getAttendingLink().contains("kommerikke")
+                        || m_data.getAttendingLink().contains("fjern"))
+                    m_attendBtn.setText(R.string.slot_btn_attend_not);
+                else
+                    m_attendBtn.setText(R.string.slot_btn_attend);
+            } else
+                Log.d(TAG_LOG, "\n\n\nNo attending link :(\n\n\n");
         }
     }
     @Override
@@ -190,5 +205,10 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     {
         Toast.makeText(this, "Download canceled", Toast.LENGTH_SHORT).show();
         m_progress.setVisibility(View.GONE);
+    }
+    @Override
+    public void onAuthenticateFinished()
+    {
+        // nothing
     }
 }

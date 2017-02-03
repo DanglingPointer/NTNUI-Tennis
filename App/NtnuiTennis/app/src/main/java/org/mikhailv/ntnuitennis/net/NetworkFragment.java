@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
@@ -13,6 +14,8 @@ import org.mikhailv.ntnuitennis.data.Week;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
+
+import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -79,9 +82,8 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     public void downloadTable(String homeAddress)
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
-
-            // TODO: create FetchTableTask and execute
-            throw new UnsupportedOperationException();
+            m_worker = new FetchTableTask(this);
+            m_worker.execute(homeAddress);
         }
     }
     public void downloadSlot(String slotAddress)
@@ -136,5 +138,12 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     {
         if (m_callbacks != null)
             m_callbacks.onDownloadCanceled();
+    }
+    @Override
+    public void onAuthenticateFinished()
+    {
+        Log.d(TAG_LOG, "Authentication finished");
+        if (m_callbacks != null)
+            m_callbacks.onAuthenticateFinished();
     }
 }

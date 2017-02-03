@@ -20,10 +20,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.NotificationsActivity"
-                  android:parentActivityName=".ui.PagerActivity"/>
-        <activity android:name=".ui.SlotDetailsActivity"
-                  android:parentActivityName=".ui.PagerActivity"/>
+        <activity android:name=".ui.NotificationsActivity"/>
+        <activity android:name=".ui.SlotDetailsActivity"/>
 
     </application>
 

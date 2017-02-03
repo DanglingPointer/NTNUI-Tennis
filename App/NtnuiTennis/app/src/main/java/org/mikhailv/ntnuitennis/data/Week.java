@@ -39,7 +39,8 @@ class WeekImpl implements Week
         Slot slot;
         for (Day d : m_days) {
             for (int hour = 8; hour < Sizes.DAY + 8; ++hour) {
-                if ((slot = d.getSlot(hour)) != null)
+                slot = d.getSlot(hour);
+                if (slot.getLevel() != null)
                     newHours.add(new HourInfo(d.getDate(), slot.getLevel(), hour));
             }
         }

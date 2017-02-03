@@ -3,6 +3,7 @@ package org.mikhailv.ntnuitennis.net;
 import android.util.Log;
 import android.util.Xml;
 
+import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -32,12 +33,11 @@ class FetchSlotTask extends FetchTask
     @Override
     protected Object parse(String rawData) throws ParseException
     {
-        Log.i(TAG_LOG, rawData);
         SlotParser parser;
         try {
             int openingTagIndex = rawData.indexOf("<table>");
-            int closingTagIndex = rawData.indexOf("</table>");
-            rawData = rawData.substring(openingTagIndex, closingTagIndex + 8);
+            rawData = rawData.substring(openingTagIndex);
+            Log.d(TAG_LOG, rawData.substring(rawData.indexOf("<p>"), rawData.indexOf("</p")));
             parser = new SlotParser(rawData);
             parser.parse();
         } catch (Exception e) {
@@ -63,14 +63,15 @@ class FetchSlotTask extends FetchTask
 
         private XmlPullParser m_parser;
         private List<List<List<String>>> m_data = new ArrayList<>(3);
+        private String m_link;
 
         public SlotParser(String rawHtml) throws XmlPullParserException
         {
             rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
-                    .replaceAll("&amp;", "&");
+                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
+            m_link = null;
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());
             m_data.add(IND_REGS, new ArrayList<List<String>>());
@@ -90,6 +91,7 @@ class FetchSlotTask extends FetchTask
             boolean newLine = false;
             int depth = 1;
             int what = IND_INFO;
+            List<String> links = new ArrayList<>();
             List<String> currentLine = null;
 
             while (depth != 0) {
@@ -102,6 +104,10 @@ class FetchSlotTask extends FetchTask
                                 m_parser.getAttributeName(1).equals("rowspan")) {
                             newLine = true;
                             ++what;
+                        } else if (m_parser.getAttributeCount() > 0 &&
+                                m_parser.getAttributeName(0).equals("href")) {
+                            Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
+                            links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
                         }
                         break;
                     case XmlPullParser.END_TAG:
@@ -124,6 +130,31 @@ class FetchSlotTask extends FetchTask
                         break;
                 }
             }
+            while (m_parser.next() != XmlPullParser.START_TAG)
+                ;
+            depth++;
+            while (depth != 0) {
+                int token = m_parser.next();
+
+                if (token == XmlPullParser.START_TAG){
+                    ++depth;
+                    if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href")) {
+                        Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
+                        links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
+                    }
+                }
+                else if (token == XmlPullParser.END_TAG) {
+                    --depth;
+                }
+            }
+            for (String link : links) {
+                if (link.contains("leggtilvikar") || link.contains("fjernvikar")
+                        || link.contains("bekrefte") || link.contains("kommerikke")) {
+                    m_link = Globals.HOME_URL + link;
+                    break;
+                }
+            }
+
             m_parser = null; // allow parser to be collected by GC
 //            test();
         }
@@ -201,6 +232,11 @@ class FetchSlotTask extends FetchTask
         {
             List<String> line = m_data.get(IND_SUBST).get(row + 1);
             return line.toArray(new String[line.size()]);
+        }
+        @Override
+        public String getAttendingLink()
+        {
+            return m_link;
         }
     }
 }

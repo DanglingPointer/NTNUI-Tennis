@@ -26,6 +26,7 @@ import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 
 import java.util.List;
@@ -42,8 +43,6 @@ public class DayFragment extends Fragment implements NetworkCallbacks
 
         void onSlotDetailsPressed(int day, Slot slot);
 
-        void onAttendPressed(int day, Slot slot);
-
         void updateData();
 
         void eraseMe(DayFragment me);
@@ -54,6 +53,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
 
     private SlotAdapter m_adapter;
     private ProgressBar m_progressBar;
+    private TextView m_dateText;
     private Callbacks m_callbacks;
 
     public static DayFragment newInstance(int day)
@@ -132,8 +132,8 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         recyclerView.setAdapter(m_adapter);
 
         m_progressBar = (ProgressBar)root.findViewById(R.id.day_progress_bar);
-        TextView dateText = (TextView)root.findViewById(R.id.day_text_date);
-        dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
+        m_dateText = (TextView)root.findViewById(R.id.day_text_date);
+        m_dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
 
         return root;
     }
@@ -159,17 +159,23 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_progressBar.setProgress(0);
     }
     @Override
-    public void onTableFetched(Exception e)
+    public void onTableFetched(Week data, Exception e)
     {
-        // TODO: add Week to arguments, and forward it to the Manager
+        Globals.currentWeek = data;
         m_progressBar.setVisibility(View.GONE);
         m_adapter.notifyDataSetChanged();
+        m_dateText.setText(Globals.getCurrentWeek().getDay(m_adapter.getDayIndex()).getDate());
     }
     @Override
     public void onSlotFetched(SlotDetailsInfo data, Exception e)
     {
         m_progressBar.setVisibility(View.GONE);
-        m_callbacks.updateData(); // refresh table after finished 'attend'
+//        m_callbacks.updateData(); // refresh table after finished 'attend'
+    }
+    @Override
+    public void onAuthenticateFinished()
+    {
+        m_progressBar.setVisibility(View.GONE);
     }
     @Override
     public void onDownloadCanceled()
@@ -242,6 +248,10 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
     void onSlotDetailsPressed(Slot slot)
     {
         ((DayFragment.Callbacks)m_context).onSlotDetailsPressed(m_dayIndex, slot);
+    }
+    public int getDayIndex()
+    {
+        return m_dayIndex;
     }
 }
 
@@ -347,11 +357,11 @@ class SlotHolder extends RecyclerView.ViewHolder
     {
         Context c = m_detailsBtn.getContext();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            m_detailsBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
-            m_expandBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
+            m_detailsBtn.setBackgroundColor(c.getColor(R.color.green));
+            m_expandBtn.setBackgroundColor(c.getColor(R.color.green));
         } else {
-            m_detailsBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
-            m_expandBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
+            m_detailsBtn.setBackgroundColor(c.getResources().getColor(R.color.green));
+            m_expandBtn.setBackgroundColor(c.getResources().getColor(R.color.green));
         }
     }
     /**

@@ -63,6 +63,7 @@ class AuthenticateTask extends NetworkTask
 
             writer.close();
             os.close();
+            publishProgress(50);
 
             int response = conn.getResponseCode();
             if (response != HttpURLConnection.HTTP_OK)
@@ -86,24 +87,28 @@ class AuthenticateTask extends NetworkTask
         }
         return null;
     }
-//    @Override
-//    protected void onPreExecute()
-//    {
-//
-//    }
-//    @Override
-//    protected void onPostExecute(Object o)
-//    {
-//
-//    }
-//    @Override
-//    protected void onProgressUpdate(Integer... values)
-//    {
-//
-//    }
-//    @Override
-//    protected void onCancelled()
-//    {
-//
-//    }
+    @Override
+    protected void onPreExecute()
+    {
+        if (getCallbacks() != null)
+            getCallbacks().onPreDownload();
+    }
+    @Override
+    protected void onPostExecute(Object o)
+    {
+        if (getCallbacks() != null)
+            getCallbacks().onAuthenticateFinished();
+    }
+    @Override
+    protected void onProgressUpdate(Integer... values)
+    {
+        if (getCallbacks() != null)
+            getCallbacks().onProgressChanged(values[0]);
+    }
+    @Override
+    protected void onCancelled()
+    {
+        if (getCallbacks() != null)
+            getCallbacks().onDownloadCanceled();
+    }
 }

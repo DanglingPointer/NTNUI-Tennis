@@ -108,7 +108,7 @@ class HourHolder extends RecyclerView.ViewHolder implements CompoundButton.OnChe
     {
         m_data = data;
         m_lvlText.setText(data.getLvl());
-        m_checkBox.setText(data.getDay() + ", " + data.getTime());
+        m_checkBox.setText(data.getDay() + ", " + data.getTime() + ":00");
         m_checkBox.setChecked(data.getChecked());
     }
 }

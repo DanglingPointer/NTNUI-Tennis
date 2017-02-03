@@ -10,13 +10,11 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.StringReader;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Stack;
 
 import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
@@ -34,11 +32,14 @@ class FetchTableTask extends FetchTask
     protected Object parse(String rawHtml) throws ParseException
     {
         try {
+            int openingTagIndex = rawHtml.indexOf("<table>");
+            int closingTagIndex = rawHtml.indexOf("</table>");
+            rawHtml = rawHtml.substring(openingTagIndex, closingTagIndex + "</table>".length());
+
             rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
-                    .replaceAll("&amp;", "&");
+                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
 
             TableBuilder builder = new TableBuilder(8, Globals.Sizes.WEEK, Globals.Sizes.DAY);
             XmlPullParser parser = Xml.newPullParser();
@@ -72,7 +73,7 @@ class FetchTableTask extends FetchTask
 
                         String link = tag.attributes.get("href");
                         if (link != null) {
-                            builder.addLink(day, hour, link.substring(1));
+                            builder.addLink(day, hour, Globals.HOME_URL + link.substring(1).replaceAll("&amp;", "&"));
                         }
 
                         String clazz = tag.attributes.get("class");
@@ -85,11 +86,16 @@ class FetchTableTask extends FetchTask
 
                         String tip = tag.attributes.get("title");
                         if (tip != null) {
-                            tip = tip.replaceAll("&lt;strong&gt;", "")
-                                    .replaceAll("&lt;/strong&gt;", "")
-                                    .replaceAll("&lt;br/&gt;", "\n")
-                                    .replaceAll("&lt;i&gt;", "")
-                                    .replaceAll("&lt;/i&gt;", "");
+//                            tip = tip.replaceAll("&lt;strong&gt;", "")
+//                                    .replaceAll("&lt;/strong&gt;", "")
+//                                    .replaceAll("&lt;br/&gt;", "\n")
+//                                    .replaceAll("&lt;i&gt;", "")
+//                                    .replaceAll("&lt;/i&gt;", "");
+                            tip = tip.replaceAll("<strong>", "")
+                                    .replaceAll("</strong>", "")
+                                    .replaceAll("<br/>", "\n")
+                                    .replaceAll("<i>", "")
+                                    .replaceAll("</i>", "");
                             builder.addNames(day, hour, Arrays.asList(tip.split("\n")));
                         }
 

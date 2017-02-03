@@ -16,7 +16,7 @@ import java.text.ParseException;
 
 abstract class FetchTask extends NetworkTask
 {
-    protected static final int BUFFER_SIZE = 20000;
+    protected static final int BUFFER_SIZE = 40000;
     protected static final int MAX_READ = 2000;
 
     public FetchTask(NetworkCallbacks callbacks)
@@ -58,7 +58,7 @@ abstract class FetchTask extends NetworkTask
                     offset += lastRead;
                 }
                 if (offset != -1)
-                    rawResult = new String(buffer, 0, offset + 1); // last read decrements offset
+                    rawResult = new String(buffer, 0, offset); // last read decrements offset
                 inStream.close();
             }
             return parse(rawResult);
