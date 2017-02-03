@@ -31,6 +31,8 @@ import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 
 import java.util.List;
 
+import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+
 /**
  * Created by MikhailV on 07.01.2017.
  */
@@ -123,11 +125,11 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         int dayIndex = getArguments().getInt(ARG_DAY);
         if (savedInstanceState == null) {
             m_adapter = new SlotAdapter(getActivity(), dayIndex);
-            Log.d(Globals.TAG_LOG, "onCreateView called without saved state");
+            Log.d(TAG_LOG, "onCreateView called without saved state");
         } else {
             boolean[] expanded = savedInstanceState.getBooleanArray(SAVED_EXPANDED);
             m_adapter = new SlotAdapter(getActivity(), dayIndex, expanded);
-            Log.d(Globals.TAG_LOG, "onCreateView called with saved state");
+            Log.d(TAG_LOG, "onCreateView called with saved state");
         }
         recyclerView.setAdapter(m_adapter);
 
@@ -220,10 +222,12 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
         if (m_slotHolders[position] != null) {
             // rebinding after scrolling/updates
             expanded = m_slotHolders[position].isExpanded();
+            Log.d(TAG_LOG, "Using existing SlotHolder, pos = " + position + ", expanded = " + expanded);
         } else if (m_savedState != null && m_savedState[position] != null) {
             // rebinding when recreating the fragment
             expanded = m_savedState[position];
             m_savedState[position] = null; // invalidate state
+            Log.d(TAG_LOG, "Using saved state, pos = " + position + ", expanded = " + expanded);
         }
         holder.bind(Globals.getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour, expanded);
         m_slotHolders[position] = holder;
@@ -313,7 +317,8 @@ class SlotHolder extends RecyclerView.ViewHolder
         }
         m_slotData = slot;
 
-        setBtnsEnabled(m_slotData.getLink() != null && !m_slotData.isExpired());
+        m_detailsBtn.setEnabled(!m_slotData.isExpired() && m_slotData.getLevel() != null);
+        m_expandBtn.setEnabled(m_slotData.getLevel() != null);
         m_detailsBtn.setText(slot.getLevel());
         if (slot.isExpired())
             setExpiredBackground();
@@ -325,15 +330,6 @@ class SlotHolder extends RecyclerView.ViewHolder
     public boolean isExpanded()
     {
         return m_expanded;
-    }
-
-    /**
-     * Enables/disables all buttons
-     */
-    private void setBtnsEnabled(boolean enabled)
-    {
-        m_expandBtn.setEnabled(enabled);
-        m_detailsBtn.setEnabled(enabled);
     }
     /**
      * Sets text if expanded

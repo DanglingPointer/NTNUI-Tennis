@@ -37,7 +37,6 @@ class FetchSlotTask extends FetchTask
         try {
             int openingTagIndex = rawData.indexOf("<table>");
             rawData = rawData.substring(openingTagIndex);
-            Log.d(TAG_LOG, rawData.substring(rawData.indexOf("<p>"), rawData.indexOf("</p")));
             parser = new SlotParser(rawData);
             parser.parse();
         } catch (Exception e) {
@@ -70,7 +69,12 @@ class FetchSlotTask extends FetchTask
             rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
+                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
+                    .replaceAll("<td style=\"text-align: left\" rowspan=", "<tr><td style=\"text-align: left\" rowspan=");
+            // The last one because of malformed html on weekend sessions
+
+            Log.d(TAG_LOG, rawHtml.substring(0, rawHtml.indexOf("</p")));
+
             m_link = null;
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());
@@ -136,14 +140,13 @@ class FetchSlotTask extends FetchTask
             while (depth != 0) {
                 int token = m_parser.next();
 
-                if (token == XmlPullParser.START_TAG){
+                if (token == XmlPullParser.START_TAG) {
                     ++depth;
                     if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href")) {
                         Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
                         links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
                     }
-                }
-                else if (token == XmlPullParser.END_TAG) {
+                } else if (token == XmlPullParser.END_TAG) {
                     --depth;
                 }
             }
@@ -213,7 +216,9 @@ class FetchSlotTask extends FetchTask
         @Override
         public String getSubstitutesTitle()
         {
-            return m_data.get(IND_SUBST).get(TITLE).get(0);
+            if (m_data.get(IND_SUBST).size() > 0)
+                return m_data.get(IND_SUBST).get(TITLE).get(0);
+            return null;
         }
         @Override
         public String[] getInfoLine(int row)
