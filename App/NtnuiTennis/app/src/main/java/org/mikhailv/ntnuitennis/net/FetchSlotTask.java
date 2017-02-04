@@ -70,10 +70,10 @@ class FetchSlotTask extends FetchTask
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
                     .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
-                    .replaceAll("<td style=\"text-align: left\" rowspan=", "<tr><td style=\"text-align: left\" rowspan=");
+                    .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td");
             // The last one because of malformed html on weekend sessions
 
-            Log.d(TAG_LOG, rawHtml.substring(0, rawHtml.indexOf("</p")));
+            Log.d(TAG_LOG, rawHtml);
 
             m_link = null;
 
@@ -118,7 +118,7 @@ class FetchSlotTask extends FetchTask
                         --depth;
                         if (m_parser.getName().equals("tr")) {
                             m_data.get(what).add(currentLine);
-                            currentLine = null; // just in case
+                            currentLine = null; // just in case / for debugging
                         }
                         break;
                     case XmlPullParser.TEXT:
