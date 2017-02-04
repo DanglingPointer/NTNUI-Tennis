@@ -209,18 +209,6 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
     public void onBindViewHolder(SlotHolder holder, int position)
     {
         int hour = position + 8;
-//        boolean expanded = false;
-//        if (m_slotHolders[position] != null) {
-//            // rebinding after scrolling/updates
-//            expanded = m_slotHolders[position].isExpanded();
-//            Log.d(TAG_LOG, "Using existing SlotHolder, pos = " + position + ", expanded = " + expanded);
-//        } else if (m_expanded != null && m_expanded[position] != null) {
-//            // rebinding when recreating the fragment
-//            expanded = m_expanded[position];
-//            m_expanded[position] = null; // invalidate state
-//            Log.d(TAG_LOG, "Using saved state, pos = " + position + ", expanded = " + expanded);
-//        }
-
         holder.bind(Globals.getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour);
     }
     @Override
@@ -286,8 +274,8 @@ class SlotHolder extends RecyclerView.ViewHolder
                     m_expandBtn.setImageResource(R.drawable.ic_collapse);
                     expanded = true;
                 }
-                m_adapter.setExpandedAt(position, expanded);
                 configReservedText(expanded);
+                m_adapter.setExpandedAt(position, expanded);
             }
         });
         m_detailsBtn.setOnClickListener(new View.OnClickListener()
@@ -350,7 +338,7 @@ class SlotHolder extends RecyclerView.ViewHolder
         }
     }
     /**
-     * Sets gray text color if no availble places
+     * Sets gray text color if no available places
      */
     private void setNoavailableTextColor(boolean available)
     {

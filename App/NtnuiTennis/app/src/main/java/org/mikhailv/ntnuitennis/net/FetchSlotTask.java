@@ -61,7 +61,7 @@ class FetchSlotTask extends FetchTask
         private static final int TITLE = 0;
 
         private XmlPullParser m_parser;
-        private List<List<List<String>>> m_data = new ArrayList<>(3);
+        private final List<List<List<String>>> m_data = new ArrayList<>(3);
         private String m_link;
 
         public SlotParser(String rawHtml) throws XmlPullParserException
@@ -157,37 +157,8 @@ class FetchSlotTask extends FetchTask
                     break;
                 }
             }
-
-            m_parser = null; // allow parser to be collected by GC
-//            test();
+            m_parser = null; // let the parser be collected by GC
         }
-        //        void test() // temp
-//        {
-//            Log.d(TAG_LOG, "Info title: " + getInfoTitle());
-//            for (int lineNumber = 0; lineNumber < getInfoSize(); lineNumber++) {
-//                StringBuilder sb = new StringBuilder();
-//                String[] line = getInfoLine(lineNumber);
-//                for (String entry : line)
-//                    sb.append(entry).append(' ');
-//                Log.d(TAG_LOG, sb.toString());
-//            }
-//            Log.d(TAG_LOG, "Regulars title: " + getRegularsTitle());
-//            for (int lineNumber = 0; lineNumber < getRegularsCount(); lineNumber++) {
-//                StringBuilder sb = new StringBuilder();
-//                String[] line = getRegularsLine(lineNumber);
-//                for (String entry : line)
-//                    sb.append(entry).append(' ');
-//                Log.d(TAG_LOG, sb.toString());
-//            }
-//            Log.d(TAG_LOG, "Subst title: " + getSubstitutesTitle());
-//            for (int lineNumber = 0; lineNumber < getSubstitutesCount(); lineNumber++) {
-//                StringBuilder sb = new StringBuilder();
-//                String[] line = getSubstitutesLine(lineNumber);
-//                for (String entry : line)
-//                    sb.append(entry).append(' ');
-//                Log.d(TAG_LOG, sb.toString());
-//            }
-//        }
         @Override
         public int getInfoSize() // row count, doesn't include title
         {
