@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">@color/extraDarkGreen</item>
         <item name="colorAccent">@color/lightGreen</item>
         <item name="actionBarPopupTheme">@style/DropDownMenuStyle</item>
+        <item name="dialogTheme">@style/DialogStyle</item>
         <!--<item name="android:colorBackground">@color/green</item>-->
     </style>
 
@@ -14,6 +15,11 @@
         <item name="android:colorBackground">?attr/colorPrimary</item>
         <item name="android:textColor">@color/white</item>
         <item name="overlapAnchor">false</item>
+    </style>
+
+    <style name="DialogStyle" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/darkGreen</item>
+        <item name="android:colorBackground">@color/darkGreen</item>
     </style>
 
     <!--Widget.AppCompat.PopupMenu.Overflow-->

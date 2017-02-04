@@ -23,7 +23,7 @@ public class NotificationsActivity extends AppCompatActivity
         i.putExtra(EXTRA_PAGER_POSITION, pagerPosition);
         return i;
     }
-    public static int getPagerPosition(Intent i)
+    public static int decodePagerPosition(Intent i)
     {
         return i.getIntExtra(EXTRA_PAGER_POSITION, 0);
     }

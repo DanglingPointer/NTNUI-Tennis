@@ -45,6 +45,8 @@ public class DayFragment extends Fragment implements NetworkCallbacks
 
         void onSlotDetailsPressed(int day, Slot slot);
 
+        void onLogInPressed();
+
         void updateData();
 
         void eraseMe(DayFragment me);
@@ -83,7 +85,8 @@ public class DayFragment extends Fragment implements NetworkCallbacks
                 return true;
             case R.id.menu_btn_next:
                 return true;
-            case R.id.menu_btn_settings:
+            case R.id.menu_btn_login:
+                m_callbacks.onLogInPressed();
                 return true;
             case R.id.menu_btn_about:
                 return true;
@@ -129,6 +132,8 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         recyclerView.setAdapter(m_adapter);
 
         m_progressBar = (ProgressBar)root.findViewById(R.id.day_progress_bar);
+        m_progressBar.setProgress(0);
+
         m_dateText = (TextView)root.findViewById(R.id.day_text_date);
         m_dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
 
@@ -147,6 +152,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onProgressChanged(int progress)
     {
+        Log.d(TAG_LOG, "Table Progress = " + progress);
         m_progressBar.setProgress(progress);
     }
     @Override

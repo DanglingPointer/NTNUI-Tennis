@@ -61,7 +61,7 @@ public class NotificationsFragment extends Fragment
     public void onStop()
     {
         super.onStop();
-        Globals.discardHoursInfoCHanges();
+        Globals.discardHoursInfoChanges();
     }
     class HourAdapter extends RecyclerView.Adapter<HourHolder>
     {

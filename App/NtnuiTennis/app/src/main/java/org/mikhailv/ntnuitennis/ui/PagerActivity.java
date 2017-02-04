@@ -7,8 +7,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
+import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
@@ -16,8 +16,6 @@ import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
-
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 public class PagerActivity extends AppCompatActivity implements DayFragment.Callbacks,
                                                                 NetworkCallbacks
@@ -76,9 +74,9 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
             return;
 
         if (requestCode == REQUEST_SLOT_DETAILS && data != null) {
-            m_viewPager.setCurrentItem(SlotDetailsActivity.getPagerPosition(data));
+            m_viewPager.setCurrentItem(SlotDetailsActivity.decodePagerPosition(data));
         } else if (requestCode == REQUEST_NOTIFICATIONS && data != null) {
-            m_viewPager.setCurrentItem(NotificationsActivity.getPagerPosition(data));
+            m_viewPager.setCurrentItem(NotificationsActivity.decodePagerPosition(data));
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -96,6 +94,21 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     {
         Intent i = SlotDetailsActivity.newIntent(this, slot.getLink(), m_viewPager.getCurrentItem());
         startActivityForResult(i, REQUEST_SLOT_DETAILS);
+    }
+    @Override
+    public void onLogInPressed()
+    {
+        if (m_networker != null){
+            m_networker.authenticate(new AppManager.Credentials()
+            {
+                @Override
+                public String getPassword() { return null; }
+                @Override
+                public String getEmail() { return null; }
+                @Override
+                public String getLanguage() { return null; }
+            });
+        }
     }
     @Override
     public void updateData()

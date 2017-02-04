@@ -27,10 +27,10 @@ public interface AppManager
 
         String getEmail();
 
-        void setCredentials(String password, String email);
+        String getLanguage();
     }
 
-    Credentials getCredentials();
+    void saveCredentials(String email, String password, String lang);
 
     /**
      * Authenticates the first time a networker is set
@@ -46,7 +46,7 @@ public interface AppManager
      */
     List<HourInfo> getHoursInfo();
 
-    void discardHoursInfoCHanges();
+    void discardHoursInfoChanges();
 
     /**
      * Writes to file if any changes made

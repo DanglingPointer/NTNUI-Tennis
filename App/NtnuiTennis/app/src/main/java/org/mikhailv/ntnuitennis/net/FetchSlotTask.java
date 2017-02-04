@@ -73,8 +73,6 @@ class FetchSlotTask extends FetchTask
                     .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td");
             // The last one because of malformed html on weekend sessions
 
-            Log.d(TAG_LOG, rawHtml);
-
             m_link = null;
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());

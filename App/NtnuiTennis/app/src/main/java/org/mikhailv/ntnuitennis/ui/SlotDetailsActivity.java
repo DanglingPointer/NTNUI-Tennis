@@ -32,13 +32,16 @@ import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 public class SlotDetailsActivity extends AppCompatActivity implements NetworkCallbacks
 {
-    // Should take day and hour and find links through the right Slot in Globals
     public static Intent newIntent(Context context, String infoLink, int pagerPosition)
     {
         Intent i = new Intent(context, SlotDetailsActivity.class);
         i.putExtra(EXTRA_URL_INFO, infoLink);
         i.putExtra(EXTRA_PAGER_POSITION, pagerPosition);
         return i;
+    }
+    public static int decodePagerPosition(Intent i)
+    {
+        return i.getIntExtra(EXTRA_PAGER_POSITION, 0);
     }
 
     private static final String EXTRA_URL_INFO = "SlotDetailsActivity.URL_INFO";
@@ -53,10 +56,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     private SlotDetailsInfo m_data;
 
 
-    public static int getPagerPosition(Intent i)
-    {
-        return i.getIntExtra(EXTRA_PAGER_POSITION, 0);
-    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -163,8 +162,8 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     @Override
     public void onProgressChanged(int progress)
     {
+        Log.d(TAG_LOG, "Slot Progress = " + progress);
         m_progress.setProgress(progress);
-        Log.d(TAG_LOG, "Progress: " + progress);
     }
     @Override
     public void onPreDownload()

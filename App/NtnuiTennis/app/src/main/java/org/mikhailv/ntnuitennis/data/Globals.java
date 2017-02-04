@@ -70,7 +70,7 @@ public final class Globals
         }
         return s_hours;
     }
-    public static void discardHoursInfoCHanges()
+    public static void discardHoursInfoChanges()
     {
         s_hours = null;
     }

@@ -1,6 +1,7 @@
 package org.mikhailv.ntnuitennis.net;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 
+import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+
 /**
  * Created by MikhailV on 31.01.2017.
  */
@@ -17,7 +20,7 @@ import java.text.ParseException;
 abstract class FetchTask extends NetworkTask
 {
     protected static final int BUFFER_SIZE = 40000;
-    protected static final int MAX_READ = 2000;
+    protected static final int MAX_READ = 4000; // 2000
 
     public FetchTask(NetworkCallbacks callbacks)
     {
@@ -49,11 +52,11 @@ abstract class FetchTask extends NetworkTask
             inStream = conn.getInputStream();
             if (inStream != null) {
                 InputStreamReader reader = new InputStreamReader(inStream, "UTF-8");
-                char[] buffer = new char[BUFFER_SIZE]; // 2^15=32768
+                char[] buffer = new char[BUFFER_SIZE];
 
                 int lastRead = 0, offset = 0;
                 while (lastRead != -1 && offset < BUFFER_SIZE && !isCancelled()) {
-                    publishProgress(offset * 100 / 16000);
+                    publishProgress(offset * 100 / BUFFER_SIZE);
                     lastRead = reader.read(buffer, offset, Math.min(MAX_READ, BUFFER_SIZE - offset));
                     offset += lastRead;
                 }
