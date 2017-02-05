@@ -3,7 +3,9 @@ package org.mikhailv.ntnuitennis.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mikhailv.ntnuitennis.data.Globals.Sizes;
+import static org.mikhailv.ntnuitennis.AppManager.DAY_SIZE;
+import static org.mikhailv.ntnuitennis.AppManager.INIT_HOUR;
+import static org.mikhailv.ntnuitennis.AppManager.WEEK_SIZE;
 
 /**
  * Created by MikhailV on 06.01.2017.
@@ -18,13 +20,13 @@ public interface Week
 
 class WeekImpl implements Week
 {
-    private final Day[] m_days = new Day[Sizes.WEEK];
+    private final Day[] m_days = new Day[WEEK_SIZE];
 
     public WeekImpl()
     { }
     public Day getDay(int index)
     {
-        if (index < 0 || index >= Sizes.WEEK)
+        if (index < 0 || index >= WEEK_SIZE)
             return null;
         return m_days[index];
     }
@@ -38,7 +40,7 @@ class WeekImpl implements Week
         List<HourInfo> newHours = new ArrayList<>();
         Slot slot;
         for (Day d : m_days) {
-            for (int hour = 8; hour < Sizes.DAY + 8; ++hour) {
+            for (int hour = INIT_HOUR; hour < DAY_SIZE + INIT_HOUR; ++hour) {
                 slot = d.getSlot(hour);
                 if (slot.getLevel() != null)
                     newHours.add(new HourInfo(d.getDate(), slot.getLevel(), hour));

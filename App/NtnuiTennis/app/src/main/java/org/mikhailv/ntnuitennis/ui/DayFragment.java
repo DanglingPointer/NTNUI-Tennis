@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.R;
-import org.mikhailv.ntnuitennis.data.Globals;
+import org.mikhailv.ntnuitennis.TennisApp;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
@@ -31,7 +31,9 @@ import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 
 import java.util.List;
 
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+import static org.mikhailv.ntnuitennis.AppManager.DAY_SIZE;
+import static org.mikhailv.ntnuitennis.AppManager.INIT_HOUR;
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 07.01.2017.
@@ -135,7 +137,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_progressBar.setProgress(0);
 
         m_dateText = (TextView)root.findViewById(R.id.day_text_date);
-        m_dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
+        m_dateText.setText(TennisApp.getManager(getActivity()).getCurrentWeek().getDay(dayIndex).getDate());
 
         return root;
     }
@@ -164,16 +166,16 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onTableFetched(Week data, Exception e)
     {
-        Globals.currentWeek = data;
+        TennisApp.getManager(getActivity()).setCurrentWeek(data);
         m_progressBar.setVisibility(View.GONE);
         m_adapter.notifyDataSetChanged();
-        m_dateText.setText(Globals.getCurrentWeek().getDay(m_adapter.getDayIndex()).getDate());
+        m_dateText.setText(TennisApp.getManager(getActivity())
+                .getCurrentWeek().getDay(m_adapter.getDayIndex()).getDate());
     }
     @Override
     public void onSlotFetched(SlotDetailsInfo data, Exception e)
     {
         m_progressBar.setVisibility(View.GONE);
-//        m_callbacks.updateData(); // refresh table after finished 'attend'
     }
     @Override
     public void onAuthenticateFinished()
@@ -196,7 +198,7 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
 
     public SlotAdapter(FragmentActivity context, int dayIndex)
     {
-        this(context, dayIndex, new boolean[Globals.Sizes.DAY]);
+        this(context, dayIndex, new boolean[DAY_SIZE]);
     }
     public SlotAdapter(FragmentActivity context, int dayIndex, boolean[] savedState)
     {
@@ -214,13 +216,13 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
     @Override
     public void onBindViewHolder(SlotHolder holder, int position)
     {
-        int hour = position + 8;
-        holder.bind(Globals.getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour);
+        int hour = position + INIT_HOUR;
+        holder.bind(TennisApp.getManager(m_context).getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour);
     }
     @Override
     public int getItemCount()
     {
-        return Globals.Sizes.DAY;
+        return DAY_SIZE;
     }
     public boolean getExpandedAt(int position)
     {

@@ -16,7 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import org.mikhailv.ntnuitennis.R;
-import org.mikhailv.ntnuitennis.data.Globals;
+import org.mikhailv.ntnuitennis.TennisApp;
 import org.mikhailv.ntnuitennis.data.HourInfo;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class NotificationsFragment extends Fragment
     {
         switch (item.getItemId()) {
             case R.id.menu_not_save_btn:
-                Globals.saveHoursInfo(getContext());
+                TennisApp.getManager(getActivity()).saveHoursInfo();
                 getActivity().finish();
                 return true;
             default:
@@ -61,7 +61,7 @@ public class NotificationsFragment extends Fragment
     public void onStop()
     {
         super.onStop();
-        Globals.discardHoursInfoChanges();
+        TennisApp.getManager(getContext()).discardHoursInfoChanges();
     }
     class HourAdapter extends RecyclerView.Adapter<HourHolder>
     {
@@ -74,13 +74,13 @@ public class NotificationsFragment extends Fragment
         @Override
         public void onBindViewHolder(HourHolder holder, int position)
         {
-            List<HourInfo> data = Globals.getHoursInfo(getContext());
+            List<HourInfo> data = TennisApp.getManager(getContext()).getHoursInfo();
             holder.bind(data.get(position));
         }
         @Override
         public int getItemCount()
         {
-            return Globals.getHoursInfo(getContext()).size();
+            return TennisApp.getManager(getContext()).getHoursInfo().size();
         }
     }
 

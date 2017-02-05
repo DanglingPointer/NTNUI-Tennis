@@ -19,7 +19,7 @@ import org.mikhailv.ntnuitennis.ui.LoginDialogFragment;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 21.01.2017.

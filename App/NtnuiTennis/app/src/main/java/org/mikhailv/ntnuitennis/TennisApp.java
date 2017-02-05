@@ -4,8 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.HourInfo;
+import org.mikhailv.ntnuitennis.data.TableBuilder;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 04.02.2017.
@@ -134,6 +134,10 @@ public class TennisApp extends Application
         @Override
         public Week getCurrentWeek()
         {
+            if (m_week == null) {
+                TableBuilder builder = new TableBuilder(INIT_HOUR, WEEK_SIZE, DAY_SIZE);
+                m_week = builder.getWeek();
+            }
             return m_week;
         }
         @Override

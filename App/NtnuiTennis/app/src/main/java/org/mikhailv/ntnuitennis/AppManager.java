@@ -19,6 +19,8 @@ public interface AppManager
     int DAY_SIZE = 15;
     int WEEK_SIZE = 8;
     int INIT_HOUR = 8;
+    String TAG_LOG = "MIKHAILS_LOG";
+    String HOME_URL = "http://org.ntnu.no/tennisgr/";
 
     interface Credentials
     {

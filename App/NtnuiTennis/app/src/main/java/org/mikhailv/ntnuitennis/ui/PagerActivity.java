@@ -10,13 +10,13 @@ import android.os.Bundle;
 
 import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.R;
-import org.mikhailv.ntnuitennis.TennisApp;
-import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
+
+import static org.mikhailv.ntnuitennis.AppManager.WEEK_SIZE;
 
 public class PagerActivity extends AppCompatActivity implements DayFragment.Callbacks,
                                                                 NetworkCallbacks
@@ -27,7 +27,7 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
 
     private ViewPager m_viewPager;
     private NetworkFragment m_networker;
-    private DayFragment[] m_fragments = new DayFragment[Globals.Sizes.WEEK];
+    private DayFragment[] m_fragments = new DayFragment[WEEK_SIZE];
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,7 +47,7 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
             @Override
             public int getCount()
             {
-                return Globals.Sizes.WEEK;
+                return WEEK_SIZE;
             }
         });
         if (savedInstanceState != null) {

@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.R;
-import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
@@ -24,7 +23,7 @@ import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
 import java.io.Serializable;
 
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 22.01.2017.

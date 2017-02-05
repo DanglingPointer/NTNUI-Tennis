@@ -3,7 +3,7 @@ package org.mikhailv.ntnuitennis.net;
 import android.util.Log;
 import android.util.Xml;
 
-import org.mikhailv.ntnuitennis.data.Globals;
+import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -15,7 +15,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -151,7 +151,7 @@ class FetchSlotTask extends FetchTask
             for (String link : links) {
                 if (link.contains("leggtilvikar") || link.contains("fjernvikar")
                         || link.contains("bekrefte") || link.contains("kommerikke")) {
-                    m_link = Globals.HOME_URL + link;
+                    m_link = AppManager.HOME_URL + link;
                     break;
                 }
             }

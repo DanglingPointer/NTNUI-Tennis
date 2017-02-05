@@ -1,7 +1,6 @@
 package org.mikhailv.ntnuitennis.net;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +9,6 @@ import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
-
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 /**
  * Created by MikhailV on 31.01.2017.

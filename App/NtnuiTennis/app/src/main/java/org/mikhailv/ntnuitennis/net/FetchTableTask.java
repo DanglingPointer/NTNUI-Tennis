@@ -3,7 +3,7 @@ package org.mikhailv.ntnuitennis.net;
 import android.util.Log;
 import android.util.Xml;
 
-import org.mikhailv.ntnuitennis.data.Globals;
+import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.data.TableBuilder;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.xmlpull.v1.XmlPullParser;
@@ -16,7 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
+import static org.mikhailv.ntnuitennis.AppManager.DAY_SIZE;
+import static org.mikhailv.ntnuitennis.AppManager.WEEK_SIZE;
 
 /**
  * Created by MikhailV on 31.01.2017.
@@ -41,7 +42,7 @@ class FetchTableTask extends FetchTask
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
                     .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
 
-            TableBuilder builder = new TableBuilder(8, Globals.Sizes.WEEK, Globals.Sizes.DAY);
+            TableBuilder builder = new TableBuilder(8, WEEK_SIZE, DAY_SIZE);
             XmlPullParser parser = Xml.newPullParser();
             parser.setInput(new StringReader(rawHtml));
 
@@ -73,7 +74,7 @@ class FetchTableTask extends FetchTask
 
                         String link = tag.attributes.get("href");
                         if (link != null) {
-                            builder.addLink(day, hour, Globals.HOME_URL + link.substring(1).replaceAll("&amp;", "&"));
+                            builder.addLink(day, hour, AppManager.HOME_URL + link.substring(1).replaceAll("&amp;", "&"));
                         }
 
                         String clazz = tag.attributes.get("class");
@@ -131,7 +132,7 @@ class FetchTableTask extends FetchTask
 
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG_LOG, e.toString());
+            Log.d(AppManager.TAG_LOG, e.toString());
             throw new ParseException(e.toString(), 0);
         }
     }
