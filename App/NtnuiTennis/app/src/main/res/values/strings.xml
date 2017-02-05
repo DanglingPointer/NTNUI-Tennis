@@ -16,4 +16,9 @@
     <string name="password_hint">Type your PIN-code here...</string>
     <string name="email_hint">Type your email here...</string>
     <string name="credentials_dialog_title">Login</string>
+    <string name="lang_prompt">Choose language:</string>
+    <string-array name="lang_array">
+        <item>Norwegian</item>
+        <item>English</item>
+    </string-array>
 </resources>

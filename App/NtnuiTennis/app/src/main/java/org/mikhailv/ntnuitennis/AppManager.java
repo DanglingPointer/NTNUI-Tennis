@@ -19,7 +19,6 @@ public interface AppManager
     int DAY_SIZE = 15;
     int WEEK_SIZE = 8;
     int INIT_HOUR = 8;
-    String HOME_URL = "http://org.ntnu.no/tennisgr/";
 
     interface Credentials
     {
@@ -29,6 +28,8 @@ public interface AppManager
 
         String getLanguage();
     }
+
+    String getHomeURL();
 
     void saveCredentials(String email, String password, String lang);
 

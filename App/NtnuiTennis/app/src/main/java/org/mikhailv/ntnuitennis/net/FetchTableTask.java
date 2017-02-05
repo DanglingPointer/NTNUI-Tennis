@@ -86,11 +86,6 @@ class FetchTableTask extends FetchTask
 
                         String tip = tag.attributes.get("title");
                         if (tip != null) {
-//                            tip = tip.replaceAll("&lt;strong&gt;", "")
-//                                    .replaceAll("&lt;/strong&gt;", "")
-//                                    .replaceAll("&lt;br/&gt;", "\n")
-//                                    .replaceAll("&lt;i&gt;", "")
-//                                    .replaceAll("&lt;/i&gt;", "");
                             tip = tip.replaceAll("<strong>", "")
                                     .replaceAll("</strong>", "")
                                     .replaceAll("<br/>", "\n")

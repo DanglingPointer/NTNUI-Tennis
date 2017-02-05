@@ -8,8 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import org.mikhailv.ntnuitennis.AppManager;
@@ -20,7 +23,7 @@ import org.mikhailv.ntnuitennis.TennisApp;
  * Created by MikhailV on 04.02.2017.
  */
 
-public class LoginDialogFragment extends DialogFragment
+public class LoginDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener
 {
     private static final String EXTRA_EMAIL = "LoginDialogFragment.extraEmail";
     private static final String EXTRA_PASSWORD = "LoginDialogFragment.extraPassword";
@@ -49,6 +52,7 @@ public class LoginDialogFragment extends DialogFragment
 
     private EditText m_passwordEditText;
     private EditText m_emailEditText;
+    private AppCompatSpinner m_spinner;
 
     @NonNull
     @Override
@@ -59,11 +63,18 @@ public class LoginDialogFragment extends DialogFragment
 
         m_passwordEditText = (EditText)root.findViewById(R.id.password_edit_text);
         m_emailEditText = (EditText)root.findViewById(R.id.email_edit_text);
+        m_spinner = (AppCompatSpinner)root.findViewById(R.id.lang_spinner);
+
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.lang_array, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        m_spinner.setAdapter(spinnerAdapter);
+        m_spinner.setOnItemSelectedListener(this);
 
         if (savedInstanceState != null) {
             m_passwordEditText.setText(savedInstanceState.getString(SAVED_PASSWORD));
             m_emailEditText.setText(savedInstanceState.getString(SAVED_EMAIL));
-            // TODO: extract language
+            m_spinner.setSelection(savedInstanceState.getInt(SAVED_LANG));
         }
 
         return new AlertDialog.Builder(getActivity())
@@ -79,7 +90,7 @@ public class LoginDialogFragment extends DialogFragment
 
                         String email = m_emailEditText.getText().toString();
                         String password = m_passwordEditText.getText().toString();
-                        String lang = "no"; // TODO
+                        String lang = (m_spinner.getSelectedItemPosition() == 0) ? "no" : "en";
 
                         TennisApp.getManager(getActivity()).saveCredentials(email, password, lang);
 
@@ -108,6 +119,16 @@ public class LoginDialogFragment extends DialogFragment
         super.onSaveInstanceState(outState);
         outState.putString(SAVED_PASSWORD, m_passwordEditText.getText().toString());
         outState.putString(SAVED_EMAIL, m_emailEditText.getText().toString());
-        // TODO: save language
+        outState.putInt(SAVED_LANG, m_spinner.getSelectedItemPosition());
+    }
+    @Override
+    public void onNothingSelected(AdapterView<?> parent)
+    {
+
+    }
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+    {
+
     }
 }

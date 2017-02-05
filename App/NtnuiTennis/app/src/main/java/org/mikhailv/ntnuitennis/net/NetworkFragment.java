@@ -97,11 +97,11 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     /**
      * Network commands
      */
-    public void downloadTable(String homeAddress)
+    public void downloadTable()
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
             m_worker = new FetchTableTask(this);
-            m_worker.execute(homeAddress);
+            m_worker.execute(TennisApp.getManager(getActivity()).getHomeURL());
         }
     }
     public void downloadSlot(String slotAddress)
@@ -133,7 +133,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
 
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
             m_worker = new AuthenticateTask(this, email, password, lang);
-            m_worker.execute(AppManager.HOME_URL);
+            m_worker.execute(TennisApp.getManager(getActivity()).getHomeURL());
         }
     }
     public void cancelDownload()

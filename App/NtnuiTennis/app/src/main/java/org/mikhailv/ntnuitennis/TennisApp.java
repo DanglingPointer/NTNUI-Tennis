@@ -65,6 +65,16 @@ public class TennisApp extends Application
         {
             m_context = context;
         }
+        @Override
+        public String getHomeURL()
+        {
+            String url;
+            if (m_credentials != null && m_credentials.lang != null)
+                url = "http://org.ntnu.no/tennisgr/index.php?lang=" + m_credentials.lang;
+            else
+                url = "http://org.ntnu.no/tennisgr/";
+            return url;
+        }
         /**
          * Writes credentials both to cash and to file
          */

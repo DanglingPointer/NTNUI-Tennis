@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.R;
+import org.mikhailv.ntnuitennis.TennisApp;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
@@ -59,7 +60,7 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     protected void onStart()
     {
         super.onStart();
-        m_networker.downloadTable(Globals.HOME_URL);
+        m_networker.downloadTable();
     }
     @Override
     protected void onSaveInstanceState(Bundle outState)
@@ -114,7 +115,7 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
     public void updateData()
     {
         if (m_networker != null)
-            m_networker.downloadTable(Globals.HOME_URL);
+            m_networker.downloadTable();
     }
     @Override
     public void eraseMe(DayFragment me)

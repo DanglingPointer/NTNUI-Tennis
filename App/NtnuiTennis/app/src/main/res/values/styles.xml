@@ -18,6 +18,12 @@
         <item name="overlapAnchor">false</item>
     </style>
 
+    <style name="SpinnerDropDownStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:colorBackground">@color/green</item>
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+        <item name="overlapAnchor">false</item>
+    </style>
+
     <style name="DialogStyle" parent="Theme.AppCompat.Dialog.Alert">
         <item name="colorPrimary">@color/darkGreen</item>
         <item name="colorPrimaryDark">@color/extraDarkGreen</item>
