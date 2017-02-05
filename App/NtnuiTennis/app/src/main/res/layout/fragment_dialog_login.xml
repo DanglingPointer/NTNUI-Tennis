@@ -3,41 +3,61 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@color/green"
-              android:orientation="vertical"
-              android:padding="16dp">
+              android:orientation="vertical">
 
     <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:text="@string/email_prompt"
-        android:textColor="@color/white"
         />
+
+    <!--android:textColor="@color/white"-->
 
     <EditText
         android:id="@+id/email_edit_text"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+
         android:background="@color/lightGreen"
         android:hint="@string/email_hint"
-        android:inputType="textEmailAddress"/>
+        android:inputType="textEmailAddress"
+        android:padding="8dp"
+        android:textCursorDrawable="@null"
+        />
+
+    <!--android:textColor="@color/extraDarkGreen"-->
 
     <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:text="@string/password_prompt"
-        android:textColor="@color/white"
         />
+
+    <!--android:textColor="@color/white"-->
 
     <EditText
         android:id="@+id/password_edit_text"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+
         android:background="@color/lightGreen"
         android:hint="@string/password_hint"
-        android:inputType="numberPassword"/>
+        android:inputType="numberPassword"
+        android:padding="8dp"
+        android:textCursorDrawable="@null"/>
 
 </LinearLayout>
