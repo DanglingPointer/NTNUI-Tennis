@@ -61,7 +61,7 @@ public class NotificationsFragment extends Fragment
     public void onStop()
     {
         super.onStop();
-        Globals.discardHoursInfoCHanges();
+        Globals.discardHoursInfoChanges();
     }
     class HourAdapter extends RecyclerView.Adapter<HourHolder>
     {
@@ -108,7 +108,7 @@ class HourHolder extends RecyclerView.ViewHolder implements CompoundButton.OnChe
     {
         m_data = data;
         m_lvlText.setText(data.getLvl());
-        m_checkBox.setText(data.getDay() + ", " + data.getTime());
+        m_checkBox.setText(data.getDay() + ", " + data.getTime() + ":00");
         m_checkBox.setChecked(data.getChecked());
     }
 }

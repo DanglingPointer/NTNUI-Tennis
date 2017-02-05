@@ -1,21 +1,16 @@
 package org.mikhailv.ntnuitennis.net;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
 
+import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.net.CookieManager;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,58 +31,12 @@ class FetchSlotTask extends FetchTask
         super(callbacks);
     }
     @Override
-    protected String download(URL link) throws IOException
-    {
-        InputStream inStream = null;
-        HttpURLConnection conn = null;
-        String result = null;
-        try {
-            conn = (HttpURLConnection)link.openConnection();
-            conn.setReadTimeout(READ_TIMEOUT);
-            conn.setConnectTimeout(CONNECT_TIMEOUT);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-
-            CookieManager cm = NetworkFragment.cookieManager;
-            if (cm.getCookieStore().getCookies().size() > 0) {
-                conn.setRequestProperty("Cookie",
-                        TextUtils.join(";",  cm.getCookieStore().getCookies()));
-            }
-
-            conn.connect();
-            int response = conn.getResponseCode();
-            if (response != HttpURLConnection.HTTP_OK)
-                throw new IOException("HTTP error: " + response);
-            inStream = conn.getInputStream();
-            if (inStream != null) {
-                InputStreamReader reader = new InputStreamReader(inStream, "UTF-8");
-                char[] buffer = new char[BUFFER_SIZE]; // 2^15=32768
-
-                int lastRead = 0, offset = 0;
-                while (lastRead != -1 && offset < BUFFER_SIZE && !isCancelled()) {
-                    publishProgress(offset * 100 / 16000);
-                    lastRead = reader.read(buffer, offset, Math.min(MAX_READ, BUFFER_SIZE - offset));
-                    offset += lastRead;
-                }
-                if (offset != -1)
-                    result = new String(buffer, 0, offset + 1); // last read decrements offset
-                inStream.close();
-            }
-        } finally {
-            if (conn != null)
-                conn.disconnect();
-        }
-        return result;
-    }
-    @Override
     protected Object parse(String rawData) throws ParseException
     {
-        Log.i(TAG_LOG, rawData);
         SlotParser parser;
         try {
             int openingTagIndex = rawData.indexOf("<table>");
-            int closingTagIndex = rawData.indexOf("</table>");
-            rawData = rawData.substring(openingTagIndex, closingTagIndex + 8);
+            rawData = rawData.substring(openingTagIndex);
             parser = new SlotParser(rawData);
             parser.parse();
         } catch (Exception e) {
@@ -98,29 +47,10 @@ class FetchSlotTask extends FetchTask
         return parser;
     }
     @Override
-    protected void onPreExecute()
-    {
-        if (getCallbacks() != null) {
-            getCallbacks().onPreDownload();
-        }
-    }
-    @Override
     protected void onPostExecute(Object s)
     {
         if (getCallbacks() != null)
             getCallbacks().onSlotFetched((SlotDetailsInfo)s, getException());
-    }
-    @Override
-    protected void onProgressUpdate(Integer... values)
-    {
-        if (getCallbacks() != null && values != null && values.length > 0)
-            getCallbacks().onProgressChanged(values[0]);
-    }
-    @Override
-    protected void onCancelled()
-    {
-        if (getCallbacks() != null)
-            getCallbacks().onDownloadCanceled();
     }
 
     private static class SlotParser implements SlotDetailsInfo, Serializable
@@ -131,14 +61,19 @@ class FetchSlotTask extends FetchTask
         private static final int TITLE = 0;
 
         private XmlPullParser m_parser;
-        private List<List<List<String>>> m_data = new ArrayList<>(3);
+        private final List<List<List<String>>> m_data = new ArrayList<>(3);
+        private String m_link;
 
         public SlotParser(String rawHtml) throws XmlPullParserException
         {
             rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
+                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
+                    .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td");
+            // The last one because of malformed html on weekend sessions
+
+            m_link = null;
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());
             m_data.add(IND_REGS, new ArrayList<List<String>>());
@@ -158,6 +93,7 @@ class FetchSlotTask extends FetchTask
             boolean newLine = false;
             int depth = 1;
             int what = IND_INFO;
+            List<String> links = new ArrayList<>();
             List<String> currentLine = null;
 
             while (depth != 0) {
@@ -170,13 +106,17 @@ class FetchSlotTask extends FetchTask
                                 m_parser.getAttributeName(1).equals("rowspan")) {
                             newLine = true;
                             ++what;
+                        } else if (m_parser.getAttributeCount() > 0 &&
+                                m_parser.getAttributeName(0).equals("href")) {
+                            Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
+                            links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
                         }
                         break;
                     case XmlPullParser.END_TAG:
                         --depth;
                         if (m_parser.getName().equals("tr")) {
                             m_data.get(what).add(currentLine);
-                            currentLine = null; // just in case
+                            currentLine = null; // just in case / for debugging
                         }
                         break;
                     case XmlPullParser.TEXT:
@@ -192,36 +132,31 @@ class FetchSlotTask extends FetchTask
                         break;
                 }
             }
-            m_parser = null; // allow parser to be collected by GC
-//            test();
+            while (m_parser.next() != XmlPullParser.START_TAG)
+                ;
+            depth++;
+            while (depth != 0) {
+                int token = m_parser.next();
+
+                if (token == XmlPullParser.START_TAG) {
+                    ++depth;
+                    if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href")) {
+                        Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
+                        links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
+                    }
+                } else if (token == XmlPullParser.END_TAG) {
+                    --depth;
+                }
+            }
+            for (String link : links) {
+                if (link.contains("leggtilvikar") || link.contains("fjernvikar")
+                        || link.contains("bekrefte") || link.contains("kommerikke")) {
+                    m_link = Globals.HOME_URL + link;
+                    break;
+                }
+            }
+            m_parser = null; // let the parser be collected by GC
         }
-        //        void test() // temp
-//        {
-//            Log.d(TAG_LOG, "Info title: " + getInfoTitle());
-//            for (int lineNumber = 0; lineNumber < getInfoSize(); lineNumber++) {
-//                StringBuilder sb = new StringBuilder();
-//                String[] line = getInfoLine(lineNumber);
-//                for (String entry : line)
-//                    sb.append(entry).append(' ');
-//                Log.d(TAG_LOG, sb.toString());
-//            }
-//            Log.d(TAG_LOG, "Regulars title: " + getRegularsTitle());
-//            for (int lineNumber = 0; lineNumber < getRegularsCount(); lineNumber++) {
-//                StringBuilder sb = new StringBuilder();
-//                String[] line = getRegularsLine(lineNumber);
-//                for (String entry : line)
-//                    sb.append(entry).append(' ');
-//                Log.d(TAG_LOG, sb.toString());
-//            }
-//            Log.d(TAG_LOG, "Subst title: " + getSubstitutesTitle());
-//            for (int lineNumber = 0; lineNumber < getSubstitutesCount(); lineNumber++) {
-//                StringBuilder sb = new StringBuilder();
-//                String[] line = getSubstitutesLine(lineNumber);
-//                for (String entry : line)
-//                    sb.append(entry).append(' ');
-//                Log.d(TAG_LOG, sb.toString());
-//            }
-//        }
         @Override
         public int getInfoSize() // row count, doesn't include title
         {
@@ -250,7 +185,9 @@ class FetchSlotTask extends FetchTask
         @Override
         public String getSubstitutesTitle()
         {
-            return m_data.get(IND_SUBST).get(TITLE).get(0);
+            if (m_data.get(IND_SUBST).size() > 0)
+                return m_data.get(IND_SUBST).get(TITLE).get(0);
+            return null;
         }
         @Override
         public String[] getInfoLine(int row)
@@ -269,6 +206,11 @@ class FetchSlotTask extends FetchTask
         {
             List<String> line = m_data.get(IND_SUBST).get(row + 1);
             return line.toArray(new String[line.size()]);
+        }
+        @Override
+        public String getAttendingLink()
+        {
+            return m_link;
         }
     }
 }

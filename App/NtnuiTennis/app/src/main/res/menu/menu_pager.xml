@@ -21,9 +21,9 @@
         app:showAsAction="never"
         />
     <item
-        android:id="@+id/menu_btn_settings"
+        android:id="@+id/menu_btn_login"
         android:icon="@drawable/ic_settings"
-        android:title="@string/menu_settings"
+        android:title="@string/menu_login"
         app:showAsAction="never"
         />
     <item

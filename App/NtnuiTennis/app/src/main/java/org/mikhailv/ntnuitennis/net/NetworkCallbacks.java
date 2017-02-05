@@ -1,6 +1,7 @@
 package org.mikhailv.ntnuitennis.net;
 
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+import org.mikhailv.ntnuitennis.data.Week;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -11,9 +12,11 @@ public interface NetworkCallbacks
 
     void onPreDownload();
 
-    void onTableFetched(Exception e);
+    void onTableFetched(Week week, Exception e);
 
     void onSlotFetched(SlotDetailsInfo slotInfo, Exception e);
+
+    void onAuthenticateFinished();
 
     void onDownloadCanceled();
 }

@@ -21,6 +21,8 @@ public interface SlotDetailsInfo
     String[] getRegularsLine(int row) // row starts from 0, one line for each spot/player
     ;
 
+    String getAttendingLink();
+
     String getSubstitutesTitle();
 
     String[] getSubstitutesLine(int row);

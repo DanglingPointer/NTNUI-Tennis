@@ -1,18 +1,25 @@
 package org.mikhailv.ntnuitennis.net;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
-import org.mikhailv.ntnuitennis.data.Globals;
+import org.mikhailv.ntnuitennis.AppManager;
+import org.mikhailv.ntnuitennis.TennisApp;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+import org.mikhailv.ntnuitennis.data.Week;
+import org.mikhailv.ntnuitennis.ui.LoginDialogFragment;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
-import java.net.URL;
+
+import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -21,9 +28,8 @@ import java.net.URL;
 public class NetworkFragment extends Fragment implements NetworkCallbacks
 {
     private static final String TAG = "NetworkFragment.Tag";
-
-    private NetworkCallbacks m_callbacks;
-    private FetchTask m_worker;
+    private static final int REQUEST_LOGIN = 0;
+    private static final String TAG_LOGIN = "NetworkFragment.TAG_LOGIN";
 
     static CookieManager cookieManager;
 
@@ -41,6 +47,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         }
         return nf;
     }
+
+    private NetworkCallbacks m_callbacks;
+    private NetworkTask m_worker;
+
     /**
      * Lifecycle methods
      */
@@ -49,14 +59,13 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
-        authenticate(Globals.HOME_URL, "mikail.vasilyev@gmail.com", "1234", "no");
     }
     @Override
     public void onAttach(Context context)
     {
         super.onAttach(context);
         m_callbacks = (NetworkCallbacks)context;
+        TennisApp.getManager(context).setNetworker(this); // might call authenticate()
     }
     @Override
     public void onDetach()
@@ -73,15 +82,26 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_worker.freeCallbacks();
         }
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode != Activity.RESULT_OK)
+            return;
+
+        if (requestCode == REQUEST_LOGIN) {
+            // Try authenticating with the new credentials
+            AppManager.Credentials creds = LoginDialogFragment.decodeCredentials(data);
+            authenticate(creds);
+        }
+    }
     /**
      * Network commands
      */
-    public void downloadTable(String homeAddress)
+    public void downloadTable()
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
-
-            // TODO: create FetchTableTask and execute
-            throw new UnsupportedOperationException();
+            m_worker = new FetchTableTask(this);
+            m_worker.execute(TennisApp.getManager(getActivity()).getHomeURL());
         }
     }
     public void downloadSlot(String slotAddress)
@@ -91,11 +111,29 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_worker.execute(slotAddress);
         }
     }
-    public void authenticate(String homeURL, String email, String password, String lang)
+    /**
+     * This method is called by AppManager inside setNetworker()
+     */
+    public void authenticate(AppManager.Credentials credentials)
     {
+        String email = credentials.getEmail();
+        String password = credentials.getPassword();
+        String lang = credentials.getLanguage();
+
+        Log.d(TAG_LOG, "email = " + email + ", passw = " + password + ", lang = " + lang);
+
+        if (email == null || password == null || lang == null) {
+            // open user login prompt
+            FragmentManager fm = getFragmentManager();
+            LoginDialogFragment dialog = new LoginDialogFragment();
+            dialog.setTargetFragment(this, REQUEST_LOGIN);
+            dialog.show(fm, TAG_LOGIN);
+            return;
+        }
+
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
             m_worker = new AuthenticateTask(this, email, password, lang);
-            m_worker.execute(homeURL);
+            m_worker.execute(TennisApp.getManager(getActivity()).getHomeURL());
         }
     }
     public void cancelDownload()
@@ -120,10 +158,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_callbacks.onPreDownload();
     }
     @Override
-    public void onTableFetched(Exception e)
+    public void onTableFetched(Week week, Exception e)
     {
         if (m_callbacks != null)
-            m_callbacks.onTableFetched(e);
+            m_callbacks.onTableFetched(week, e);
     }
     @Override
     public void onSlotFetched(SlotDetailsInfo slotInfo, Exception e)
@@ -136,5 +174,12 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     {
         if (m_callbacks != null)
             m_callbacks.onDownloadCanceled();
+    }
+    @Override
+    public void onAuthenticateFinished()
+    {
+        Log.d(TAG_LOG, "Authentication finished");
+        if (m_callbacks != null)
+            m_callbacks.onAuthenticateFinished();
     }
 }

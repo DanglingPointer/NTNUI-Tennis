@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,7 +26,12 @@ import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.Globals;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
+import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
+
+import java.util.List;
+
+import static org.mikhailv.ntnuitennis.data.Globals.TAG_LOG;
 
 /**
  * Created by MikhailV on 07.01.2017.
@@ -39,7 +45,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
 
         void onSlotDetailsPressed(int day, Slot slot);
 
-        void onAttendPressed(int day, Slot slot);
+        void onLogInPressed();
 
         void updateData();
 
@@ -51,6 +57,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
 
     private SlotAdapter m_adapter;
     private ProgressBar m_progressBar;
+    private TextView m_dateText;
     private Callbacks m_callbacks;
 
     public static DayFragment newInstance(int day)
@@ -78,7 +85,8 @@ public class DayFragment extends Fragment implements NetworkCallbacks
                 return true;
             case R.id.menu_btn_next:
                 return true;
-            case R.id.menu_btn_settings:
+            case R.id.menu_btn_login:
+                m_callbacks.onLogInPressed();
                 return true;
             case R.id.menu_btn_about:
                 return true;
@@ -102,11 +110,6 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_callbacks.eraseMe(this);
         m_callbacks = null;
     }
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -120,17 +123,19 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         int dayIndex = getArguments().getInt(ARG_DAY);
         if (savedInstanceState == null) {
             m_adapter = new SlotAdapter(getActivity(), dayIndex);
-            Log.d(Globals.TAG_LOG, "onCreateView called without saved state");
+            Log.d(TAG_LOG, "onCreateView called without saved state");
         } else {
             boolean[] expanded = savedInstanceState.getBooleanArray(SAVED_EXPANDED);
             m_adapter = new SlotAdapter(getActivity(), dayIndex, expanded);
-            Log.d(Globals.TAG_LOG, "onCreateView called with saved state");
+            Log.d(TAG_LOG, "onCreateView called with saved state");
         }
         recyclerView.setAdapter(m_adapter);
 
         m_progressBar = (ProgressBar)root.findViewById(R.id.day_progress_bar);
-        TextView dateText = (TextView)root.findViewById(R.id.day_text_date);
-        dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
+        m_progressBar.setProgress(0);
+
+        m_dateText = (TextView)root.findViewById(R.id.day_text_date);
+        m_dateText.setText(Globals.getCurrentWeek().getDay(dayIndex).getDate());
 
         return root;
     }
@@ -147,6 +152,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onProgressChanged(int progress)
     {
+        Log.d(TAG_LOG, "Table Progress = " + progress);
         m_progressBar.setProgress(progress);
     }
     @Override
@@ -156,16 +162,23 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_progressBar.setProgress(0);
     }
     @Override
-    public void onTableFetched(Exception e)
+    public void onTableFetched(Week data, Exception e)
     {
+        Globals.currentWeek = data;
         m_progressBar.setVisibility(View.GONE);
         m_adapter.notifyDataSetChanged();
+        m_dateText.setText(Globals.getCurrentWeek().getDay(m_adapter.getDayIndex()).getDate());
     }
     @Override
     public void onSlotFetched(SlotDetailsInfo data, Exception e)
     {
         m_progressBar.setVisibility(View.GONE);
-        m_callbacks.updateData(); // refresh table after finished 'attend'
+//        m_callbacks.updateData(); // refresh table after finished 'attend'
+    }
+    @Override
+    public void onAuthenticateFinished()
+    {
+        m_progressBar.setVisibility(View.GONE);
     }
     @Override
     public void onDownloadCanceled()
@@ -179,21 +192,17 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
 {
     private FragmentActivity m_context;
     private int m_dayIndex;
-    private final SlotHolder[] m_slotHolders;
-    private Boolean[] m_savedState;
+    private boolean[] m_expanded;
 
     public SlotAdapter(FragmentActivity context, int dayIndex)
     {
-        m_context = context;
-        m_dayIndex = dayIndex;
-        m_slotHolders = new SlotHolder[Globals.Sizes.DAY];
+        this(context, dayIndex, new boolean[Globals.Sizes.DAY]);
     }
     public SlotAdapter(FragmentActivity context, int dayIndex, boolean[] savedState)
     {
-        this(context, dayIndex);
-        m_savedState = new Boolean[savedState.length];
-        for (int i = 0; i < savedState.length; ++i)
-            m_savedState[i] = savedState[i];
+        m_context = context;
+        m_dayIndex = dayIndex;
+        m_expanded = savedState;
     }
     @Override
     public SlotHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -206,42 +215,32 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
     public void onBindViewHolder(SlotHolder holder, int position)
     {
         int hour = position + 8;
-        boolean expanded = false;
-        if (m_slotHolders[position] != null) {
-            // rebinding after scrolling/updates
-            expanded = m_slotHolders[position].isExpanded();
-        } else if (m_savedState != null && m_savedState[position] != null) {
-            // rebinding when recreating the fragment
-            expanded = m_savedState[position];
-            m_savedState[position] = null; // invalidate state
-        }
-        holder.bind(Globals.getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour, expanded);
-        m_slotHolders[position] = holder;
+        holder.bind(Globals.getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour);
     }
     @Override
     public int getItemCount()
     {
         return Globals.Sizes.DAY;
     }
-    /**
-     * Returns state (expanded/collapsed) of all bound SlotHolder's
-     */
+    public boolean getExpandedAt(int position)
+    {
+        return m_expanded[position];
+    }
+    public void setExpandedAt(int position, boolean expanded)
+    {
+        m_expanded[position] = expanded;
+    }
     public boolean[] getExpanded()
     {
-        boolean[] temp = new boolean[Globals.Sizes.DAY];
-        for (int i = 0; i < Globals.Sizes.DAY; ++i) {
-            SlotHolder sh = m_slotHolders[i];
-            temp[i] = (sh == null) ? false : sh.isExpanded();
-        }
-        return temp;
-    }
-    void onSlotAttendPressed(Slot slot)
-    {
-        ((DayFragment.Callbacks)m_context).onAttendPressed(m_dayIndex, slot);
+        return m_expanded;
     }
     void onSlotDetailsPressed(Slot slot)
     {
         ((DayFragment.Callbacks)m_context).onSlotDetailsPressed(m_dayIndex, slot);
+    }
+    public int getDayIndex()
+    {
+        return m_dayIndex;
     }
 }
 
@@ -250,11 +249,9 @@ class SlotHolder extends RecyclerView.ViewHolder
     private TextView m_hourText;
     private TextView m_reservedText;
 
-    private Button m_attendBtn;
     private ImageButton m_expandBtn;
     private Button m_detailsBtn;
 
-    private boolean m_expanded;
     private Slot m_slotData;
     private final SlotAdapter m_adapter;
 
@@ -266,7 +263,6 @@ class SlotHolder extends RecyclerView.ViewHolder
         m_hourText = (TextView)root.findViewById(R.id.slot_text_hour);
         m_reservedText = (TextView)root.findViewById(R.id.slot_text_reserved);
 
-        m_attendBtn = (Button)root.findViewById(R.id.slot_btn_attend);
         m_expandBtn = (ImageButton)root.findViewById(R.id.slot_btn_expand);
         m_detailsBtn = (Button)root.findViewById(R.id.slot_btn_details);
 
@@ -275,14 +271,17 @@ class SlotHolder extends RecyclerView.ViewHolder
             @Override
             public void onClick(View v)
             {
-                if (m_expanded) {
+                int position = getAdapterPosition();
+                boolean expanded = m_adapter.getExpandedAt(position);
+                if (expanded) {
                     m_expandBtn.setImageResource(R.drawable.ic_expand);
-                    m_expanded = false;
+                    expanded = false;
                 } else {
                     m_expandBtn.setImageResource(R.drawable.ic_collapse);
-                    m_expanded = true;
+                    expanded = true;
                 }
-                configReservedText();
+                configReservedText(expanded);
+                m_adapter.setExpandedAt(position, expanded);
             }
         });
         m_detailsBtn.setOnClickListener(new View.OnClickListener()
@@ -293,67 +292,36 @@ class SlotHolder extends RecyclerView.ViewHolder
                 m_adapter.onSlotDetailsPressed(m_slotData);
             }
         });
-        m_attendBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                m_adapter.onSlotAttendPressed(m_slotData);
-            }
-        });
     }
-    public void bind(Slot slot, int hour, boolean expanded)
+    public void bind(Slot slot, int hour)
     {
         m_hourText.setText(hour + ":00");
+        boolean expanded = m_adapter.getExpandedAt(getAdapterPosition());
 
-        if (m_expanded = expanded) {
+        if (expanded) {
             m_expandBtn.setImageResource(R.drawable.ic_collapse);
         } else {
             m_expandBtn.setImageResource(R.drawable.ic_expand);
         }
-        if ((m_slotData = slot) == null) {
-            m_detailsBtn.setText(null);
-            setBtnsEnabled(false);
-        } else {
-            m_detailsBtn.setText(slot.getLevel());
-            setBtnsEnabled(!slot.isExpired());
-            if (slot.isMeAttending()) {
-                m_attendBtn.setText(R.string.slot_btn_attend_not);
-            } else {
-                m_attendBtn.setEnabled(slot.hasAvailable() && !slot.isExpired());
-                m_attendBtn.setText(R.string.slot_btn_attend);
-            }
-            if (slot.isExpired())
-                setExpiredBackground();
-        }
-        configReservedText();
-    }
-    public boolean isExpanded()
-    {
-        return m_expanded;
-    }
+        m_slotData = slot;
 
-    /**
-     * Enables/disables all buttons
-     */
-    private void setBtnsEnabled(boolean enabled)
-    {
-        m_attendBtn.setEnabled(enabled);
-        m_expandBtn.setEnabled(enabled);
-        m_detailsBtn.setEnabled(enabled);
+        m_detailsBtn.setEnabled(!m_slotData.isExpired() && m_slotData.getLevel() != null);
+        m_expandBtn.setEnabled(m_slotData.getLevel() != null);
+        m_detailsBtn.setText(slot.getLevel());
+
+        setExpiredBackground(slot.isExpired());
+        setNoavailableTextColor(slot.hasAvailable());
+        configReservedText(expanded);
     }
     /**
      * Sets text if expanded
      */
-    private void configReservedText()
+    private void configReservedText(boolean expanded)
     {
-        if (m_slotData != null && m_expanded) {
-            StringBuilder sb = new StringBuilder();
-            for (String name : m_slotData.getAttending()) {
-                sb.append(name);
-                sb.append("\n");
-            }
-            m_reservedText.setText(sb.toString().trim());
+        List<String> names = m_slotData.getAttending();
+        if (names != null && expanded) {
+            String text = TextUtils.join("\n", names);
+            m_reservedText.setText(text);
             m_reservedText.setVisibility(View.VISIBLE);
         } else {
             m_reservedText.setText(null);
@@ -363,17 +331,30 @@ class SlotHolder extends RecyclerView.ViewHolder
     /**
      * Sets dark background color for buttons
      */
-    private void setExpiredBackground()
+    private void setExpiredBackground(boolean expired)
     {
-        Context c = m_attendBtn.getContext();
+        int color = expired ? R.color.green : R.color.lightGreen;
+        Context c = m_detailsBtn.getContext();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            m_attendBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
-            m_detailsBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
-            m_expandBtn.setBackgroundColor(c.getColor(R.color.darkGreen));
+            m_detailsBtn.setBackgroundColor(c.getColor(color));
+            m_expandBtn.setBackgroundColor(c.getColor(color));
         } else {
-            m_attendBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
-            m_detailsBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
-            m_expandBtn.setBackgroundColor(c.getResources().getColor(R.color.darkGreen));
+            m_detailsBtn.setBackgroundColor(c.getResources().getColor(color));
+            m_expandBtn.setBackgroundColor(c.getResources().getColor(color));
+        }
+    }
+    /**
+     * Sets gray text color if no available places
+     */
+    private void setNoavailableTextColor(boolean available)
+    {
+        int color = available ? R.color.extraDarkGreen : R.color.gray;
+
+        Context c = m_detailsBtn.getContext();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            m_detailsBtn.setTextColor(c.getColor(color));
+        } else {
+            m_detailsBtn.setTextColor(c.getResources().getColor(color));
         }
     }
 }

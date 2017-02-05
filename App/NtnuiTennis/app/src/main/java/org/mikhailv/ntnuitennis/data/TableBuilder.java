@@ -21,7 +21,7 @@ public class TableBuilder
         WEEK_SIZE = weekSize;
         DAY_SIZE = daySize;
         m_slotData = new SlotImpl[WEEK_SIZE][DAY_SIZE];
-        m_days = new ArrayList<String>(Globals.Sizes.WEEK);
+        m_days = new ArrayList<String>(WEEK_SIZE);
     }
     public TableBuilder addNames(int day, int hour, List<String> names)
     {
@@ -45,17 +45,29 @@ public class TableBuilder
         get(day, hour).setExpired(expired);
         return this;
     }
+    public TableBuilder addHasAvailable(int day, int hour, boolean hasAvailable)
+    {
+        get(day, hour).setAvailable(hasAvailable);
+        return this;
+    }
     public TableBuilder addDayName(String name)
     {
         m_days.add(name);
         return this;
     }
+    /**
+     * Can be used as dummy
+     */
     public Week getWeek()
     {
+        if (m_days.size() == 0) {
+            for (int i = 0; i < WEEK_SIZE; ++i)
+                m_days.add("");
+        }
         WeekImpl week = new WeekImpl();
-        for (int dayIndex = 0; dayIndex < Globals.Sizes.WEEK; ++dayIndex) {
+        for (int dayIndex = 0; dayIndex < WEEK_SIZE; ++dayIndex) {
             DayImpl day = new DayImpl(m_days.get(dayIndex));
-            for (int slotIndex = 0; slotIndex < Globals.Sizes.DAY; ++slotIndex) {
+            for (int slotIndex = 0; slotIndex < DAY_SIZE; ++slotIndex) {
                 Slot s = m_slotData[dayIndex][slotIndex];
                 if (s == null)
                     s = new SlotImpl();

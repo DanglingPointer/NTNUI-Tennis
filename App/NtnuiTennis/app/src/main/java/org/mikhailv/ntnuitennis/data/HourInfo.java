@@ -43,4 +43,16 @@ public class HourInfo implements Serializable
     {
         m_checked = checked;
     }
+    /**
+     * Checks all fields except 'm_checked'
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj != null && obj instanceof HourInfo) {
+            HourInfo rhs = (HourInfo)obj;
+            return m_day.equals(rhs.m_day) && m_lvl.equals(rhs.m_lvl) && m_time == rhs.m_time;
+        }
+        return false;
+    }
 }

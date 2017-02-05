@@ -21,7 +21,6 @@ public final class Globals
         public static final int WEEK = 8;
     }
 
-    public static final String MY_NAME = "Mikhail";
     public static final String TAG_LOG = "MIKHAILS_LOG"; // temp
     public static final String FILE_NAME = "config";
     public static final String HOME_URL = "http://org.ntnu.no/tennisgr/"; // temp, see strings.xml
@@ -30,25 +29,12 @@ public final class Globals
     public static Week getCurrentWeek()
     {
         // temporary stub
-        if (s_current == null) {
-            s_current = new WeekImpl();
-            for (int i = 0; i < Sizes.WEEK; ++i) {
-                DayImpl d = new DayImpl("Day #" + i);
-                if (i % 2 == 0) {
-                    Slot s1 = new SlotImpl().addName("Guang").addName("Mikhail").setLevel("N+*")
-                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&lang=no")
-                            .setAttendLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&leggtilvikarid=619&lang=no");
-                    Slot s2 = new SlotImpl().setLevel("M").addName("Guang_1").addName("Guang_2")
-                            .setLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&lang=no")
-                            .setAttendLink(HOME_URL + "timeinfo.php?spilletid=20170130T11:00:00&timeid=179&leggtilvikarid=619&lang=no");
-                    d.setSlot(9, s1).setSlot(11, s2);
-                }
-                s_current.setDay(i, d);
-            }
+        if (currentWeek == null) {
+            currentWeek = new TableBuilder(8, Sizes.WEEK, Sizes.DAY).getWeek();
         }
-        return s_current;
+        return currentWeek;
     }
-    private static WeekImpl s_current;
+    public static Week currentWeek;
 
     /**
      * List with notifications preferences.
@@ -84,7 +70,7 @@ public final class Globals
         }
         return s_hours;
     }
-    public static void discardHoursInfoCHanges()
+    public static void discardHoursInfoChanges()
     {
         s_hours = null;
     }

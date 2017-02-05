@@ -5,8 +5,10 @@
         <item name="colorPrimary">@color/darkGreen</item>
         <item name="colorPrimaryDark">@color/extraDarkGreen</item>
         <item name="colorAccent">@color/lightGreen</item>
+
+        <item name="android:windowBackground">@color/darkGreen</item>
         <item name="actionBarPopupTheme">@style/DropDownMenuStyle</item>
-        <!--<item name="android:colorBackground">@color/green</item>-->
+        <item name="android:alertDialogTheme">@style/DialogStyle</item>
     </style>
 
     <style name="DropDownMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
@@ -16,6 +18,27 @@
         <item name="overlapAnchor">false</item>
     </style>
 
-    <!--Widget.AppCompat.PopupMenu.Overflow-->
+    <style name="SpinnerDropDownStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:colorBackground">@color/green</item>
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+        <item name="overlapAnchor">false</item>
+    </style>
+
+    <style name="DialogStyle" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorPrimary">@color/darkGreen</item>
+        <item name="colorPrimaryDark">@color/extraDarkGreen</item>
+        <item name="colorAccent">@color/white</item>
+
+        <item name="android:windowBackground">@color/darkGreen</item>
+        <item name="android:windowTitleStyle">@style/DialogTitleStyle</item>
+    </style>
+
+    <style name="DialogTitleStyle" parent="Base.DialogWindowTitle.AppCompat">
+        <item name="colorPrimary">@color/darkGreen</item>
+        <item name="colorPrimaryDark">@color/extraDarkGreen</item>
+        <item name="colorAccent">@color/white</item>
+
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
 
 </resources>

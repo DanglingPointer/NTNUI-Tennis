@@ -14,7 +14,7 @@ import java.util.List;
  * Created by MikhailV on 27.01.2017.
  */
 
-class AuthenticateTask extends FetchTask
+class AuthenticateTask extends NetworkTask
 {
     private static final String EMAIL_KEY = "email";
     private static final String PASSWORD_KEY = "password";
@@ -45,7 +45,7 @@ class AuthenticateTask extends FetchTask
         m_postArgs = sb.toString();
     }
     @Override
-    protected String download(URL link) throws IOException
+    protected Object download(URL link) throws IOException
     {
         HttpURLConnection conn = null;
         try {
@@ -63,6 +63,7 @@ class AuthenticateTask extends FetchTask
 
             writer.close();
             os.close();
+            publishProgress(50);
 
             int response = conn.getResponseCode();
             if (response != HttpURLConnection.HTTP_OK)
@@ -87,28 +88,27 @@ class AuthenticateTask extends FetchTask
         return null;
     }
     @Override
-    protected Object parse(String rawData)
+    protected void onPreExecute()
     {
-        return null;
+        if (getCallbacks() != null)
+            getCallbacks().onPreDownload();
     }
-//    @Override
-//    protected void onPreExecute()
-//    {
-//
-//    }
-//    @Override
-//    protected void onPostExecute(Object o)
-//    {
-//
-//    }
-//    @Override
-//    protected void onProgressUpdate(Integer... values)
-//    {
-//
-//    }
-//    @Override
-//    protected void onCancelled()
-//    {
-//
-//    }
+    @Override
+    protected void onPostExecute(Object o)
+    {
+        if (getCallbacks() != null)
+            getCallbacks().onAuthenticateFinished();
+    }
+    @Override
+    protected void onProgressUpdate(Integer... values)
+    {
+        if (getCallbacks() != null)
+            getCallbacks().onProgressChanged(values[0]);
+    }
+    @Override
+    protected void onCancelled()
+    {
+        if (getCallbacks() != null)
+            getCallbacks().onDownloadCanceled();
+    }
 }
