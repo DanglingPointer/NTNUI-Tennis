@@ -81,7 +81,7 @@ class FetchTableTask extends FetchTask
                         if (clazz != null) {
                             if (clazz.equals("expired"))
                                 builder.addExpired(day, hour, true);
-                            else if (clazz.equals("fulltime"))
+                            else if (clazz.equals("fulltime") || clazz.equals("fulldropintime"))
                                 builder.addHasAvailable(day, hour, false);
                         }
 
@@ -121,7 +121,7 @@ class FetchTableTask extends FetchTask
                             Scanner in = new Scanner(text).useDelimiter("[^0-9]+");
                             hour = in.nextInt();
 
-                        } else if (tag.name.equals("a")) {
+                        } else if (tag.name.equals("a") || tag.name.equals("span")) { // span for expired hours
                             builder.addLevel(day, hour, text);
                         }
 

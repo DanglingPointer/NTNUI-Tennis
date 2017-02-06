@@ -70,6 +70,7 @@ class FetchSlotTask extends FetchTask
                     .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
                     .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
+                    .replaceAll("&ldquo;", "").replaceAll("&rdquo;", "")
                     .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td");
             // The last one because of malformed html on weekend sessions
 
@@ -132,20 +133,22 @@ class FetchSlotTask extends FetchTask
                         break;
                 }
             }
-            while (m_parser.next() != XmlPullParser.START_TAG)
-                ;
-            depth++;
-            while (depth != 0) {
-                int token = m_parser.next();
+            for (int i = 0; i < 2; ++i) {
+                while (m_parser.next() != XmlPullParser.START_TAG)
+                    ;
+                depth++;
+                while (depth != 0) {
+                    int token = m_parser.next();
 
-                if (token == XmlPullParser.START_TAG) {
-                    ++depth;
-                    if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href")) {
-                        Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
-                        links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
+                    if (token == XmlPullParser.START_TAG) {
+                        ++depth;
+                        if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href")) {
+                            Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
+                            links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
+                        }
+                    } else if (token == XmlPullParser.END_TAG) {
+                        --depth;
                     }
-                } else if (token == XmlPullParser.END_TAG) {
-                    --depth;
                 }
             }
             for (String link : links) {
