@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.R;
@@ -16,6 +17,7 @@ import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 import static org.mikhailv.ntnuitennis.AppManager.WEEK_SIZE;
 
 public class PagerActivity extends AppCompatActivity implements DayFragment.Callbacks,
@@ -165,10 +167,10 @@ public class PagerActivity extends AppCompatActivity implements DayFragment.Call
             currentFragment.onDownloadCanceled();
     }
     @Override
-    public void onAuthenticateFinished()
+    public void onAuthenticateFinished(Exception e)
     {
         DayFragment currentFragment = m_fragments[m_viewPager.getCurrentItem()];
         if (currentFragment != null && currentFragment.isAdded())
-            currentFragment.onAuthenticateFinished();
+            currentFragment.onAuthenticateFinished(e);
     }
 }

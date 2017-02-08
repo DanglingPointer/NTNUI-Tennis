@@ -166,8 +166,12 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onTableFetched(Week data, Exception e)
     {
-        TennisApp.getManager(getActivity()).setCurrentWeek(data);
         m_progressBar.setVisibility(View.GONE);
+        if (e != null) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        TennisApp.getManager(getActivity()).setCurrentWeek(data);
         m_adapter.notifyDataSetChanged();
         m_dateText.setText(TennisApp.getManager(getActivity())
                 .getCurrentWeek().getDay(m_adapter.getDayIndex()).getDate());
@@ -178,9 +182,11 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_progressBar.setVisibility(View.GONE);
     }
     @Override
-    public void onAuthenticateFinished()
+    public void onAuthenticateFinished(Exception e)
     {
         m_progressBar.setVisibility(View.GONE);
+        if (e != null)
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onDownloadCanceled()

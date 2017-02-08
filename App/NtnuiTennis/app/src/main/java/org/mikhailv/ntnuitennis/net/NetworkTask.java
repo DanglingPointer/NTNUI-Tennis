@@ -1,16 +1,19 @@
 package org.mikhailv.ntnuitennis.net;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
+
 /**
  * Created by MikhailV on 21.01.2017.
  */
 
-public abstract class NetworkTask extends AsyncTask<String, Integer, Object>
+abstract class NetworkTask extends AsyncTask<String, Integer, Object>
 {
     protected static final int READ_TIMEOUT = 10000;
     protected static final int CONNECT_TIMEOUT = 15000;
@@ -40,10 +43,7 @@ public abstract class NetworkTask extends AsyncTask<String, Integer, Object>
         try {
             if (!isCancelled())
                 result = download(new URL(params[0]));
-        } catch (ParseException e) {
-            m_exception = e;
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             m_exception = e;
             e.printStackTrace();
             result = null;

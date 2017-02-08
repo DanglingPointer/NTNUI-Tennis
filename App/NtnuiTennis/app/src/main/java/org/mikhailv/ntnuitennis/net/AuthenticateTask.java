@@ -97,7 +97,7 @@ class AuthenticateTask extends NetworkTask
     protected void onPostExecute(Object o)
     {
         if (getCallbacks() != null)
-            getCallbacks().onAuthenticateFinished();
+            getCallbacks().onAuthenticateFinished(getException());
     }
     @Override
     protected void onProgressUpdate(Integer... values)

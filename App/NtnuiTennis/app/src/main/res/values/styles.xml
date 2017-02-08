@@ -19,7 +19,7 @@
     </style>
 
     <style name="SpinnerDropDownStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <item name="android:colorBackground">@color/green</item>
+        <item name="android:colorBackground">@color/lightGreen</item>
         <item name="android:textColor">?attr/colorPrimaryDark</item>
         <item name="overlapAnchor">false</item>
     </style>
@@ -29,7 +29,7 @@
         <item name="colorPrimaryDark">@color/extraDarkGreen</item>
         <item name="colorAccent">@color/white</item>
 
-        <item name="android:windowBackground">@color/darkGreen</item>
+        <item name="android:windowBackground">@color/green</item>
         <item name="android:windowTitleStyle">@style/DialogTitleStyle</item>
     </style>
 

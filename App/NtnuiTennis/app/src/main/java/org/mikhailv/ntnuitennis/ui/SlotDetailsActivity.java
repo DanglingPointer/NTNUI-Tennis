@@ -179,7 +179,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     public void onSlotFetched(SlotDetailsInfo slotData, Exception e)
     {
         if (e != null) {
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             finish();
         } else {
             createLayout(slotData);
@@ -195,7 +195,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
                 else
                     m_attendBtn.setText(R.string.slot_btn_attend);
             } else
-                Log.d(TAG_LOG, "\n\n\nNo attending link :(\n\n\n");
+                Log.d(TAG_LOG, "No attending link :(");
         }
     }
     @Override
@@ -205,8 +205,10 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         m_progress.setVisibility(View.GONE);
     }
     @Override
-    public void onAuthenticateFinished()
+    public void onAuthenticateFinished(Exception e)
     {
-        // nothing
+        m_progress.setVisibility(View.GONE);
+        if (e != null)
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

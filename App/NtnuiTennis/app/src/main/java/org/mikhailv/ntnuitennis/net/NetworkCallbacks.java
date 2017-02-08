@@ -16,7 +16,7 @@ public interface NetworkCallbacks
 
     void onSlotFetched(SlotDetailsInfo slotInfo, Exception e);
 
-    void onAuthenticateFinished();
+    void onAuthenticateFinished(Exception e);
 
     void onDownloadCanceled();
 }

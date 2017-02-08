@@ -10,13 +10,14 @@
 
     <TextView
         android:id="@+id/slot_text_hour"
-        android:textColor="@color/white"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@color/green"
+        android:background="@color/lightGreen"
         android:gravity="center"
         />
+
+    <!--android:textColor="@color/white"-->
 
     <LinearLayout
         android:layout_width="0dp"

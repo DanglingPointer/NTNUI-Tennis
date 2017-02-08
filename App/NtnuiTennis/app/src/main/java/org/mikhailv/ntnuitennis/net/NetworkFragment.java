@@ -38,6 +38,9 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         CookieHandler.setDefault(cookieManager);
     }
 
+    /**
+     * Creates a new instance if none exists, and attaches it using the fragment manager
+     */
     public static NetworkFragment addInstance(FragmentManager fm)
     {
         NetworkFragment nf = (NetworkFragment)fm.findFragmentByTag(TAG);
@@ -51,9 +54,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     private NetworkCallbacks m_callbacks;
     private NetworkTask m_worker;
 
-    /**
-     * Lifecycle methods
-     */
+    //-----------------Lifecycle methods------------------------------------------------------------
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -82,6 +83,9 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_worker.freeCallbacks();
         }
     }
+    /**
+     * Called to authenticate user after she has entered credentials
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -94,8 +98,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             authenticate(creds);
         }
     }
+    //-----------------Network-commands-------------------------------------------------------------
     /**
-     * Network commands
+     * Downloads and parses the main page. Returns a fully initialized Week object using
+     * onTableFetched(). Changes progress during the download.
      */
     public void downloadTable()
     {
@@ -104,6 +110,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_worker.execute(TennisApp.getManager(getActivity()).getHomeURL());
         }
     }
+    /**
+     * Downloads and parses a session page. Sets progress during the download, and calls
+     * onSlotFetched() at the end.
+     */
     public void downloadSlot(String slotAddress)
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
@@ -112,7 +122,9 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         }
     }
     /**
-     * This method is called by AppManager inside setNetworker()
+     * If 'credentials' has null-fields, we launch the login-dialog first, otherwise we authenticate
+     * user (using a POST request) and save the received cookie. No html is downloaded, and no
+     * progress set during authentication. At the end onAuthenticateFinished() is called
      */
     public void authenticate(AppManager.Credentials credentials)
     {
@@ -141,10 +153,8 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         if (m_worker != null && m_worker.getStatus() == AsyncTask.Status.RUNNING)
             m_worker.cancel(true);
     }
-    /**
-     * Internal callbacks from AsyncTasks.
-     * Necessary because the fragment might be reattached while a task is executing
-     */
+    //-----------------Internal callbacks from AsyncTasks-------------------------------------------
+    // Necessary because the fragment might be reattached while a task is executing
     @Override
     public void onProgressChanged(int progress)
     {
@@ -157,12 +167,18 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         if (m_callbacks != null)
             m_callbacks.onPreDownload();
     }
+    /**
+     * If 'e' is not null, the result is invalid
+     */
     @Override
     public void onTableFetched(Week week, Exception e)
     {
         if (m_callbacks != null)
             m_callbacks.onTableFetched(week, e);
     }
+    /**
+     * If 'e' is not null, the result is invalid
+     */
     @Override
     public void onSlotFetched(SlotDetailsInfo slotInfo, Exception e)
     {
@@ -175,11 +191,14 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         if (m_callbacks != null)
             m_callbacks.onDownloadCanceled();
     }
+    /**
+     * If 'e' is not null, the result is invalid
+     */
     @Override
-    public void onAuthenticateFinished()
+    public void onAuthenticateFinished(Exception e)
     {
         Log.d(TAG_LOG, "Authentication finished");
         if (m_callbacks != null)
-            m_callbacks.onAuthenticateFinished();
+            m_callbacks.onAuthenticateFinished(e);
     }
 }

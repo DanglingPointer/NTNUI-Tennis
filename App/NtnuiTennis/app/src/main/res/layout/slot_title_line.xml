@@ -8,10 +8,13 @@
         android:id="@+id/slot_title_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         android:gravity="center_horizontal"
         android:textStyle="bold"
-        android:padding="4dp"
+        android:padding="8dp"
         android:background="@color/darkGreen"
         android:textColor="@color/white"/>
 
