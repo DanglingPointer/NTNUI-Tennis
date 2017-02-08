@@ -17,6 +17,7 @@ abstract class NetworkTask extends AsyncTask<String, Integer, Object>
 {
     protected static final int READ_TIMEOUT = 10000;
     protected static final int CONNECT_TIMEOUT = 15000;
+    protected static final String BASE_URL = "http://org.ntnu.no/tennisgr/";
 
     private NetworkCallbacks m_callbacks;
     private Exception m_exception;

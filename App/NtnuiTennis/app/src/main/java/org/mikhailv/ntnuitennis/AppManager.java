@@ -14,13 +14,11 @@ import java.util.List;
 
 public interface AppManager
 {
-    // can be obtained  through a static function that takes Context as argument
-
     int DAY_SIZE = 15;
     int WEEK_SIZE = 8;
     int INIT_HOUR = 8;
-    String TAG_LOG = "MIKHAILS_LOG";
-    String HOME_URL = "http://org.ntnu.no/tennisgr/";
+
+    String TAG_LOG = "MIKHAILS_LOG"; // temp
 
     interface Credentials
     {
@@ -31,7 +29,11 @@ public interface AppManager
         String getLanguage();
     }
 
-    String getHomeURL();
+    String getTableURL();
+
+    void incrementWeek();
+
+    boolean decrementWeek();
 
     void saveCredentials(String email, String password, String lang);
 

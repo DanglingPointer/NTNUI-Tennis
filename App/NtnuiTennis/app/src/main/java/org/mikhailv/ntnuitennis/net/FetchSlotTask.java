@@ -3,7 +3,6 @@ package org.mikhailv.ntnuitennis.net;
 import android.util.Log;
 import android.util.Xml;
 
-import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -38,7 +37,7 @@ class FetchSlotTask extends FetchTask
             int openingTagIndex = rawData.indexOf("<table>");
             rawData = rawData.substring(openingTagIndex);
             parser = new SlotParser(rawData);
-            parser.parse();
+            parser.parse(BASE_URL);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG_LOG, e.toString());
@@ -86,7 +85,7 @@ class FetchSlotTask extends FetchTask
         /**
          * One-shot
          */
-        public void parse() throws XmlPullParserException, IOException, NullPointerException
+        public void parse(String baseURL) throws XmlPullParserException, IOException, NullPointerException
         {
             if (m_parser.nextTag() != XmlPullParser.START_TAG)
                 throw new XmlPullParserException("Malformed raw html slot table");
@@ -154,7 +153,7 @@ class FetchSlotTask extends FetchTask
             for (String link : links) {
                 if (link.contains("leggtilvikar") || link.contains("fjernvikar")
                         || link.contains("bekrefte") || link.contains("kommerikke")) {
-                    m_link = AppManager.HOME_URL + link;
+                    m_link = baseURL + link;
                     break;
                 }
             }

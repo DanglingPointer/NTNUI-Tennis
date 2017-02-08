@@ -74,7 +74,7 @@ class FetchTableTask extends FetchTask
 
                         String link = tag.attributes.get("href");
                         if (link != null) {
-                            builder.addLink(day, hour, AppManager.HOME_URL + link.substring(1).replaceAll("&amp;", "&"));
+                            builder.addLink(day, hour, BASE_URL + link.substring(1).replaceAll("&amp;", "&"));
                         }
 
                         String clazz = tag.attributes.get("class");

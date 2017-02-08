@@ -2,6 +2,7 @@ package org.mikhailv.ntnuitennis;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import org.mikhailv.ntnuitennis.data.HourInfo;
@@ -14,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,14 +38,13 @@ public class TennisApp extends Application
     }
     public static void clearManagerContext()
     {
-        if (s_manager != null)
-            s_manager.setContext(null);
+        s_manager.setContext(null);
     }
 
     private static class AppManagerImpl implements AppManager
     {
         private static final String NOTIFICATIONS_FILE = "config";
-        private static final String CREDENTIALS_FILE = "creds";
+        private static final String CREDENTIALS_FILE = "creds";      // use SharedPreferences instead??
 
 
         private Context m_context;
@@ -51,12 +52,28 @@ public class TennisApp extends Application
         private Week m_week;
         private CredentialsImpl m_credentials;
         private List<HourInfo> m_hours;
+        private int m_weekNumber;
 
         public AppManagerImpl(Context context)
         {
             m_context = context;
             m_networker = null;
             m_credentials = null;
+            m_weekNumber = 0;
+        }
+        @Override
+        public void incrementWeek()
+        {
+            ++m_weekNumber;
+        }
+        @Override
+        public boolean decrementWeek()
+        {
+            if (m_weekNumber > 0) {
+                --m_weekNumber;
+                return true;
+            }
+            return false;
         }
         /**
          * Should be used with null as argument to clear context
@@ -66,13 +83,16 @@ public class TennisApp extends Application
             m_context = context;
         }
         @Override
-        public String getHomeURL()
+        public String getTableURL()
         {
-            String url;
-            if (m_credentials != null && m_credentials.lang != null)
-                url = "http://org.ntnu.no/tennisgr/index.php?lang=" + m_credentials.lang;
-            else
-                url = "http://org.ntnu.no/tennisgr/";
+            String url = "http://org.ntnu.no/tennisgr/index.php";
+            if (m_credentials != null && m_credentials.lang != null) {
+                url = Uri.parse(url).buildUpon()
+                        .appendQueryParameter("lang", m_credentials.lang)
+                        .appendQueryParameter("uke", "" + m_weekNumber)
+                        .toString();
+                Log.d(TAG_LOG, url);
+            }
             return url;
         }
         /**

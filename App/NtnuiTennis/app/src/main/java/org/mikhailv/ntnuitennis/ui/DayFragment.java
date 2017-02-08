@@ -84,8 +84,12 @@ public class DayFragment extends Fragment implements NetworkCallbacks
                 m_callbacks.updateData();
                 return true;
             case R.id.menu_btn_prev:
+                if (TennisApp.getManager(getActivity()).decrementWeek())
+                    m_callbacks.updateData();
                 return true;
             case R.id.menu_btn_next:
+                TennisApp.getManager(getActivity()).incrementWeek();
+                m_callbacks.updateData();
                 return true;
             case R.id.menu_btn_login:
                 m_callbacks.onLogInPressed();

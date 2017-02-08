@@ -106,8 +106,9 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     public void downloadTable()
     {
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
+            AppManager am = TennisApp.getManager(getActivity());
             m_worker = new FetchTableTask(this);
-            m_worker.execute(TennisApp.getManager(getActivity()).getHomeURL());
+            m_worker.execute(am.getTableURL());
         }
     }
     /**
@@ -145,7 +146,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
 
         if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
             m_worker = new AuthenticateTask(this, email, password, lang);
-            m_worker.execute(TennisApp.getManager(getActivity()).getHomeURL());
+            m_worker.execute(TennisApp.getManager(getActivity()).getTableURL());
         }
     }
     public void cancelDownload()
