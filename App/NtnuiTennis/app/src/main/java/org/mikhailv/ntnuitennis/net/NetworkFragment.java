@@ -52,7 +52,8 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     }
 
     private NetworkCallbacks m_callbacks;
-    private NetworkTask m_worker;
+    private NetworkTask m_fetchWorker;
+    private NetworkTask m_authWorker;
 
     //-----------------Lifecycle methods------------------------------------------------------------
     @Override
@@ -78,9 +79,15 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     public void onDestroy()
     {
         super.onDestroy();
-        if (m_worker != null && m_worker.getStatus() == AsyncTask.Status.RUNNING) {
-            m_worker.cancel(true);
-            m_worker.freeCallbacks();
+        if (m_fetchWorker != null) {
+            if (m_fetchWorker.getStatus() == AsyncTask.Status.RUNNING)
+                m_fetchWorker.cancel(true);
+            m_fetchWorker.freeCallbacks();
+        }
+        if (m_authWorker != null) {
+            if (m_authWorker.getStatus() == AsyncTask.Status.RUNNING)
+                m_authWorker.cancel(true);
+            m_authWorker.freeCallbacks();
         }
     }
     /**
@@ -105,10 +112,10 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
      */
     public void downloadTable()
     {
-        if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
+        if (m_fetchWorker == null || m_fetchWorker.getStatus() != AsyncTask.Status.RUNNING) {
             AppManager am = TennisApp.getManager(getActivity());
-            m_worker = new FetchTableTask(this);
-            m_worker.execute(am.getTableURL());
+            m_fetchWorker = new FetchTableTask(this);
+            m_fetchWorker.execute(am.getTableURL());
         }
     }
     /**
@@ -117,9 +124,9 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
      */
     public void downloadSlot(String slotAddress)
     {
-        if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
-            m_worker = new FetchSlotTask(this);
-            m_worker.execute(slotAddress);
+        if (m_fetchWorker == null || m_fetchWorker.getStatus() != AsyncTask.Status.RUNNING) {
+            m_fetchWorker = new FetchSlotTask(this);
+            m_fetchWorker.execute(slotAddress);
         }
     }
     /**
@@ -144,15 +151,15 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             return;
         }
 
-        if (m_worker == null || m_worker.getStatus() != AsyncTask.Status.RUNNING) {
-            m_worker = new AuthenticateTask(this, email, password, lang);
-            m_worker.execute(TennisApp.getManager(getActivity()).getTableURL());
+        if (m_authWorker == null || m_authWorker.getStatus() != AsyncTask.Status.RUNNING) {
+            m_authWorker = new AuthenticateTask(this, email, password, lang);
+            m_authWorker.execute(TennisApp.getManager(getActivity()).getTableURL());
         }
     }
     public void cancelDownload()
     {
-        if (m_worker != null && m_worker.getStatus() == AsyncTask.Status.RUNNING)
-            m_worker.cancel(true);
+        if (m_fetchWorker != null && m_fetchWorker.getStatus() == AsyncTask.Status.RUNNING)
+            m_fetchWorker.cancel(true);
     }
     //-----------------Internal callbacks from AsyncTasks-------------------------------------------
     // Necessary because the fragment might be reattached while a task is executing
