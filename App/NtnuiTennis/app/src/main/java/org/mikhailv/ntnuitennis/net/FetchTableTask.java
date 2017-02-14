@@ -37,10 +37,10 @@ class FetchTableTask extends FetchTask
             int closingTagIndex = rawHtml.indexOf("</table>");
             rawHtml = rawHtml.substring(openingTagIndex, closingTagIndex + "</table>".length());
 
-            rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
-                    .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
-                    .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "");
+            rawHtml = rawHtml.replace("&nbsp;", " ").replace("&Oslash;", "Ø")
+                    .replace("&oslash;", "ø").replace("&Aring;", "Å")
+                    .replace("&aring;", "å").replace("&AElig;", "Æ")
+                    .replace("&aelig;", "æ").replace("&#9990", "");
 
             TableBuilder builder = new TableBuilder(8, WEEK_SIZE, DAY_SIZE);
             XmlPullParser parser = Xml.newPullParser();
@@ -116,12 +116,12 @@ class FetchTableTask extends FetchTask
 
                         if (tag.name.equals("th") && day >= 0) {
                             builder.addDayName(text);
-
-                        } else if (tag.name.equals("td") && day == -1) {
+                        }
+                        else if (tag.name.equals("td") && day == -1) {
                             Scanner in = new Scanner(text).useDelimiter("[^0-9]+");
                             hour = in.nextInt();
-
-                        } else if (tag.name.equals("a") || tag.name.equals("span")) { // span for expired hours
+                        }
+                        else if (tag.name.equals("a") || tag.name.equals("span")) { // span for expired hours
                             builder.addLevel(day, hour, text);
                         }
 
@@ -129,8 +129,8 @@ class FetchTableTask extends FetchTask
                 }
             }
             return builder.getWeek();
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             Log.d(AppManager.TAG_LOG, e.toString());
             throw new ParseException(e.toString(), 0);

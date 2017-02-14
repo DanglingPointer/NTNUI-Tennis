@@ -38,7 +38,8 @@ class FetchSlotTask extends FetchTask
             rawData = rawData.substring(openingTagIndex);
             parser = new SlotParser(rawData);
             parser.parse(BASE_URL);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG_LOG, e.toString());
             throw new ParseException(e.toString(), 0);
@@ -65,15 +66,15 @@ class FetchSlotTask extends FetchTask
 
         public SlotParser(String rawHtml) throws XmlPullParserException
         {
-            rawHtml = rawHtml.replaceAll("&nbsp;", " ").replaceAll("&Oslash;", "Ø")
-                    .replaceAll("&oslash;", "ø").replaceAll("&Aring;", "Å")
-                    .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
-                    .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
-                    .replaceAll("&ldquo;", "").replaceAll("&rdquo;", "")
+            rawHtml = rawHtml.replace("&nbsp;", " ").replace("&Oslash;", "Ø")
+                    .replace("&oslash;", "ø").replace("&Aring;", "Å")
+                    .replace("&aring;", "å").replace("&AElig;", "Æ")
+                    .replace("&aelig;", "æ").replace("&#9990", "")
+                    .replace("&ldquo;", "").replace("&rdquo;", "")
                     .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td")
                     .replaceAll("[0-9]+\\)</span></span>", ")</span>");
             // The last two because of malformed html on some sessions
-            
+
             m_link = null;
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());
@@ -103,11 +104,13 @@ class FetchSlotTask extends FetchTask
                         ++depth;
                         if (m_parser.getName().equals("tr")) {
                             currentLine = new ArrayList<>();
-                        } else if (m_parser.getAttributeCount() == 2 &&
+                        }
+                        else if (m_parser.getAttributeCount() == 2 &&
                                 m_parser.getAttributeName(1).equals("rowspan")) {
                             newLine = true;
                             ++what;
-                        } else if (m_parser.getAttributeCount() > 0 &&
+                        }
+                        else if (m_parser.getAttributeCount() > 0 &&
                                 m_parser.getAttributeName(0).equals("href")) {
                             Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
                             links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
@@ -146,7 +149,8 @@ class FetchSlotTask extends FetchTask
                             Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
                             links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
                         }
-                    } else if (token == XmlPullParser.END_TAG) {
+                    }
+                    else if (token == XmlPullParser.END_TAG) {
                         --depth;
                     }
                 }

@@ -2,6 +2,7 @@ package org.mikhailv.ntnuitennis.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -155,7 +156,20 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         leftTextView.setText(left);
         rightTextView.setText(right);
 
+        if (right != null && (right.contains("not ") || right.contains(" ikke"))
+                && countOccurrences(' ', right) < 3)
+            rightTextView.setTextColor(Color.RED);
+
         m_rootView.addView(infoLine);
+    }
+    private int countOccurrences(char of, CharSequence in)
+    {
+        int count = 0;
+        for (int i = 0; i < in.length(); ++i) {
+            if (in.charAt(i) == of)
+                ++count;
+        }
+        return count;
     }
     //-----------Network callbacks------------------------------------------------------------------
     @Override
