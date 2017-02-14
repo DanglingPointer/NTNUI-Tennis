@@ -70,9 +70,10 @@ class FetchSlotTask extends FetchTask
                     .replaceAll("&aring;", "å").replaceAll("&AElig;", "Æ")
                     .replaceAll("&aelig;", "æ").replaceAll("&#9990", "")
                     .replaceAll("&ldquo;", "").replaceAll("&rdquo;", "")
-                    .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td");
-            // The last one because of malformed html on weekend sessions
-
+                    .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td")
+                    .replaceAll("[0-9]+\\)</span></span>", ")</span>");
+            // The last two because of malformed html on some sessions
+            
             m_link = null;
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());
