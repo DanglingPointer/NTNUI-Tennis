@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.TennisApp;
-import org.mikhailv.ntnuitennis.data.HourInfo;
+import org.mikhailv.ntnuitennis.data.SessionInfo;
 
 import java.util.List;
 
@@ -74,7 +74,7 @@ public class NotificationsFragment extends Fragment
         @Override
         public void onBindViewHolder(HourHolder holder, int position)
         {
-            List<HourInfo> data = TennisApp.getManager(getContext()).getHoursInfo();
+            List<SessionInfo> data = TennisApp.getManager(getContext()).getHoursInfo();
             holder.bind(data.get(position));
         }
         @Override
@@ -90,7 +90,7 @@ class HourHolder extends RecyclerView.ViewHolder implements CompoundButton.OnChe
 {
     private CheckBox m_checkBox;
     private TextView m_lvlText;
-    private HourInfo m_data;
+    private SessionInfo m_data;
 
     public HourHolder(View root)
     {
@@ -104,11 +104,11 @@ class HourHolder extends RecyclerView.ViewHolder implements CompoundButton.OnChe
     {
         m_data.setChecked(isChecked);
     }
-    public void bind(HourInfo data)
+    public void bind(SessionInfo data)
     {
         m_data = data;
         m_lvlText.setText(data.getLvl());
-        m_checkBox.setText(data.getDay() + ", " + data.getTime() + ":00");
+        m_checkBox.setText(data.getDate() + ", " + data.getHour() + ":00");
         m_checkBox.setChecked(data.getChecked());
     }
 }

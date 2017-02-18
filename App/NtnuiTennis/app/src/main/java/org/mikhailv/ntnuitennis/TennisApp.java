@@ -5,7 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import org.mikhailv.ntnuitennis.data.HourInfo;
+import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.data.TableBuilder;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
@@ -15,11 +15,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 04.02.2017.
@@ -51,7 +48,7 @@ public class TennisApp extends Application
         private NetworkFragment m_networker;
         private Week m_week;
         private CredentialsImpl m_credentials;
-        private List<HourInfo> m_hours;
+        private List<SessionInfo> m_hours;
         private int m_weekNumber;
 
         public AppManagerImpl(Context context)
@@ -166,26 +163,26 @@ public class TennisApp extends Application
             m_week = week;
         }
         @Override
-        public List<HourInfo> getHoursInfo()
+        public List<SessionInfo> getHoursInfo()
         {
             if (m_hours == null) {
-                List<HourInfo> newHours = getCurrentWeek().getHours();
-                List<HourInfo> oldHours;
+                List<SessionInfo> newHours = getCurrentWeek().getHours();
+                List<SessionInfo> oldHours;
                 try {
                     FileInputStream fileIn = m_context.openFileInput(NOTIFICATIONS_FILE);
                     ObjectInputStream in = new ObjectInputStream(fileIn);
-                    oldHours = (ArrayList<HourInfo>)in.readObject();
+                    oldHours = (ArrayList<SessionInfo>)in.readObject();
                     in.close();
                     fileIn.close();
 
                     if (oldHours.size() != newHours.size())
                         throw new Exception();
                     for (int i = 0; i < oldHours.size(); ++i) {
-                        HourInfo newHour = newHours.get(i);
-                        HourInfo oldHour = oldHours.get(i);
-                        if (!newHour.getDay().equals(oldHour.getDay()) ||
+                        SessionInfo newHour = newHours.get(i);
+                        SessionInfo oldHour = oldHours.get(i);
+                        if (!newHour.getDate().equals(oldHour.getDate()) ||
                                 !newHour.getLvl().equals(oldHour.getLvl()) ||
-                                newHour.getTime() != oldHour.getTime())
+                                newHour.getHour() != oldHour.getHour())
                             throw new Exception();
                     }
                     m_hours = oldHours;

@@ -1,8 +1,6 @@
 package org.mikhailv.ntnuitennis;
 
-import android.content.Context;
-
-import org.mikhailv.ntnuitennis.data.HourInfo;
+import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
@@ -49,7 +47,7 @@ public interface AppManager
     /**
      * Reads from file the first time
      */
-    List<HourInfo> getHoursInfo();
+    List<SessionInfo> getHoursInfo();
 
     void discardHoursInfoChanges();
 

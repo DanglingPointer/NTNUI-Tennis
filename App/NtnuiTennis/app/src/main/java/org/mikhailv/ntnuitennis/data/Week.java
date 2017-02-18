@@ -15,7 +15,7 @@ public interface Week
 {
     Day getDay(int index);
 
-    List<HourInfo> getHours();
+    List<SessionInfo> getHours();
 }
 
 class WeekImpl implements Week
@@ -35,15 +35,17 @@ class WeekImpl implements Week
         m_days[index] = day;
         return this;
     }
-    public List<HourInfo> getHours()
+    public List<SessionInfo> getHours()
     {
-        List<HourInfo> newHours = new ArrayList<>();
+        List<SessionInfo> newHours = new ArrayList<>();
         Slot slot;
         for (Day d : m_days) {
             for (int hour = INIT_HOUR; hour < DAY_SIZE + INIT_HOUR; ++hour) {
                 slot = d.getSlot(hour);
-                if (slot.getLevel() != null)
-                    newHours.add(new HourInfo(d.getDate(), slot.getLevel(), hour));
+                if (slot.getLevel() != null && !slot.isExpired()) {
+                    SessionInfo hi = new SessionInfo(d.getDate(), slot.getLevel(), hour, slot.getLink());
+                    newHours.add(hi);
+                }
             }
         }
         return newHours;
