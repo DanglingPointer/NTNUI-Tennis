@@ -130,7 +130,8 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         if (savedInstanceState == null) {
             m_adapter = new SlotAdapter(getActivity(), dayIndex);
             Log.d(TAG_LOG, "onCreateView called without saved state");
-        } else {
+        }
+        else {
             boolean[] expanded = savedInstanceState.getBooleanArray(SAVED_EXPANDED);
             m_adapter = new SlotAdapter(getActivity(), dayIndex, expanded);
             Log.d(TAG_LOG, "onCreateView called with saved state");
@@ -152,9 +153,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         boolean[] expanded = m_adapter.getExpanded();
         outState.putBooleanArray(SAVED_EXPANDED, expanded);
     }
-    /**
-     * Network callbacks
-     */
+    //-------------------------Network callbacks----------------------------------------------------
     @Override
     public void onProgressChanged(int progress)
     {
@@ -288,7 +287,8 @@ class SlotHolder extends RecyclerView.ViewHolder
                 if (expanded) {
                     m_expandBtn.setImageResource(R.drawable.ic_expand);
                     expanded = false;
-                } else {
+                }
+                else {
                     m_expandBtn.setImageResource(R.drawable.ic_collapse);
                     expanded = true;
                 }
@@ -312,7 +312,8 @@ class SlotHolder extends RecyclerView.ViewHolder
 
         if (expanded) {
             m_expandBtn.setImageResource(R.drawable.ic_collapse);
-        } else {
+        }
+        else {
             m_expandBtn.setImageResource(R.drawable.ic_expand);
         }
         m_slotData = slot;
@@ -335,7 +336,8 @@ class SlotHolder extends RecyclerView.ViewHolder
             String text = TextUtils.join("\n", names);
             m_reservedText.setText(text);
             m_reservedText.setVisibility(View.VISIBLE);
-        } else {
+        }
+        else {
             m_reservedText.setText(null);
             m_reservedText.setVisibility(View.GONE);
         }
@@ -350,7 +352,8 @@ class SlotHolder extends RecyclerView.ViewHolder
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             m_detailsBtn.setBackgroundColor(c.getColor(color));
             m_expandBtn.setBackgroundColor(c.getColor(color));
-        } else {
+        }
+        else {
             m_detailsBtn.setBackgroundColor(c.getResources().getColor(color));
             m_expandBtn.setBackgroundColor(c.getResources().getColor(color));
         }
@@ -365,7 +368,8 @@ class SlotHolder extends RecyclerView.ViewHolder
         Context c = m_detailsBtn.getContext();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             m_detailsBtn.setTextColor(c.getColor(color));
-        } else {
+        }
+        else {
             m_detailsBtn.setTextColor(c.getResources().getColor(color));
         }
     }

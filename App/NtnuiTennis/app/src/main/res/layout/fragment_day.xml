@@ -18,10 +18,11 @@
 
     <ProgressBar
         android:id="@+id/day_progress_bar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="4dp"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:visibility="gone"
+        android:max="100"
         />
 
     <android.support.v7.widget.RecyclerView

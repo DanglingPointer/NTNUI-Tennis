@@ -20,26 +20,27 @@ final class LinksTable
 class SessionsDBHelper extends SQLiteOpenHelper
 {
     private static final int VERSION = 1;
-    private static final String DB_NAME = "sessionsBase.db";
+    private static final String DB_FILENAME = "sessionsBase.db";
+
+    private static final String SQL_CREATE_TABLE = "CREATE TABLE " + LinksTable.NAME + " ( "
+            + LinksTable.COL_LINK + " VARCHAR(100) NOT NULL, "
+            + LinksTable.COL_DATE + " LONG NOT NULL, "
+            + "PRIMARY KEY (" + LinksTable.COL_LINK + ") );";
+    private static final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + LinksTable.NAME + ";";
 
     public SessionsDBHelper(Context c)
     {
-        super(c, DB_NAME, null, VERSION);
+        super(c, DB_FILENAME, null, VERSION);
     }
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        StringBuilder query = new StringBuilder(100)
-                .append("CREATE TABLE " + LinksTable.NAME + " ( ")
-                .append(LinksTable.COL_LINK + " VARCHAR(100) NOT NULL, ")
-                .append(LinksTable.COL_DATE + " LONG NOT NULL, ")
-                .append("PRIMARY KEY (" + LinksTable.COL_LINK + ") );");
-        db.execSQL(query.toString());
+        db.execSQL(SQL_CREATE_TABLE);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        db.execSQL("DROP TABLE IF EXISTS " + LinksTable.NAME);
+        db.execSQL(SQL_DELETE_TABLE);
         onCreate(db);
     }
     public static ContentValues getContentValues(String link, long date)
