@@ -18,6 +18,13 @@ import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
  */
 public class SessionInfo implements Serializable
 {
+    public interface ShortForm
+    {
+        String getLink();
+
+        long getDate();
+    }
+
     private String m_day;
     private String m_lvl;
     private String m_link;
@@ -33,18 +40,21 @@ public class SessionInfo implements Serializable
         m_link = link;
     }
     //----DB methods--------------------------------------------------------------------------------
-    public long getDateInMillis()
+    public ShortForm getShortForm()
     {
         Scanner in = new Scanner(m_day).useDelimiter("[^0-9]+");
         int day = in.nextInt();
         int month = in.nextInt();
         int year = Calendar.getInstance().get(Calendar.YEAR);
         Calendar c = new GregorianCalendar(year, month, day, m_hour, 0, 0);
-        return c.getTimeInMillis();
-    }
-    public String getLink()
-    {
-        return m_link;
+        final long date = c.getTimeInMillis();
+        return new ShortForm()
+        {
+            @Override
+            public String getLink() { return m_link; }
+            @Override
+            public long getDate() { return date; }
+        };
     }
     //----GUI methods-------------------------------------------------------------------------------
     public String getDate()
