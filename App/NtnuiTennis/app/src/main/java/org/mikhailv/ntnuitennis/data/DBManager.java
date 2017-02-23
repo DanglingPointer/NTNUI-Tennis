@@ -69,13 +69,13 @@ public class DBManager
     {
         m_db = new SessionsDBHelper(context.getApplicationContext()).getWritableDatabase();
     }
-    public void insertTuple(@NonNull SessionInfo.ShortForm session)
+    public void insertTuple(SessionInfo.ShortForm session)
     {
         ContentValues tuple = getContentValues(session);
         long rowID = m_db.insert(SessionsTable.NAME, null, tuple);
         Log.d(TAG_LOG, "DB: Inserted row " + rowID);
     }
-    public void deleteTuple(@NonNull String link)
+    public void deleteTuple(String link)
     {
         // WHERE link = 'http://blablabla'
         int rows = m_db.delete(SessionsTable.NAME,

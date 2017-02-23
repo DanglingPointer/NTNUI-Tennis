@@ -1,6 +1,7 @@
 package org.mikhailv.ntnuitennis.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.TennisApp;
 import org.mikhailv.ntnuitennis.data.SessionInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +29,10 @@ import java.util.List;
 
 public class NotificationsFragment extends Fragment
 {
+    private static final String SAVED_CHECKED = "NotificationsFragment.checked";
+
+    private HourAdapter m_adapter;
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
@@ -38,7 +44,7 @@ public class NotificationsFragment extends Fragment
     {
         switch (item.getItemId()) {
             case R.id.menu_not_save_btn:
-                TennisApp.getManager(getActivity()).saveHoursInfo();
+                TennisApp.getManager(getActivity()).saveHoursInfo(m_adapter.getData());
                 getActivity().finish();
                 return true;
             default:
@@ -52,35 +58,78 @@ public class NotificationsFragment extends Fragment
         setHasOptionsMenu(true);
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
         RecyclerView recyclerView = (RecyclerView)root.findViewById(R.id.notifications_recycler_view);
-        recyclerView.setAdapter(new HourAdapter());
+        if (savedInstanceState == null) {
+            m_adapter = new HourAdapter();
+        }
+        else {
+            boolean[] savedChecked = savedInstanceState.getBooleanArray(SAVED_CHECKED);
+            m_adapter = new HourAdapter(savedChecked);
+        }
+        recyclerView.setAdapter(m_adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return root;
     }
     @Override
-    public void onStop()
+    public void onSaveInstanceState(Bundle outState)
     {
-        super.onStop();
-        TennisApp.getManager(getContext()).discardHoursInfoChanges();
+        outState.putBooleanArray(SAVED_CHECKED, m_adapter.getChecked());
     }
+    //----------------------------------------------------------------------------------------------
+
     class HourAdapter extends RecyclerView.Adapter<HourHolder>
     {
+        final List<SessionInfo> m_data;
+        final boolean[] m_checked;
+        /**
+         * Sets m_checked according to m_data
+         */
+        public HourAdapter()
+        {
+            m_data = TennisApp.getManager(getContext()).getHoursInfo();
+            m_checked = new boolean[m_data.size()];
+            for (int i = 0; i < m_data.size(); ++i) {
+                m_checked[i] = m_data.get(i).isChecked();
+            }
+        }
+        /**
+         * Sets m_data according to m_checked
+         */
+        public HourAdapter(boolean[] checked)
+        {
+            m_data = TennisApp.getManager(getContext()).getHoursInfo();
+            m_checked = checked;
+            for (int i = 0; i < m_checked.length; ++i) {
+                m_data.get(i).setChecked(m_checked[i]);
+            }
+        }
         @Override
         public HourHolder onCreateViewHolder(ViewGroup parent, int viewType)
         {
             View root = LayoutInflater.from(getActivity()).inflate(R.layout.item_hour, parent, false);
-            return new HourHolder(root);
+            return new HourHolder(root, this);
         }
         @Override
         public void onBindViewHolder(HourHolder holder, int position)
         {
-            List<SessionInfo> data = TennisApp.getManager(getContext()).getHoursInfo();
-            holder.bind(data.get(position));
+            holder.bind(m_data.get(position));
         }
         @Override
         public int getItemCount()
         {
             return TennisApp.getManager(getContext()).getHoursInfo().size();
+        }
+        public List<SessionInfo> getData()
+        {
+            return m_data;
+        }
+        public void setCheckedAt(int position, boolean isChecked)
+        {
+            m_checked[position] = isChecked;
+        }
+        public boolean[] getChecked()
+        {
+            return m_checked;
         }
     }
 
@@ -88,13 +137,15 @@ public class NotificationsFragment extends Fragment
 
 class HourHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener
 {
-    private CheckBox m_checkBox;
-    private TextView m_lvlText;
+    final private CheckBox m_checkBox;
+    final private TextView m_lvlText;
     private SessionInfo m_data;
+    final private NotificationsFragment.HourAdapter m_adapter;
 
-    public HourHolder(View root)
+    public HourHolder(View root, NotificationsFragment.HourAdapter adapter)
     {
         super(root);
+        m_adapter = adapter;
         m_lvlText = (TextView)root.findViewById(R.id.item_hour_text_lvl);
         m_checkBox = (CheckBox)root.findViewById(R.id.item_hour_checkbox);
         m_checkBox.setOnCheckedChangeListener(this);
@@ -103,12 +154,13 @@ class HourHolder extends RecyclerView.ViewHolder implements CompoundButton.OnChe
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
     {
         m_data.setChecked(isChecked);
+        m_adapter.setCheckedAt(getAdapterPosition(), isChecked);
     }
     public void bind(SessionInfo data)
     {
         m_data = data;
         m_lvlText.setText(data.getLvl());
         m_checkBox.setText(data.getDate() + ", " + data.getHour() + ":00");
-        m_checkBox.setChecked(data.getChecked());
+        m_checkBox.setChecked(data.isChecked());
     }
 }

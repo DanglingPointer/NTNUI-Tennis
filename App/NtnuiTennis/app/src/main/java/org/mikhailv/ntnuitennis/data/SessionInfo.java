@@ -56,6 +56,10 @@ public class SessionInfo implements Serializable
             public long getDate() { return date; }
         };
     }
+    public String getLink()
+    {
+        return m_link;
+    }
     //----GUI methods-------------------------------------------------------------------------------
     public String getDate()
     {
@@ -69,7 +73,7 @@ public class SessionInfo implements Serializable
     {
         return m_hour;
     }
-    public boolean getChecked()
+    public boolean isChecked()
     {
         return m_checked;
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import org.mikhailv.ntnuitennis.data.DBManager;
 import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.data.TableBuilder;
 import org.mikhailv.ntnuitennis.data.Week;
@@ -48,7 +49,6 @@ public class TennisApp extends Application
         private NetworkFragment m_networker;
         private Week m_week;
         private CredentialsImpl m_credentials;
-        private List<SessionInfo> m_hours;
         private int m_weekNumber;
 
         public AppManagerImpl(Context context)
@@ -109,7 +109,8 @@ public class TennisApp extends Application
                 out.writeObject(m_credentials);
                 out.close();
                 fileOut.close();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Log.d(TAG_LOG, "Cannot write credentials :(");
                 e.printStackTrace();
             }
@@ -123,7 +124,8 @@ public class TennisApp extends Application
             if (m_networker == null) {
                 m_networker = networker;
                 m_networker.authenticate(getCredentials());
-            } else {
+            }
+            else {
                 m_networker = networker;
             }
         }
@@ -140,7 +142,8 @@ public class TennisApp extends Application
                     m_credentials = (CredentialsImpl)in.readObject();
                     in.close();
                     fileIn.close();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.d(TAG_LOG, "no credentials file found :(");
                     // credentials file is non-existing (first time)
                     m_credentials = new CredentialsImpl();
@@ -153,7 +156,7 @@ public class TennisApp extends Application
         {
             if (m_week == null) {
                 TableBuilder builder = new TableBuilder(INIT_HOUR, WEEK_SIZE, DAY_SIZE);
-                m_week = builder.getWeek();
+                m_week = builder.getWeek(); // empty week
             }
             return m_week;
         }
@@ -162,55 +165,44 @@ public class TennisApp extends Application
         {
             m_week = week;
         }
+        /**
+         * Does not delete expired tracked sessions, that will be done in service
+         *
+         * @return
+         */
         @Override
         public List<SessionInfo> getHoursInfo()
         {
-            if (m_hours == null) {
-                List<SessionInfo> newHours = getCurrentWeek().getHours();
-                List<SessionInfo> oldHours;
-                try {
-                    FileInputStream fileIn = m_context.openFileInput(NOTIFICATIONS_FILE);
-                    ObjectInputStream in = new ObjectInputStream(fileIn);
-                    oldHours = (ArrayList<SessionInfo>)in.readObject();
-                    in.close();
-                    fileIn.close();
+            DBManager db = new DBManager(m_context);
+            List<SessionInfo.ShortForm> trackedSessions = db.getAllTuples();
+            List<SessionInfo> currentSessions = getCurrentWeek().getHours();
 
-                    if (oldHours.size() != newHours.size())
-                        throw new Exception();
-                    for (int i = 0; i < oldHours.size(); ++i) {
-                        SessionInfo newHour = newHours.get(i);
-                        SessionInfo oldHour = oldHours.get(i);
-                        if (!newHour.getDate().equals(oldHour.getDate()) ||
-                                !newHour.getLvl().equals(oldHour.getLvl()) ||
-                                newHour.getHour() != oldHour.getHour())
-                            throw new Exception();
+            for (SessionInfo.ShortForm trackedSession : trackedSessions) {
+                for (SessionInfo currentSession : currentSessions) {
+                    if (trackedSession.getLink().equals(currentSession.getLink())) {
+                        currentSession.setChecked(true);
+                        break;
                     }
-                    m_hours = oldHours;
-                } catch (Exception e) {
-                    // something went wrong or config-file is outdated
-                    m_hours = newHours;
                 }
             }
-            return m_hours;
+            return currentSessions;
         }
         @Override
-        public void discardHoursInfoChanges()
+        public void saveHoursInfo(List<SessionInfo> sessions)
         {
-            m_hours = null;
-        }
-        @Override
-        public void saveHoursInfo()
-        {
-            if (m_hours == null) return;
-            try {
-                FileOutputStream fileOut = m_context.openFileOutput(NOTIFICATIONS_FILE, Context.MODE_PRIVATE);
-                ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                out.writeObject(m_hours);
-                out.close();
-                fileOut.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+            DBManager db = new DBManager(m_context);
+            List<SessionInfo.ShortForm> trackedSessions = db.getAllTuples();
+            List<String> trackedURLs = new ArrayList<>();
+            for (SessionInfo.ShortForm session : trackedSessions)
+                trackedURLs.add(session.getLink());
+
+            for (SessionInfo session : sessions) {
+                if (session.isChecked() && !trackedURLs.contains(session.getLink()))
+                    db.insertTuple(session.getShortForm());
+                else if (!session.isChecked() && trackedURLs.contains(session.getLink()))
+                    db.deleteTuple(session.getLink());
             }
+
         }
         private static class CredentialsImpl implements AppManager.Credentials, Serializable
         {

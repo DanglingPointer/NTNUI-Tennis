@@ -49,11 +49,9 @@ public interface AppManager
      */
     List<SessionInfo> getHoursInfo();
 
-    void discardHoursInfoChanges();
-
     /**
      * Writes to file if any changes made
      */
-    void saveHoursInfo();
+    void saveHoursInfo(List<SessionInfo> sessions);
 }
 
