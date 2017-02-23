@@ -23,6 +23,8 @@ public class SessionInfo implements Serializable
         String getLink();
 
         long getDate();
+
+        String getInfo();
     }
 
     private String m_day;
@@ -54,6 +56,8 @@ public class SessionInfo implements Serializable
             public String getLink() { return m_link; }
             @Override
             public long getDate() { return date; }
+            @Override
+            public String getInfo() { return m_lvl; }
         };
     }
     public String getLink()

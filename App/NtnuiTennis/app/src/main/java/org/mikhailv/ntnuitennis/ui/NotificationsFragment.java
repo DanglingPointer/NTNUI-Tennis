@@ -117,7 +117,7 @@ public class NotificationsFragment extends Fragment
         @Override
         public int getItemCount()
         {
-            return TennisApp.getManager(getContext()).getHoursInfo().size();
+            return m_data.size();
         }
         public List<SessionInfo> getData()
         {

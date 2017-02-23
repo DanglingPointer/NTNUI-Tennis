@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ public class DBManager
         static final String NAME = "sessions";
         static final String COL_LINK = "link";
         static final String COL_DATE = "date";
+        static final String COL_INFO = "info";
     }
     //----------------------------------------------------------------------------------------------
 
@@ -33,15 +33,18 @@ public class DBManager
         static final String CREATE_TABLE = "CREATE TABLE " + SessionsTable.NAME + " ( "
                 + SessionsTable.COL_LINK + " VARCHAR(100) NOT NULL, "
                 + SessionsTable.COL_DATE + " LONG NOT NULL, "
+                + SessionsTable.COL_INFO + " VARCHAR(16), "
                 + "PRIMARY KEY (" + SessionsTable.COL_LINK + ") );";
 
         static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + SessionsTable.NAME + ";";
+
+        static final String TABLE_SIZE = "SELECT COUNT(*) FROM " + SessionsTable.NAME + ";";
     }
     //----------------------------------------------------------------------------------------------
 
     private static class SessionsDBHelper extends SQLiteOpenHelper
     {
-        private static final int VERSION = 1;
+        private static final int VERSION = 3;
         private static final String DB_FILENAME = "sessionsBase.db";
 
 
@@ -72,22 +75,19 @@ public class DBManager
     public void insertTuple(SessionInfo.ShortForm session)
     {
         ContentValues tuple = getContentValues(session);
-        long rowID = m_db.insert(SessionsTable.NAME, null, tuple);
-        Log.d(TAG_LOG, "DB: Inserted row " + rowID);
+        m_db.insert(SessionsTable.NAME, null, tuple);
     }
     public void deleteTuple(String link)
     {
         // WHERE link = 'http://blablabla'
-        int rows = m_db.delete(SessionsTable.NAME,
-                SessionsTable.COL_LINK + " = ?", new String[] { link });
-        Log.d(TAG_LOG, "DB: Deleted " + rows + " rows");
+        m_db.delete(SessionsTable.NAME, SessionsTable.COL_LINK + " = ?", new String[] { link });
     }
     public List<SessionInfo.ShortForm> getAllTuples()
     {
         List<SessionInfo.ShortForm> tuples = new ArrayList<>();
 
         try (Cursor cursor = m_db.query(
-                SessionsTable.NAME, // table
+                SessionsTable.NAME, // FROM
                 null,               // SELECT *
                 null,               // WHERE
                 null,               // WHERE args
@@ -97,30 +97,43 @@ public class DBManager
         )) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                tuples.add(getSessionShortForm(cursor));
+                SessionInfo.ShortForm tuple = getSessionShortForm(cursor);
+                Log.d(TAG_LOG, "Tuple: Link = " + tuple.getLink()
+                        + " Info = " + tuple.getInfo() + " Date = " + tuple.getDate());
+                tuples.add(tuple);
                 cursor.moveToNext();
             }
             return tuples;
         }
     }
-
+    public int getTableSize()
+    {
+        try (Cursor cursor = m_db.rawQuery(Query.TABLE_SIZE, null)) {
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+    }
     private ContentValues getContentValues(SessionInfo.ShortForm session)
     {
-        ContentValues tuple = new ContentValues(2);
+        ContentValues tuple = new ContentValues(3);
         tuple.put(SessionsTable.COL_LINK, session.getLink());
-        tuple.put(SessionsTable.COL_DATE, session.getLink());
+        tuple.put(SessionsTable.COL_DATE, session.getDate());
+        tuple.put(SessionsTable.COL_INFO, session.getInfo());
         return tuple;
     }
     private SessionInfo.ShortForm getSessionShortForm(Cursor c)
     {
         final String link = c.getString(c.getColumnIndex(SessionsTable.COL_LINK));
         final long date = c.getLong(c.getColumnIndex(SessionsTable.COL_DATE));
+        final String info = c.getString(c.getColumnIndex(SessionsTable.COL_INFO));
         return new SessionInfo.ShortForm()
         {
             @Override
             public String getLink() { return link; }
             @Override
             public long getDate() { return date; }
+            @Override
+            public String getInfo() { return info; }
         };
     }
 }

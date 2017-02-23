@@ -166,9 +166,9 @@ public class TennisApp extends Application
             m_week = week;
         }
         /**
+         * Loads content of DB, compares with current week and modifies the latter if necessary.
+         * Does not change any internal state.
          * Does not delete expired tracked sessions, that will be done in service
-         *
-         * @return
          */
         @Override
         public List<SessionInfo> getHoursInfo()
@@ -187,6 +187,9 @@ public class TennisApp extends Application
             }
             return currentSessions;
         }
+        /**
+         * Updates DB according to checked sessions
+         */
         @Override
         public void saveHoursInfo(List<SessionInfo> sessions)
         {
@@ -202,7 +205,6 @@ public class TennisApp extends Application
                 else if (!session.isChecked() && trackedURLs.contains(session.getLink()))
                     db.deleteTuple(session.getLink());
             }
-
         }
         private static class CredentialsImpl implements AppManager.Credentials, Serializable
         {
