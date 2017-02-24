@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.CookieManager;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * Created by MikhailV on 31.01.2017.
@@ -17,7 +19,7 @@ import java.text.ParseException;
 abstract class FetchTask extends NetworkTask
 {
     protected static final int BUFFER_SIZE = 40000;
-    protected static final int MAX_READ = 4000; // 2000
+    protected static final int MAX_READ = 4000;
 
     public FetchTask(NetworkCallbacks callbacks)
     {
@@ -37,9 +39,9 @@ abstract class FetchTask extends NetworkTask
             conn.setDoInput(true);
 
             CookieManager cm = NetworkFragment.cookieManager;
-            if (cm.getCookieStore().getCookies().size() > 0) {
-                conn.setRequestProperty("Cookie",
-                        TextUtils.join(";", cm.getCookieStore().getCookies()));
+            List<HttpCookie> coockies = cm.getCookieStore().getCookies();
+            if (coockies.size() > 0) {
+                conn.setRequestProperty("Cookie", TextUtils.join(";", coockies));
             }
 
             conn.connect();
@@ -48,7 +50,7 @@ abstract class FetchTask extends NetworkTask
                 throw new IOException("HTTP error: " + response);
             inStream = conn.getInputStream();
             if (inStream != null) {
-                InputStreamReader reader = new InputStreamReader(inStream, "UTF-8");
+                InputStreamReader reader = new InputStreamReader(inStream, "ISO-8859-1");
                 char[] buffer = new char[BUFFER_SIZE];
 
                 int lastRead = 0, offset = 0;
