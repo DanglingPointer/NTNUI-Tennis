@@ -1,7 +1,6 @@
 package org.mikhailv.ntnuitennis.net;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.mikhailv.ntnuitennis.TennisApp;
@@ -9,7 +8,6 @@ import org.mikhailv.ntnuitennis.TennisApp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,27 +30,27 @@ public class SlotChecker
     private static final int CONNECT_TIMEOUT = 15000;
     private static final int BUFFER_SIZE = 40000;
 
-    private List<HttpCookie> m_cookies;
+    private String m_cookies;
     /**
      * Reads cookies from the cookie-file
      */
     public SlotChecker(Context context)
     {
-        List<String> cookieStrings = TennisApp.readCookies(context);
-        if (cookieStrings == null || cookieStrings.size() == 0)
+        String cookieString = TennisApp.readCookies(context);
+        Log.d(TAG_LOG, "SlotChecker(): cookies from file: " + cookieString);
+
+        if (cookieString == null || cookieString.isEmpty())
             return;
 
-        m_cookies = new ArrayList<>();
-        for (String cookieString : cookieStrings) {
-            List<HttpCookie> cookies = HttpCookie.parse(cookieString);
-            for (HttpCookie cookie : cookies) {
-                if (cookie.hasExpired()) {
-                    m_cookies = null;
-                    return;
-                }
-                m_cookies.add(cookie);
-            }
-        }
+        m_cookies = cookieString;
+
+//        List<HttpCookie> cookiesList = HttpCookie.parse(cookieString);
+//        for (HttpCookie cookie : cookiesList){
+//            if (cookie.hasExpired()){
+//                m_cookies = null;
+//                return;
+//            }
+//        }
     }
     /**
      * If no cookies-file or some of the cookies are expired, returns false
@@ -66,6 +64,7 @@ public class SlotChecker
      */
     public boolean checkSlotAvailability(String url)
     {
+        Log.d(TAG_LOG, "SlotChecker.checkSlotAvailability() called");
         InputStream inStream = null;
         HttpURLConnection conn = null;
         String rawResult = null;
@@ -77,8 +76,7 @@ public class SlotChecker
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
 
-            conn.setRequestProperty("Cookie", TextUtils.join(";", m_cookies));
-            Log.d(TAG_LOG, "Coockies: " + TextUtils.join(";", m_cookies));
+            conn.setRequestProperty("Cookie", m_cookies);
 
             conn.connect();
             int response = conn.getResponseCode();
@@ -101,7 +99,7 @@ public class SlotChecker
             }
         }
         catch (Exception e) {
-            Log.d(TAG_LOG, e.toString());
+            Log.d(TAG_LOG, "SlotChecker caught an exception: " + e.toString());
             e.printStackTrace();
             return false;
         }
@@ -123,7 +121,6 @@ public class SlotChecker
             links.add(m.group(1));
         }
         for (String link : links) {
-            Log.d(TAG_LOG, "SlotChecker found link: "+ link);
             if (link.contains("bekrefteid") || link.contains("leggtilvikarid"))
                 return true;
         }

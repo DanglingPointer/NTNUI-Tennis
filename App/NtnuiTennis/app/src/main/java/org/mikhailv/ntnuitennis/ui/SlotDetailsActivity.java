@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,8 +22,6 @@ import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
 
 import java.io.Serializable;
-
-import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 22.01.2017.
@@ -207,8 +204,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
                     m_attendBtn.setText(R.string.slot_btn_attend_not);
                 else
                     m_attendBtn.setText(R.string.slot_btn_attend);
-            } else
-                Log.d(TAG_LOG, "No attending link :(");
+            }
         }
     }
     @Override
@@ -223,5 +219,9 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         m_progress.setVisibility(View.GONE);
         if (e != null)
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        else {
+            String link = getIntent().getStringExtra(EXTRA_URL_INFO);
+            m_networker.downloadSlot(link);
+        }
     }
 }

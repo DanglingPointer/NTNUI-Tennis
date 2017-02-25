@@ -4,14 +4,10 @@ package org.mikhailv.ntnuitennis.data;
  * Created by MikhailV on 08.01.2017.
  */
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
-
-import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Used for notifications page
@@ -46,8 +42,8 @@ public class SessionInfo implements Serializable
     {
         Scanner in = new Scanner(m_day).useDelimiter("[^0-9]+");
         int day = in.nextInt();
-        int month = in.nextInt();
-        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int month = in.nextInt() - 1;
+        int year = new GregorianCalendar().get(Calendar.YEAR);
         Calendar c = new GregorianCalendar(year, month, day, m_hour, 0, 0);
         final long date = c.getTimeInMillis();
         return new ShortForm()

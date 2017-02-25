@@ -1,9 +1,7 @@
 package org.mikhailv.ntnuitennis.net;
 
-import android.util.Log;
 import android.util.Xml;
 
-import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.data.TableBuilder;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.xmlpull.v1.XmlPullParser;
@@ -75,7 +73,7 @@ class FetchTableTask extends FetchTask
 
                         String link = tag.attributes.get("href");
                         if (link != null) {
-                            builder.addLink(day, hour, BASE_URL + link.substring(1).replaceAll("&amp;", "&"));
+                            builder.addLink(day, hour, BASE_URL + link.substring(1).replace("&amp;", "&"));
                         }
 
                         String clazz = tag.attributes.get("class");
@@ -88,11 +86,11 @@ class FetchTableTask extends FetchTask
 
                         String tip = tag.attributes.get("title");
                         if (tip != null) {
-                            tip = tip.replaceAll("<strong>", "")
-                                    .replaceAll("</strong>", "")
-                                    .replaceAll("<br/>", "\n")
-                                    .replaceAll("<i>", "")
-                                    .replaceAll("</i>", "");
+                            tip = tip.replace("<strong>", "")
+                                    .replace("</strong>", "")
+                                    .replace("<br/>", "\n")
+                                    .replace("<i>", "")
+                                    .replace("</i>", "");
                             builder.addNames(day, hour, Arrays.asList(tip.split("\n")));
                         }
 
@@ -133,7 +131,6 @@ class FetchTableTask extends FetchTask
         }
         catch (Exception e) {
             e.printStackTrace();
-            Log.d(AppManager.TAG_LOG, e.toString());
             throw new ParseException(e.toString(), 0);
         }
     }

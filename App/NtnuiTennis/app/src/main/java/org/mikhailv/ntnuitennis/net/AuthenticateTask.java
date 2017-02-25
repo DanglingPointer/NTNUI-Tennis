@@ -1,6 +1,8 @@
 package org.mikhailv.ntnuitennis.net;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 
 import org.mikhailv.ntnuitennis.TennisApp;
 
@@ -8,11 +10,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
+
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 27.01.2017.
@@ -79,14 +84,17 @@ class AuthenticateTask extends NetworkTask
             if (cookiesHeader == null)
                 throw new IOException("No cookies received from server");
 
-            TennisApp.saveCookies(m_context, cookiesHeader);
-
-            NetworkFragment.cookieManager.getCookieStore().removeAll();
+            CookieStore cookieStore = NetworkFragment.cookieManager.getCookieStore();
+            cookieStore.removeAll();
             for (String cookieString : cookiesHeader) {
                 List<HttpCookie> cookies = HttpCookie.parse(cookieString);
                 for (HttpCookie cookie : cookies)
-                    NetworkFragment.cookieManager.getCookieStore().add(null, cookie);
+                    cookieStore.add(null, cookie);
             }
+
+            List<HttpCookie> cookiesFromStore = cookieStore.getCookies();
+            TennisApp.saveCookies(m_context, TextUtils.join(";", cookiesFromStore));
+            Log.d(TAG_LOG, "AuthenticateTask.download(): cookies to file: " + TextUtils.join(";", cookiesFromStore));
 
         } finally {
             if (conn != null)

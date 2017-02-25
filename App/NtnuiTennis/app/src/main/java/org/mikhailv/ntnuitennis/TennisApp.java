@@ -42,7 +42,7 @@ public class TennisApp extends Application
         s_manager.setContext(null);
     }
     //------------------------------------------------------------------------------------------
-    public static void saveCookies(Context context, List<String> cookies)
+    public static void saveCookies(Context context, String cookies)
     {
         try {
             FileOutputStream fileOut = context.openFileOutput(AppManagerImpl.COOKIE_FILE, Context.MODE_PRIVATE);
@@ -52,22 +52,22 @@ public class TennisApp extends Application
             fileOut.close();
         }
         catch (Exception e) {
-            Log.d(TAG_LOG, "Failed to write cookies to file");
+            Log.d(TAG_LOG, "TennisApp.saveCookies(): failed to write cookies to file");
             e.printStackTrace();
         }
     }
-    public static List<String> readCookies(Context context)
+    public static String readCookies(Context context)
     {
-        List<String> cookies = null;
+        String cookies = null;
         try {
             FileInputStream fileIn = context.openFileInput(AppManagerImpl.COOKIE_FILE);
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            cookies = (List<String>)in.readObject();
+            cookies = (String)in.readObject();
             in.close();
             fileIn.close();
         }
         catch (Exception e) {
-            Log.d(TAG_LOG, "Failed to read cookies from file");
+            Log.d(TAG_LOG, "TennisApp.readCookies(): failed to read cookies from file");
             e.printStackTrace();
         }
         return cookies;
@@ -122,7 +122,6 @@ public class TennisApp extends Application
                         .appendQueryParameter("lang", m_credentials.lang)
                         .appendQueryParameter("uke", "" + m_weekNumber)
                         .toString();
-                Log.d(TAG_LOG, url);
             }
             return url;
         }
@@ -145,7 +144,7 @@ public class TennisApp extends Application
                 fileOut.close();
             }
             catch (Exception e) {
-                Log.d(TAG_LOG, "Cannot write credentials :(");
+                Log.d(TAG_LOG, "AppManager.saveCredentials(): cannot write credentials to file");
                 e.printStackTrace();
             }
         }
@@ -178,7 +177,7 @@ public class TennisApp extends Application
                     fileIn.close();
                 }
                 catch (Exception e) {
-                    Log.d(TAG_LOG, "no credentials file found :(");
+                    Log.d(TAG_LOG, "AppManager.getCredentials(): no credentials file found");
                     // credentials file is non-existing (first time)
                     m_credentials = new CredentialsImpl();
                 }

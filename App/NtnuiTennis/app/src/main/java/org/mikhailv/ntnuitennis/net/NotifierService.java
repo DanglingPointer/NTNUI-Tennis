@@ -19,7 +19,6 @@ import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.ui.PagerActivity;
 import org.mikhailv.ntnuitennis.ui.SlotDetailsActivity;
 
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,21 +32,20 @@ public class NotifierService extends IntentService
 {
     private static final String TAG = "NotifierService";
     private static final int INTERVALL = 1000 * 60; // 1 minute
-
-    private static int m_notificationId = 0;
+    private static final int WEEK_MILLIS = 7 * 24 * 3600 * 1000;
 
     public static void setAlarm(Context context)
     {
-        Log.d(TAG_LOG, "alarm set");
+        Log.d(TAG_LOG, "NotifierService.setAlarm() called");
         PendingIntent pi = PendingIntent.getService(context, 0,
                 new Intent(context, NotifierService.class), 0);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.setRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() /*+ INTERVALL*/, INTERVALL, pi);
+                SystemClock.elapsedRealtime(), INTERVALL, pi);
     }
     public static void cancelAlarm(Context context)
     {
-        Log.d(TAG_LOG, "alarm canceled");
+        Log.d(TAG_LOG, "NotifierService.cancelAlarm() called");
         PendingIntent pi = PendingIntent.getService(context, 0,
                 new Intent(context, NotifierService.class), 0);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
@@ -56,6 +54,7 @@ public class NotifierService extends IntentService
     }
     public static boolean isAlarmOn(Context context)
     {
+        Log.d(TAG_LOG, "NotifierService.isAlarmOn() called");
         PendingIntent pi = PendingIntent.getService(context, 0,
                 new Intent(context, NotifierService.class),
                 PendingIntent.FLAG_NO_CREATE);
@@ -69,28 +68,29 @@ public class NotifierService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
+        Log.d(TAG_LOG, "NotifierService.onHandleIntent() called");
         // Checking internet connection
         NetworkInfo netInfo = ((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE))
                 .getActiveNetworkInfo();
         if (netInfo == null || !netInfo.isConnected()) {
-            Log.d(TAG_LOG, "NotifierService.onHandleIntent(): no connection");
+            Log.d(TAG_LOG, "NotifierService.onHandleIntent() aborted: no connection");
             return;
         }
 
-        // Reading data from db
+        // Reading data from db and removing expired
         DBManager db = new DBManager(this);
         List<SessionInfo.ShortForm> sessions = db.getAllTuples();
-        long currentDate = Calendar.getInstance().getTimeInMillis();
+        long currentDate = System.currentTimeMillis();
         for (Iterator<SessionInfo.ShortForm> it = sessions.iterator(); it.hasNext(); ) {
             SessionInfo.ShortForm entry = it.next();
-            if (entry.getDate() < currentDate) {
+            if (entry.getDate() < currentDate) {    // expired
                 it.remove();
                 db.deleteTuple(entry.getLink());
             }
         }
         if (sessions.size() == 0) {
+            Log.d(TAG_LOG, "NotifierService.onHandleIntent() aborted: everything is expired");
             cancelAlarm(this);
-            Log.d(TAG_LOG, "NotifierService.onHandleIntent(): everything is expired");
             return;
         }
 
@@ -103,13 +103,14 @@ public class NotifierService extends IntentService
 
         // Fire notifications and update db
         for (SessionInfo.ShortForm entry : sessions) {
-            if (fetcher.checkSlotAvailability(entry.getLink())) {
+            if (entry.getDate() < currentDate + WEEK_MILLIS
+                    && fetcher.checkSlotAvailability(entry.getLink())) {
                 db.deleteTuple(entry.getLink());
                 fireSlotNotification(entry.getLink(), entry.getInfo());
             }
         }
 
-        // Cancel service alarm if db is empty
+        // Cancel service alarm if db is now empty
         if (db.getTableSize() == 0) {
             cancelAlarm(this);
         }
@@ -117,18 +118,17 @@ public class NotifierService extends IntentService
     private void fireSlotNotification(String link, String info)  // TODO
     {
         int id = link.hashCode();
-        Log.d(TAG_LOG, "id = " + id);
         PendingIntent pi = PendingIntent.getActivity(
                 this, id, SlotDetailsActivity.newIntent(this, link, 0), PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification note =  new NotificationCompat.Builder(this)
+        Notification note = new NotificationCompat.Builder(this)
                 .setTicker("blablabla")                                     // temp
                 .setSmallIcon(android.R.drawable.ic_menu_report_image)
                 .setContentTitle("Available tennis session")
                 .setContentText("Available spot in " + info + " tennis session.")
                 .setContentIntent(pi)
                 .setAutoCancel(true)
-                .setVibrate(new long[] { 500, 500 })        // TODO
-                .setLights(Color.GREEN, 3000, 3000)         // TODO: doesn't work
+                .setVibrate(new long[] { 0, 100, 500, 100 })        // TODO: adjust
+                .setLights(Color.GREEN, 500, 3000)                  // TODO: doesn't work
                 .build();
         NotificationManagerCompat nm = NotificationManagerCompat.from(this);
         nm.notify(id, note);
@@ -137,7 +137,7 @@ public class NotifierService extends IntentService
     {
         PendingIntent pi = PendingIntent.getActivity(
                 this, 0, new Intent(this, PagerActivity.class), PendingIntent.FLAG_ONE_SHOT);
-        Notification note =  new NotificationCompat.Builder(this)
+        Notification note = new NotificationCompat.Builder(this)
                 .setTicker("blablabla")
                 .setSmallIcon(android.R.drawable.ic_menu_report_image)
                 .setContentTitle("Login info expired")

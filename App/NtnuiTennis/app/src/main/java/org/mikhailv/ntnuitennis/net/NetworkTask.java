@@ -46,6 +46,7 @@ abstract class NetworkTask extends AsyncTask<String, Integer, Object>
                 result = download(new URL(params[0]));
         } catch (Exception e) {
             m_exception = e;
+            Log.d(TAG_LOG, "NetworkTask caught an exception: " + e.toString());
             e.printStackTrace();
             result = null;
         }

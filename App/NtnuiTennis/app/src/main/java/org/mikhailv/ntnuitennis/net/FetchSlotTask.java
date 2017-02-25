@@ -1,6 +1,5 @@
 package org.mikhailv.ntnuitennis.net;
 
-import android.util.Log;
 import android.util.Xml;
 
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
@@ -13,8 +12,6 @@ import java.io.StringReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -41,7 +38,6 @@ class FetchSlotTask extends FetchTask
         }
         catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG_LOG, e.toString());
             throw new ParseException(e.toString(), 0);
         }
         return parser;
@@ -112,8 +108,7 @@ class FetchSlotTask extends FetchTask
                         }
                         else if (m_parser.getAttributeCount() > 0 &&
                                 m_parser.getAttributeName(0).equals("href")) {
-                            Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
-                            links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
+                            links.add(m_parser.getAttributeValue(0).substring(1).replace("&amp;", "&"));
                         }
                         break;
                     case XmlPullParser.END_TAG:
@@ -145,10 +140,8 @@ class FetchSlotTask extends FetchTask
 
                     if (token == XmlPullParser.START_TAG) {
                         ++depth;
-                        if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href")) {
-                            Log.d(TAG_LOG, "Link found: " + m_parser.getAttributeValue(0));
-                            links.add(m_parser.getAttributeValue(0).substring(1).replaceAll("&amp;", "&"));
-                        }
+                        if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href"))
+                            links.add(m_parser.getAttributeValue(0).substring(1).replace("&amp;", "&"));
                     }
                     else if (token == XmlPullParser.END_TAG) {
                         --depth;

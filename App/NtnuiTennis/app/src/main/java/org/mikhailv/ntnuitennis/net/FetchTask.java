@@ -1,6 +1,7 @@
 package org.mikhailv.ntnuitennis.net;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.List;
+
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 31.01.2017.
@@ -42,6 +45,7 @@ abstract class FetchTask extends NetworkTask
             List<HttpCookie> cookies = cm.getCookieStore().getCookies();
             if (cookies.size() > 0) {
                 conn.setRequestProperty("Cookie", TextUtils.join(";", cookies));
+                Log.d(TAG_LOG, "FetchTask cookies: " + TextUtils.join(";", cookies));
             }
 
             conn.connect();

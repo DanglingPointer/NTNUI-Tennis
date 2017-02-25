@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +32,6 @@ import java.util.List;
 
 import static org.mikhailv.ntnuitennis.AppManager.DAY_SIZE;
 import static org.mikhailv.ntnuitennis.AppManager.INIT_HOUR;
-import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 07.01.2017.
@@ -129,12 +127,10 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         int dayIndex = getArguments().getInt(ARG_DAY);
         if (savedInstanceState == null) {
             m_adapter = new SlotAdapter(getActivity(), dayIndex);
-            Log.d(TAG_LOG, "onCreateView called without saved state");
         }
         else {
             boolean[] expanded = savedInstanceState.getBooleanArray(SAVED_EXPANDED);
             m_adapter = new SlotAdapter(getActivity(), dayIndex, expanded);
-            Log.d(TAG_LOG, "onCreateView called with saved state");
         }
         recyclerView.setAdapter(m_adapter);
 
