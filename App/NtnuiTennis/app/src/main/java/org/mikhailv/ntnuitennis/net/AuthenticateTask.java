@@ -50,7 +50,8 @@ class AuthenticateTask extends NetworkTask
                     .append(URLEncoder.encode(lang, ENCODING)).append('&');
             sb.append(URLEncoder.encode(REMEMBER_KEY, ENCODING)).append("=")
                     .append(URLEncoder.encode("on", ENCODING));
-        } catch (UnsupportedEncodingException e) {}
+        }
+        catch (UnsupportedEncodingException e) {}
 
         m_postArgs = sb.toString();
         m_context = context;
@@ -81,8 +82,12 @@ class AuthenticateTask extends NetworkTask
                 throw new IOException("Http error: " + response);
 
             List<String> cookiesHeader = conn.getHeaderFields().get(COOKIES_HEADER);
+
             if (cookiesHeader == null)
                 throw new IOException("No cookies received from server");
+
+            if (cookiesHeader.size() <= 1)
+                throw new IOException("Error: Invalid credentials");
 
             CookieStore cookieStore = NetworkFragment.cookieManager.getCookieStore();
             cookieStore.removeAll();
@@ -96,7 +101,8 @@ class AuthenticateTask extends NetworkTask
             TennisApp.saveCookies(m_context, TextUtils.join(";", cookiesFromStore));
             Log.d(TAG_LOG, "AuthenticateTask.download(): cookies to file: " + TextUtils.join(";", cookiesFromStore));
 
-        } finally {
+        }
+        finally {
             if (conn != null)
                 conn.disconnect();
         }

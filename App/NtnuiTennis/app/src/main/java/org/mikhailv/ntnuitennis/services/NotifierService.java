@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -125,9 +126,10 @@ public class NotifierService extends IntentService
         Resources r = getResources();
         Notification note = new NotificationCompat.Builder(this)
                 .setTicker(r.getString(R.string.notification_ticker))
-                .setSmallIcon(R.drawable.ic_notification_icon)
                 .setContentTitle(r.getString(R.string.notification_title))
                 .setContentText(r.getString(R.string.notification_text, info))
+                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(r, R.mipmap.ic_launcher))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .setVibrate(new long[] { 0, 200, 500, 200 })

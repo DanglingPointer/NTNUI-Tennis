@@ -26,4 +26,5 @@
     <string name="notification_text">Available spot in %1s tennis session!</string>
     <string name="notification_cookie_title">Login error</string>
     <string name="notification_cookie_text">Press to renew your login information automatically.</string>
+    <string name="menu_back">Back</string>
 </resources>

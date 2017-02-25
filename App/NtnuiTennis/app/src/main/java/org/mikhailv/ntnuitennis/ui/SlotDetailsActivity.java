@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
@@ -52,7 +55,38 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     private NetworkFragment m_networker;
     private SlotDetailsInfo m_data;
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_slot_details, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()) {
+            case R.id.menu_back_btn:
+                finish();
+                return true;
+            case R.id.menu_refresh_btn:
+                String link = getIntent().getStringExtra(EXTRA_URL_INFO);
+                m_networker.downloadSlot(link);
+                return true;
+            case R.id.menu_login_btn:
+                m_networker.authenticate(new AppManager.Credentials()
+                {
+                    @Override
+                    public String getPassword() { return null; }
+                    @Override
+                    public String getEmail() { return null; }
+                    @Override
+                    public String getLanguage() { return null; }
+                });
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -81,7 +115,8 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             String link = getIntent().getStringExtra(EXTRA_URL_INFO);
             m_networker.downloadSlot(link);
             m_progress.setVisibility(View.VISIBLE); // onPreDownload wouldn't work yet at this point
-        } else {
+        }
+        else {
             m_data = (SlotDetailsInfo)savedInstanceState.getSerializable(SAVED_DATA);
             createLayout(m_data);
         }
@@ -191,7 +226,8 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         if (e != null) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             finish();
-        } else {
+        }
+        else {
             createLayout(slotData);
             m_data = slotData;
             m_progress.setVisibility(View.GONE);
@@ -204,6 +240,9 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
                     m_attendBtn.setText(R.string.slot_btn_attend_not);
                 else
                     m_attendBtn.setText(R.string.slot_btn_attend);
+            }
+            else {
+                m_attendBtn.setEnabled(false);
             }
         }
     }
@@ -218,7 +257,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     {
         m_progress.setVisibility(View.GONE);
         if (e != null)
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         else {
             String link = getIntent().getStringExtra(EXTRA_URL_INFO);
             m_networker.downloadSlot(link);
