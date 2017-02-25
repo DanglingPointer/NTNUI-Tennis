@@ -175,7 +175,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     @Override
     public void onProgressChanged(int progress)
     {
-        Log.d(TAG_LOG, "Slot Progress = " + progress);
         m_progress.setProgress(progress);
     }
     @Override

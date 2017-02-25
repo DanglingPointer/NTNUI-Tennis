@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import static org.mikhailv.ntnuitennis.AppManager.DAY_SIZE;
+import static org.mikhailv.ntnuitennis.AppManager.INIT_HOUR;
 import static org.mikhailv.ntnuitennis.AppManager.WEEK_SIZE;
 
 /**
@@ -42,7 +43,7 @@ class FetchTableTask extends FetchTask
                     .replace("&aring;", "å").replace("&AElig;", "Æ")
                     .replace("&aelig;", "æ").replace("&#9990", "");
 
-            TableBuilder builder = new TableBuilder(8, WEEK_SIZE, DAY_SIZE);
+            TableBuilder builder = new TableBuilder(INIT_HOUR, WEEK_SIZE, DAY_SIZE);
             XmlPullParser parser = Xml.newPullParser();
             parser.setInput(new StringReader(rawHtml));
 

@@ -10,7 +10,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,8 +156,8 @@ class FetchSlotTask extends FetchTask
                 }
             }
             for (String link : links) {
-                if (link.contains("leggtilvikar") || link.contains("fjernvikar")
-                        || link.contains("bekrefte") || link.contains("kommerikke")) {
+                if (link.contains("leggtilvikarid") || link.contains("fjernvikarid")
+                        || link.contains("bekrefteid") || link.contains("kommerikkeid")) {
                     m_link = baseURL + link;
                     break;
                 }

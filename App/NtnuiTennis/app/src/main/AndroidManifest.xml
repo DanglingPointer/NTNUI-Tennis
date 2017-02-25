@@ -16,13 +16,13 @@
         <activity android:name=".ui.PagerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <activity android:name=".ui.NotificationsActivity"/>
         <activity android:name=".ui.SlotDetailsActivity"/>
+        <service android:name=".net.NotifierService"/>
 
     </application>
 

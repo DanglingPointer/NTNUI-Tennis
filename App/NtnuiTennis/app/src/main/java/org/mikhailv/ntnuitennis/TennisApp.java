@@ -10,6 +10,7 @@ import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.data.TableBuilder;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
+import org.mikhailv.ntnuitennis.net.NotifierService;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,6 +19,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 04.02.2017.
@@ -38,12 +41,43 @@ public class TennisApp extends Application
     {
         s_manager.setContext(null);
     }
+    //------------------------------------------------------------------------------------------
+    public static void saveCookies(Context context, List<String> cookies)
+    {
+        try {
+            FileOutputStream fileOut = context.openFileOutput(AppManagerImpl.COOKIE_FILE, Context.MODE_PRIVATE);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(cookies);
+            out.close();
+            fileOut.close();
+        }
+        catch (Exception e) {
+            Log.d(TAG_LOG, "Failed to write cookies to file");
+            e.printStackTrace();
+        }
+    }
+    public static List<String> readCookies(Context context)
+    {
+        List<String> cookies = null;
+        try {
+            FileInputStream fileIn = context.openFileInput(AppManagerImpl.COOKIE_FILE);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            cookies = (List<String>)in.readObject();
+            in.close();
+            fileIn.close();
+        }
+        catch (Exception e) {
+            Log.d(TAG_LOG, "Failed to read cookies from file");
+            e.printStackTrace();
+        }
+        return cookies;
+    }
+    //------------------------------------------------------------------------------------------
 
     private static class AppManagerImpl implements AppManager
     {
-        private static final String NOTIFICATIONS_FILE = "config";
-        private static final String CREDENTIALS_FILE = "creds";      // use SharedPreferences instead??
-
+        private static final String CREDENTIALS_FILE = "creds";
+        private static final String COOKIE_FILE = "cookies";
 
         private Context m_context;
         private NetworkFragment m_networker;
@@ -188,7 +222,7 @@ public class TennisApp extends Application
             return currentSessions;
         }
         /**
-         * Updates DB according to checked sessions
+         * Updates DB according to checked sessions, and sets up service accordingly
          */
         @Override
         public void saveHoursInfo(List<SessionInfo> sessions)
@@ -205,6 +239,13 @@ public class TennisApp extends Application
                 else if (!session.isChecked() && trackedURLs.contains(session.getLink()))
                     db.deleteTuple(session.getLink());
             }
+
+            boolean isServiceOn = NotifierService.isAlarmOn(m_context);
+            int dbSize = db.getTableSize();
+            if (dbSize > 0 && !isServiceOn)
+                NotifierService.setAlarm(m_context);
+            else if (dbSize == 0 && isServiceOn)
+                NotifierService.cancelAlarm(m_context);
         }
         private static class CredentialsImpl implements AppManager.Credentials, Serializable
         {

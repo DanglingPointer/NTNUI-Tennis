@@ -157,7 +157,6 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onProgressChanged(int progress)
     {
-        Log.d(TAG_LOG, "Table Progress = " + progress);
         m_progressBar.setProgress(progress);
     }
     @Override

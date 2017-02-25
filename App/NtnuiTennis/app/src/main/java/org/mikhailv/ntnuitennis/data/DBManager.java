@@ -65,52 +65,62 @@ public class DBManager
         }
     }
     //----------------------------------------------------------------------------------------------
-
+    private static Object s_lock = new Object();
     private SQLiteDatabase m_db;
 
     public DBManager(Context context)
     {
-        m_db = new SessionsDBHelper(context.getApplicationContext()).getWritableDatabase();
+        synchronized (s_lock) {
+            m_db = new SessionsDBHelper(context.getApplicationContext()).getWritableDatabase();
+        }
     }
     public void insertTuple(SessionInfo.ShortForm session)
     {
-        ContentValues tuple = getContentValues(session);
-        m_db.insert(SessionsTable.NAME, null, tuple);
+        synchronized (s_lock) {
+            ContentValues tuple = getContentValues(session);
+            m_db.insert(SessionsTable.NAME, null, tuple);
+        }
     }
     public void deleteTuple(String link)
     {
-        // WHERE link = 'http://blablabla'
-        m_db.delete(SessionsTable.NAME, SessionsTable.COL_LINK + " = ?", new String[] { link });
+        synchronized (s_lock) {
+            // WHERE link = 'http://blablabla'
+            m_db.delete(SessionsTable.NAME, SessionsTable.COL_LINK + " = ?", new String[] { link });
+        }
     }
     public List<SessionInfo.ShortForm> getAllTuples()
     {
-        List<SessionInfo.ShortForm> tuples = new ArrayList<>();
+        synchronized (s_lock) {
+            List<SessionInfo.ShortForm> tuples = new ArrayList<>();
 
-        try (Cursor cursor = m_db.query(
-                SessionsTable.NAME, // FROM
-                null,               // SELECT *
-                null,               // WHERE
-                null,               // WHERE args
-                null,               // GROUP BY
-                null,               // HAVING
-                null                // ORDER BY
-        )) {
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                SessionInfo.ShortForm tuple = getSessionShortForm(cursor);
-                Log.d(TAG_LOG, "Tuple: Link = " + tuple.getLink()
-                        + " Info = " + tuple.getInfo() + " Date = " + tuple.getDate());
-                tuples.add(tuple);
-                cursor.moveToNext();
+            try (Cursor cursor = m_db.query(
+                    SessionsTable.NAME, // FROM
+                    null,               // SELECT *
+                    null,               // WHERE
+                    null,               // WHERE args
+                    null,               // GROUP BY
+                    null,               // HAVING
+                    null                // ORDER BY
+            )) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    SessionInfo.ShortForm tuple = getSessionShortForm(cursor);
+//                    Log.d(TAG_LOG, "Tuple: Link = " + tuple.getLink()
+//                            + " Info = " + tuple.getInfo() + " Date = " + tuple.getDate());
+                    tuples.add(tuple);
+                    cursor.moveToNext();
+                }
+                return tuples;
             }
-            return tuples;
         }
     }
     public int getTableSize()
     {
-        try (Cursor cursor = m_db.rawQuery(Query.TABLE_SIZE, null)) {
-            cursor.moveToFirst();
-            return cursor.getInt(0);
+        synchronized (s_lock) {
+            try (Cursor cursor = m_db.rawQuery(Query.TABLE_SIZE, null)) {
+                cursor.moveToFirst();
+                return cursor.getInt(0);
+            }
         }
     }
     private ContentValues getContentValues(SessionInfo.ShortForm session)

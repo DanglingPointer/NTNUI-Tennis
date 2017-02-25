@@ -39,9 +39,9 @@ abstract class FetchTask extends NetworkTask
             conn.setDoInput(true);
 
             CookieManager cm = NetworkFragment.cookieManager;
-            List<HttpCookie> coockies = cm.getCookieStore().getCookies();
-            if (coockies.size() > 0) {
-                conn.setRequestProperty("Cookie", TextUtils.join(";", coockies));
+            List<HttpCookie> cookies = cm.getCookieStore().getCookies();
+            if (cookies.size() > 0) {
+                conn.setRequestProperty("Cookie", TextUtils.join(";", cookies));
             }
 
             conn.connect();

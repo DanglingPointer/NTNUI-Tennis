@@ -152,7 +152,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         }
 
         if (m_authWorker == null || m_authWorker.getStatus() != AsyncTask.Status.RUNNING) {
-            m_authWorker = new AuthenticateTask(this, email, password, lang);
+            m_authWorker = new AuthenticateTask(getContext(), this, email, password, lang);
             m_authWorker.execute(TennisApp.getManager(getActivity()).getTableURL());
         }
     }
@@ -162,7 +162,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
             m_fetchWorker.cancel(true);
     }
     //-----------------Internal callbacks from AsyncTasks-------------------------------------------
-    // Necessary because the fragment might be reattached while a task is executing
+    //------Necessary because the fragment might be reattached while a task is executing------------
     @Override
     public void onProgressChanged(int progress)
     {

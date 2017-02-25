@@ -1,5 +1,9 @@
 package org.mikhailv.ntnuitennis.net;
 
+import android.content.Context;
+
+import org.mikhailv.ntnuitennis.TennisApp;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -25,8 +29,9 @@ class AuthenticateTask extends NetworkTask
     private static final String ENCODING = "UTF-8";
 
     private String m_postArgs;
+    private Context m_context;
 
-    public AuthenticateTask(NetworkCallbacks callbacks, String email, String password, String lang)
+    public AuthenticateTask(Context context, NetworkCallbacks callbacks, String email, String password, String lang)
     {
         super(callbacks);
         StringBuilder sb = new StringBuilder();
@@ -43,6 +48,7 @@ class AuthenticateTask extends NetworkTask
         } catch (UnsupportedEncodingException e) {}
 
         m_postArgs = sb.toString();
+        m_context = context;
     }
     @Override
     protected Object download(URL link) throws IOException
@@ -70,9 +76,10 @@ class AuthenticateTask extends NetworkTask
                 throw new IOException("Http error: " + response);
 
             List<String> cookiesHeader = conn.getHeaderFields().get(COOKIES_HEADER);
-
             if (cookiesHeader == null)
                 throw new IOException("No cookies received from server");
+
+            TennisApp.saveCookies(m_context, cookiesHeader);
 
             NetworkFragment.cookieManager.getCookieStore().removeAll();
             for (String cookieString : cookiesHeader) {
