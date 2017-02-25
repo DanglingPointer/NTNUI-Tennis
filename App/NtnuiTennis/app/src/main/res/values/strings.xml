@@ -21,4 +21,9 @@
         <item>Norwegian</item>
         <item>English</item>
     </string-array>
+    <string name="notification_ticker">Tennis</string>
+    <string name="notification_title">Tennis session available</string>
+    <string name="notification_text">Available spot in %1s tennis session!</string>
+    <string name="notification_cookie_title">Login error</string>
+    <string name="notification_cookie_text">Press to renew your login information automatically.</string>
 </resources>

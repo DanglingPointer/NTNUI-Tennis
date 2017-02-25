@@ -1,4 +1,4 @@
-package org.mikhailv.ntnuitennis.net;
+package org.mikhailv.ntnuitennis.services;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -6,6 +6,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.data.DBManager;
 import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.ui.PagerActivity;
@@ -97,7 +99,7 @@ public class NotifierService extends IntentService
         // Checking if cookies are expired
         SlotChecker fetcher = new SlotChecker(this);
         if (!fetcher.isCookiesOK()) {
-            fireExpiredNotification();
+            fireNoCookiesNotification();
             return;
         }
 
@@ -120,28 +122,30 @@ public class NotifierService extends IntentService
         int id = link.hashCode();
         PendingIntent pi = PendingIntent.getActivity(
                 this, id, SlotDetailsActivity.newIntent(this, link, 0), PendingIntent.FLAG_UPDATE_CURRENT);
+        Resources r = getResources();
         Notification note = new NotificationCompat.Builder(this)
-                .setTicker("blablabla")                                     // temp
-                .setSmallIcon(android.R.drawable.ic_menu_report_image)
-                .setContentTitle("Available tennis session")
-                .setContentText("Available spot in " + info + " tennis session.")
+                .setTicker(r.getString(R.string.notification_ticker))
+                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setContentTitle(r.getString(R.string.notification_title))
+                .setContentText(r.getString(R.string.notification_text, info))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
-                .setVibrate(new long[] { 0, 100, 500, 100 })        // TODO: adjust
+                .setVibrate(new long[] { 0, 200, 500, 200 })
                 .setLights(Color.GREEN, 500, 3000)                  // TODO: doesn't work
                 .build();
         NotificationManagerCompat nm = NotificationManagerCompat.from(this);
         nm.notify(id, note);
     }
-    private void fireExpiredNotification()   // TODO
+    private void fireNoCookiesNotification()   // TODO
     {
         PendingIntent pi = PendingIntent.getActivity(
                 this, 0, new Intent(this, PagerActivity.class), PendingIntent.FLAG_ONE_SHOT);
+        Resources r = getResources();
         Notification note = new NotificationCompat.Builder(this)
-                .setTicker("blablabla")
-                .setSmallIcon(android.R.drawable.ic_menu_report_image)
-                .setContentTitle("Login info expired")
-                .setContentText("Press to renew your login information automatically.")
+                .setTicker(r.getString(R.string.notification_ticker))
+                .setSmallIcon(R.drawable.ic_login_notification)
+                .setContentTitle(r.getString(R.string.notification_cookie_title))
+                .setContentText(r.getString(R.string.notification_cookie_text))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .build();

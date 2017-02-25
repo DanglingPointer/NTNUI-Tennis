@@ -10,7 +10,7 @@ import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.data.TableBuilder;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
-import org.mikhailv.ntnuitennis.net.NotifierService;
+import org.mikhailv.ntnuitennis.services.NotifierService;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

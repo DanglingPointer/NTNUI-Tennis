@@ -1,4 +1,4 @@
-package org.mikhailv.ntnuitennis.net;
+package org.mikhailv.ntnuitennis.services;
 
 import android.content.Context;
 import android.util.Log;

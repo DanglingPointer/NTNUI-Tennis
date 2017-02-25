@@ -65,8 +65,8 @@ public class DBManager
         }
     }
     //----------------------------------------------------------------------------------------------
-    private static Object s_lock = new Object();
-    private SQLiteDatabase m_db;
+    private static final Object s_lock = new Object();
+    private final SQLiteDatabase m_db;
 
     public DBManager(Context context)
     {
