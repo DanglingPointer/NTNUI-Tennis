@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -92,7 +93,7 @@ public class NotifierService extends IntentService
             }
         }
         if (sessions.size() == 0) {
-            Log.d(TAG_LOG, "NotifierService.onHandleIntent() aborted: everything is expired");
+            Log.d(TAG_LOG, "NotifierService aborted and canceled: everything is expired");
             cancelAlarm(this);
             return;
         }
@@ -118,7 +119,14 @@ public class NotifierService extends IntentService
             cancelAlarm(this);
         }
     }
-    private void fireSlotNotification(String link, String info)  // TODO
+    private int getResourceColor(int colorId)
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            return getColor(colorId);
+        else
+            return getResources().getColor(colorId);
+    }
+    private void fireSlotNotification(String link, String info)
     {
         int id = link.hashCode();
         PendingIntent pi = PendingIntent.getActivity(
@@ -130,24 +138,29 @@ public class NotifierService extends IntentService
                 .setContentText(r.getString(R.string.notification_text, info))
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(r, R.mipmap.ic_launcher))
+                .setColor(getResourceColor(R.color.green))
                 .setContentIntent(pi)
+                .setPriority(Notification.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .setVibrate(new long[] { 0, 200, 500, 200 })
-                .setLights(Color.GREEN, 500, 3000)                  // TODO: doesn't work
+                .setLights(Color.GREEN, 100, 3000)                  // doesn't work
                 .build();
         NotificationManagerCompat nm = NotificationManagerCompat.from(this);
         nm.notify(id, note);
     }
-    private void fireNoCookiesNotification()   // TODO
+    private void fireNoCookiesNotification()
     {
         PendingIntent pi = PendingIntent.getActivity(
-                this, 0, new Intent(this, PagerActivity.class), PendingIntent.FLAG_ONE_SHOT);
+                this, 0, new Intent(this, PagerActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
         Resources r = getResources();
         Notification note = new NotificationCompat.Builder(this)
                 .setTicker(r.getString(R.string.notification_ticker))
-                .setSmallIcon(R.drawable.ic_login_notification)
                 .setContentTitle(r.getString(R.string.notification_cookie_title))
                 .setContentText(r.getString(R.string.notification_cookie_text))
+                .setSmallIcon(R.drawable.ic_login_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(r, R.mipmap.ic_launcher))
+                .setColor(getResourceColor(R.color.lightGreen))
+                .setPriority(Notification.PRIORITY_DEFAULT)
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .build();

@@ -39,21 +39,15 @@ public class SlotChecker
         String cookieString = TennisApp.readCookies(context);
         Log.d(TAG_LOG, "SlotChecker(): cookies from file: " + cookieString);
 
-        if (cookieString == null || cookieString.isEmpty())
+        if (cookieString == null || cookieString.isEmpty()
+                || !cookieString.contains("NTNUITennis_brukernavn"))
             return;
 
         m_cookies = cookieString;
-
-//        List<HttpCookie> cookiesList = HttpCookie.parse(cookieString);
-//        for (HttpCookie cookie : cookiesList){
-//            if (cookie.hasExpired()){
-//                m_cookies = null;
-//                return;
-//            }
-//        }
     }
     /**
-     * If no cookies-file or some of the cookies are expired, returns false
+     * If no cookies-file or some of the cookies are expired or there are not enough cookies,
+     * returns false
      */
     public boolean isCookiesOK()
     {
