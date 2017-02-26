@@ -82,11 +82,7 @@ class AuthenticateTask extends NetworkTask
                 throw new IOException("Http error: " + response);
 
             List<String> cookiesHeader = conn.getHeaderFields().get(COOKIES_HEADER);
-
-            if (cookiesHeader == null)
-                throw new IOException("No cookies received from server");
-
-            if (cookiesHeader.size() <= 1)
+            if (cookiesHeader == null || cookiesHeader.size() <= 2)
                 throw new IOException("Error: Invalid credentials");
 
             CookieStore cookieStore = NetworkFragment.cookieManager.getCookieStore();

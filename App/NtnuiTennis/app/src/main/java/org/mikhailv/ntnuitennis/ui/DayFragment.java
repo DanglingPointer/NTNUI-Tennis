@@ -93,6 +93,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
                 m_callbacks.onLogInPressed();
                 return true;
             case R.id.menu_btn_about:
+                startActivity(AboutActivity.newIntent(getActivity()));
                 return true;
             case R.id.menu_btn_notifications:
                 m_callbacks.onNotificationsPressed();

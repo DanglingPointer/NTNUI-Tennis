@@ -9,6 +9,12 @@
         <item name="android:windowBackground">@color/darkGreen</item>
         <item name="actionBarPopupTheme">@style/DropDownMenuStyle</item>
         <item name="android:alertDialogTheme">@style/DialogStyle</item>
+
+    </style>
+
+    <style name="AppPreferenceTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/lightGreen</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <style name="DropDownMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">

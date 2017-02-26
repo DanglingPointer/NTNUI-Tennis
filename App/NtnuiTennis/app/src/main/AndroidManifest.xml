@@ -22,6 +22,7 @@
         </activity>
         <activity android:name=".ui.NotificationsActivity"/>
         <activity android:name=".ui.SlotDetailsActivity"/>
+        <activity android:name=".ui.AboutActivity" android:theme="@style/AppPreferenceTheme"/>
 
         <service android:name=".services.NotifierService"/>
         <receiver
