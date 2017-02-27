@@ -2,7 +2,7 @@ package org.mikhailv.ntnuitennis.net;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
+//import android.util.Log;
 
 import org.mikhailv.ntnuitennis.TennisApp;
 
@@ -17,7 +17,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 
-import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
+//import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 27.01.2017.
@@ -95,7 +95,7 @@ class AuthenticateTask extends NetworkTask
 
             List<HttpCookie> cookiesFromStore = cookieStore.getCookies();
             TennisApp.saveCookies(m_context, TextUtils.join(";", cookiesFromStore));
-            Log.d(TAG_LOG, "AuthenticateTask.download(): cookies to file: " + TextUtils.join(";", cookiesFromStore));
+//            Log.d(TAG_LOG, "AuthenticateTask.download(): cookies to file: " + TextUtils.join(";", cookiesFromStore));
 
         }
         finally {

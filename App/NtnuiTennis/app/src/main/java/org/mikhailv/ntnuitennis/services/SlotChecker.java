@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +35,6 @@ public class SlotChecker
     public SlotChecker(Context context)
     {
         String cookieString = TennisApp.readCookies(context);
-        Log.d(TAG_LOG, "SlotChecker(): cookies from file: " + cookieString);
 
         if (cookieString == null || cookieString.isEmpty()
                 || !cookieString.contains("NTNUITennis_brukernavn"))
@@ -58,7 +55,6 @@ public class SlotChecker
      */
     public boolean checkSlotAvailability(String url)
     {
-        Log.d(TAG_LOG, "SlotChecker.checkSlotAvailability() called");
         InputStream inStream = null;
         HttpURLConnection conn = null;
         String rawResult = null;
@@ -108,13 +104,9 @@ public class SlotChecker
         int openingTagIndex = rawHtml.indexOf("<table>");
         rawHtml = rawHtml.substring(openingTagIndex);
 
-        List<String> links = new ArrayList<>();
-
         Matcher m = Pattern.compile("href=\"([^\"]+)\"").matcher(rawHtml);
         while (m.find()) {
-            links.add(m.group(1));
-        }
-        for (String link : links) {
+            String link = m.group(1);
             if (link.contains("bekrefteid") || link.contains("leggtilvikarid"))
                 return true;
         }

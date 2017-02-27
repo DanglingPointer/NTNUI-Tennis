@@ -15,6 +15,8 @@
     <style name="AppPreferenceTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/lightGreen</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="android:textColorSecondary">@color/darkGreen</item>
+        <item name="android:textColorPrimary">@color/extraDarkGreen</item>
     </style>
 
     <style name="DropDownMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">

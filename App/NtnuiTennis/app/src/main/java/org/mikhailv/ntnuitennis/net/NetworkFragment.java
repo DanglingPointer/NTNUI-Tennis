@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
+//import android.util.Log;
 
 import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.TennisApp;
@@ -19,7 +19,7 @@ import org.mikhailv.ntnuitennis.ui.LoginDialogFragment;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 
-import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
+//import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -113,7 +113,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     public void downloadTable()
     {
         if (m_fetchWorker == null || m_fetchWorker.getStatus() != AsyncTask.Status.RUNNING) {
-            Log.d(TAG_LOG, "Table fetch finished");
+//            Log.d(TAG_LOG, "Table fetch finished");
             AppManager am = TennisApp.getManager(getActivity());
             m_fetchWorker = new FetchTableTask(this);
             m_fetchWorker.execute(am.getTableURL());
@@ -126,7 +126,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     public void downloadSlot(String slotAddress)
     {
         if (m_fetchWorker == null || m_fetchWorker.getStatus() != AsyncTask.Status.RUNNING) {
-            Log.d(TAG_LOG, "Slot fetch started");
+//            Log.d(TAG_LOG, "Slot fetch started");
             m_fetchWorker = new FetchSlotTask(this);
             m_fetchWorker.execute(slotAddress);
         }
@@ -152,7 +152,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
         }
 
         if (m_authWorker == null || m_authWorker.getStatus() != AsyncTask.Status.RUNNING) {
-            Log.d(TAG_LOG, "Authentication started");
+//            Log.d(TAG_LOG, "Authentication started");
             m_authWorker = new AuthenticateTask(getContext(), this, email, password, lang);
             m_authWorker.execute(TennisApp.getManager(getActivity()).getTableURL());
         }
@@ -182,7 +182,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onTableFetched(Week week, Exception e)
     {
-        Log.d(TAG_LOG, "Table fetch finished");
+//        Log.d(TAG_LOG, "Table fetch finished");
         if (m_callbacks != null)
             m_callbacks.onTableFetched(week, e);
     }
@@ -192,7 +192,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onSlotFetched(SlotDetailsInfo slotInfo, Exception e)
     {
-        Log.d(TAG_LOG, "Slot fetch finished");
+//        Log.d(TAG_LOG, "Slot fetch finished");
         if (m_callbacks != null)
             m_callbacks.onSlotFetched(slotInfo, e);
     }
@@ -208,7 +208,7 @@ public class NetworkFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onAuthenticateFinished(Exception e)
     {
-        Log.d(TAG_LOG, "Authentication finished");
+//        Log.d(TAG_LOG, "Authentication finished");
         if (m_callbacks != null)
             m_callbacks.onAuthenticateFinished(e);
     }

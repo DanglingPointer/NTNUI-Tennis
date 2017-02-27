@@ -7,8 +7,8 @@ android {
         applicationId "org.mikhailv.ntnuitennis"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -18,14 +18,6 @@ android {
         }
     }
     productFlavors {
-        hack {
-            minSdkVersion 19
-            applicationId 'org.mikhailv.ntnuitennis'
-            targetSdkVersion 25
-            testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
-            versionCode 1
-            versionName '1.0'
-        }
     }
 }
 
@@ -34,8 +26,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.2.0'
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.android.support:preference-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.android.support:preference-v7:25.2.0'
 }

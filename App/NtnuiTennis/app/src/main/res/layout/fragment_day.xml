@@ -22,7 +22,7 @@
         android:layout_height="4dp"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:visibility="gone"
-        android:max="100"
+        android:max="70"
         />
 
     <android.support.v7.widget.RecyclerView
