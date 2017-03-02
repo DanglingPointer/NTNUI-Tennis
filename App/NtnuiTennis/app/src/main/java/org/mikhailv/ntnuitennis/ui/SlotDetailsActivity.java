@@ -182,11 +182,11 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             right = line[1];
             if (line.length > 2) {
                 for (int i = 2; i < line.length; ++i)
-                    right += ('\n' + line[i]);
+                    right += ' ' + line[i];
             }
             if ((right.contains("not ") || right.contains(" ikke")) && countOccurrences(' ', right) < 3)
                 rightTextView.setTextColor(Color.RED);
-            else if (right.contains("(kommer)") || right.contains("(attending)"))
+            else if (right.contains("kommer") || right.contains("attending"))
                 rightTextView.setTextColor(Color.GREEN);
         }
 

@@ -93,6 +93,7 @@ class FetchSlotTask extends FetchTask
             int what = IND_INFO;
             List<String> links = new ArrayList<>();
             List<String> currentLine = null;
+            int ignoreText = 0;
 
             while (depth != 0) {
                 switch (m_parser.next()) {
@@ -109,24 +110,31 @@ class FetchSlotTask extends FetchTask
                         else if (m_parser.getAttributeCount() > 0 &&
                                 m_parser.getAttributeName(0).equals("href")) {
                             links.add(m_parser.getAttributeValue(0).substring(1).replace("&amp;", "&"));
+                            if (m_parser.getAttributeCount() == 1)
+                                ignoreText = 1;
                         }
                         break;
                     case XmlPullParser.END_TAG:
                         --depth;
                         if (m_parser.getName().equals("tr")) {
                             m_data.get(what).add(currentLine);
-                            currentLine = null; // just in case / for debugging
+                            currentLine = null; // just in case
                         }
                         break;
                     case XmlPullParser.TEXT:
-                        if (depth > 2) {
-                            String text = m_parser.getText().trim();
-                            currentLine.add(text);
+                        if (ignoreText > 0) {
+                            --ignoreText;
                         }
-                        if (newLine) {
-                            newLine = false;
-                            m_data.get(what).add(currentLine);
-                            currentLine = new ArrayList<>();
+                        else {
+                            if (depth > 2) {
+                                String text = m_parser.getText().replace("|", "").trim();
+                                currentLine.add(text);
+                            }
+                            if (newLine) {
+                                newLine = false;
+                                m_data.get(what).add(currentLine);
+                                currentLine = new ArrayList<>();
+                            }
                         }
                         break;
                 }
