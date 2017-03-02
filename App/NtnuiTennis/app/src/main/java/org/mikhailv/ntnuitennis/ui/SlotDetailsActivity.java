@@ -144,23 +144,21 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         if (childrenCount > 1) {
             m_rootView.removeViewsInLayout(1, childrenCount - 1);
         }
+        boolean hasSubstitutes = data.getSubstitutesTitle() != null;
 
         addTitleLine(data.getInfoTitle());
-
         for (int row = 0; row < data.getInfoSize(); ++row) {
-            addDataLine(data.getInfoLine(row), false);
+            addDataLine(data.getInfoLine(row), false, true);
         }
 
         addTitleLine(data.getRegularsTitle());
-
         for (int row = 0; row < data.getRegularsCount(); ++row) {
-            addDataLine(data.getRegularsLine(row), true);
+            addDataLine(data.getRegularsLine(row), true, hasSubstitutes);
         }
 
         addTitleLine(data.getSubstitutesTitle());
-
         for (int row = 0; row < data.getSubstitutesCount(); ++row) {
-            addDataLine(data.getSubstitutesLine(row), true);
+            addDataLine(data.getSubstitutesLine(row), true, false);
         }
     }
     private void addTitleLine(String text)
@@ -170,7 +168,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         titleText.setText(text);
         m_rootView.addView(titleLineView);
     }
-    private void addDataLine(String[] line, boolean italic)
+    private void addDataLine(String[] line, boolean italic, boolean printRight)
     {
         View infoLine = LayoutInflater.from(this).inflate(R.layout.slot_info_line, m_rootView, false);
         TextView leftTextView = (TextView)infoLine.findViewById(R.id.slot_info_text_left);
@@ -179,18 +177,22 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             rightTextView.setTypeface(rightTextView.getTypeface(), Typeface.ITALIC);
 
         String left = line[0];
-        String right = (line.length > 1) ? line[1] : null;
-
-        if (line.length > 2) {
-            for (int i = 2; i < line.length; ++i)
-                right += ('\n' + line[i]);
+        String right = null;
+        if (printRight && line.length > 1) {
+            right = line[1];
+            if (line.length > 2) {
+                for (int i = 2; i < line.length; ++i)
+                    right += ('\n' + line[i]);
+            }
+            if ((right.contains("not ") || right.contains(" ikke")) && countOccurrences(' ', right) < 3)
+                rightTextView.setTextColor(Color.RED);
+            else if (right.contains("(kommer)") || right.contains("(attending)"))
+                rightTextView.setTextColor(Color.GREEN);
         }
+
         leftTextView.setText(left);
         rightTextView.setText(right);
 
-        if (right != null && (right.contains("not ") || right.contains(" ikke"))
-                && countOccurrences(' ', right) < 3)
-            rightTextView.setTextColor(Color.RED);
 
         m_rootView.addView(infoLine);
     }

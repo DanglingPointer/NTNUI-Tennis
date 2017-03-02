@@ -184,8 +184,11 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     public void onAuthenticateFinished(Exception e)
     {
         m_progressBar.setVisibility(View.GONE);
-        if (e != null)
-            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+        String message = (e == null) ?
+                getResources().getString(R.string.login_toast) : e.getMessage();
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        if (e == null)
+            m_callbacks.updateData();
     }
     @Override
     public void onDownloadCanceled()
