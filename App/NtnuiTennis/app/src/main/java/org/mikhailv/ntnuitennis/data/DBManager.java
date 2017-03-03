@@ -64,6 +64,7 @@ public class DBManager
             onCreate(db);
         }
     }
+
     //----------------------------------------------------------------------------------------------
     private static final Object s_lock = new Object();
     private final SQLiteDatabase m_db;
@@ -111,6 +112,22 @@ public class DBManager
                     cursor.moveToNext();
                 }
                 return tuples;
+            }
+        }
+    }
+    public boolean containsLink(String link)
+    {
+        synchronized (s_lock) {
+            try (Cursor cursor = m_db.query(
+                    SessionsTable.NAME,                         // FROM
+                    new String[] { SessionsTable.COL_LINK },    // SELECT
+                    SessionsTable.COL_LINK + " = ?",            // WHERE
+                    new String[] { link },                      // WHERE args
+                    null,                                       // GROUP BY
+                    null,                                       // HAVING
+                    null                                        // ORDER BY
+            )) {
+                return cursor.moveToFirst();
             }
         }
     }

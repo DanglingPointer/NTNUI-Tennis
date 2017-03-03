@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,12 +21,17 @@ import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.R;
+import org.mikhailv.ntnuitennis.TennisApp;
+import org.mikhailv.ntnuitennis.data.DBManager;
+import org.mikhailv.ntnuitennis.data.SessionInfo;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
 import org.mikhailv.ntnuitennis.net.NetworkCallbacks;
 import org.mikhailv.ntnuitennis.net.NetworkFragment;
+import org.mikhailv.ntnuitennis.services.NotifierService;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by MikhailV on 22.01.2017.
@@ -53,9 +59,11 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     private LinearLayout m_rootView;
     private Button m_attendBtn;
     private SwipeRefreshLayout m_swiper;
+    private CheckBox m_notifications;
 
     private NetworkFragment m_networker;
     private SlotDetailsInfo m_data;
+    private DBManager m_db;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -94,8 +102,10 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acticity_slot_details);
+        final String link = getIntent().getStringExtra(EXTRA_URL_INFO);
 
         m_data = null;
+        m_db = new DBManager(this);
         m_networker = NetworkFragment.addInstance(getSupportFragmentManager());
         m_progress = (ProgressBar)findViewById(R.id.activity_slot_progress);
 
@@ -114,7 +124,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         m_rootView = (LinearLayout)findViewById(R.id.activity_slot_linear_layout);
 
         if (savedInstanceState == null) {
-            String link = getIntent().getStringExtra(EXTRA_URL_INFO);
             m_networker.downloadSlot(link);
             m_progress.setVisibility(View.VISIBLE); // onPreDownload wouldn't work yet at this point
         }
@@ -129,12 +138,14 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             @Override
             public void onRefresh()
             {
-                String link = getIntent().getStringExtra(EXTRA_URL_INFO);
                 m_networker.downloadSlot(link);
             }
         });
         m_swiper.setColorSchemeResources(R.color.darkGreen);
         m_swiper.setProgressBackgroundColorSchemeResource(R.color.green);
+
+        m_notifications = (CheckBox)findViewById(R.id.notifications_checkbox);
+        m_notifications.setChecked(m_db.containsLink(link));
 
         Intent i = new Intent();
         i.putExtra(EXTRA_PAGER_POSITION, getIntent().getIntExtra(EXTRA_PAGER_POSITION, 0));
@@ -146,18 +157,48 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         super.onSaveInstanceState(outState);
         outState.putSerializable(SAVED_DATA, (Serializable)m_data);
     }
+    /**
+     * Updates DB according to checkbox's state
+     */
     @Override
     protected void onStop()
     {
         super.onStop();
         m_networker.cancelDownload();
+
+        String link = getIntent().getStringExtra(EXTRA_URL_INFO);
+        boolean isAlarmOn = NotifierService.isAlarmOn(this);
+        boolean isChecked = m_notifications.isChecked();
+        boolean inDB = m_db.containsLink(link);
+
+        if (isChecked && !inDB) {
+            List<SessionInfo> allHours = TennisApp.getManager(this).getCurrentWeek().getHours();
+            SessionInfo.ShortForm shortInfo = null;
+            for (SessionInfo fullInfo : allHours) {
+                if (fullInfo.getLink().equals(link)) {
+                    shortInfo = fullInfo.getShortForm();
+                    break;
+                }
+            }
+            if (shortInfo != null) {
+                m_db.insertTuple(shortInfo);
+                if (!isAlarmOn)
+                    NotifierService.setAlarm(this);
+            }
+        }
+        else if (!isChecked && inDB) {
+            m_db.deleteTuple(link);
+            if (isAlarmOn && m_db.getTableSize() == 0)
+                NotifierService.cancelAlarm(this);
+
+        }
     }
     //-----------Helpers----------------------------------------------------------------------------
     private void createLayout(SlotDetailsInfo data)
     {
         int childrenCount = m_rootView.getChildCount();
-        if (childrenCount > 1) {
-            m_rootView.removeViewsInLayout(1, childrenCount - 1);
+        if (childrenCount > 2) {
+            m_rootView.removeViewsInLayout(2, childrenCount - 2);
         }
         boolean hasSubstitutes = data.getSubstitutesTitle() != null;
 
@@ -197,9 +238,9 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             right = line[1];
             if (line.length > 2) {
                 for (int i = 2; i < line.length; ++i)
-                    right += ' ' + line[i];
+                    right += /*' ' + */line[i];
             }
-            if ((right.contains("not ") || right.contains(" ikke")) && countOccurrences(' ', right) < 3)
+            if ((right.contains("not ") || right.contains(" ikke")))
                 rightTextView.setTextColor(Color.RED);
             else if (right.contains("kommer") || right.contains("attending"))
                 rightTextView.setTextColor(Color.GREEN);
@@ -211,15 +252,15 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
 
         m_rootView.addView(infoLine);
     }
-    private int countOccurrences(char of, CharSequence in)
-    {
-        int count = 0;
-        for (int i = 0; i < in.length(); ++i) {
-            if (in.charAt(i) == of)
-                ++count;
-        }
-        return count;
-    }
+//    private int countOccurrences(char of, CharSequence in)
+//    {
+//        int count = 0;
+//        for (int i = 0; i < in.length(); ++i) {
+//            if (in.charAt(i) == of)
+//                ++count;
+//        }
+//        return count;
+//    }
     //-----------Network callbacks------------------------------------------------------------------
     @Override
     public void onProgressChanged(int progress)
@@ -270,6 +311,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     {
         Toast.makeText(this, "Download canceled", Toast.LENGTH_SHORT).show();
         m_progress.setVisibility(View.GONE);
+        m_swiper.setRefreshing(false);
     }
     @Override
     public void onAuthenticateFinished(Exception e)

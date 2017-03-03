@@ -201,7 +201,7 @@ public class TennisApp extends Application
         /**
          * Loads content of DB, compares with current week and modifies the latter if necessary.
          * Does not change any internal state.
-         * Does not delete expired tracked sessions, that will be done in service
+         * Does not delete expired tracked sessions; that will be done in service
          */
         @Override
         public List<SessionInfo> getHoursInfo()
