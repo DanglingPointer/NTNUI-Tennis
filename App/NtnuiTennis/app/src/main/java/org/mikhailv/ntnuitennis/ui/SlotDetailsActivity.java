@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,6 +52,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     private ProgressBar m_progress;
     private LinearLayout m_rootView;
     private Button m_attendBtn;
+    private SwipeRefreshLayout m_swiper;
 
     private NetworkFragment m_networker;
     private SlotDetailsInfo m_data;
@@ -120,6 +122,19 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
             m_data = (SlotDetailsInfo)savedInstanceState.getSerializable(SAVED_DATA);
             createLayout(m_data);
         }
+
+        m_swiper = (SwipeRefreshLayout)findViewById(R.id.swiperefresh);
+        m_swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                String link = getIntent().getStringExtra(EXTRA_URL_INFO);
+                m_networker.downloadSlot(link);
+            }
+        });
+        m_swiper.setColorSchemeResources(R.color.darkGreen);
+        m_swiper.setProgressBackgroundColorSchemeResource(R.color.green);
 
         Intent i = new Intent();
         i.putExtra(EXTRA_PAGER_POSITION, getIntent().getIntExtra(EXTRA_PAGER_POSITION, 0));
@@ -225,6 +240,9 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     @Override
     public void onSlotFetched(SlotDetailsInfo slotData, Exception e)
     {
+        m_progress.setVisibility(View.GONE);
+        m_swiper.setRefreshing(false);
+
         if (e != null) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             finish();
@@ -232,7 +250,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         else {
             createLayout(slotData);
             m_data = slotData;
-            m_progress.setVisibility(View.GONE);
 
             if (m_data.getAttendingLink() != null) {
                 m_attendBtn.setEnabled(true);

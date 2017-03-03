@@ -1,11 +1,13 @@
 package org.mikhailv.ntnuitennis.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -59,6 +61,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     private ProgressBar m_progressBar;
     private TextView m_dateText;
     private Callbacks m_callbacks;
+    private SwipeRefreshLayout m_swiper;
 
     public static DayFragment newInstance(int day)
     {
@@ -141,6 +144,15 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         m_dateText = (TextView)root.findViewById(R.id.day_text_date);
         m_dateText.setText(TennisApp.getManager(getActivity()).getCurrentWeek().getDay(dayIndex).getDate());
 
+        m_swiper = (SwipeRefreshLayout)root.findViewById(R.id.swiperefresh);
+        m_swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh() { m_callbacks.updateData(); }
+        });
+        m_swiper.setColorSchemeResources(R.color.darkGreen);
+        m_swiper.setProgressBackgroundColorSchemeResource(R.color.lightGreen);
+
         return root;
     }
     @Override
@@ -165,6 +177,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onTableFetched(Week data, Exception e)
     {
+        m_swiper.setRefreshing(false);
         m_progressBar.setVisibility(View.GONE);
         if (e != null) {
             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -193,6 +206,7 @@ public class DayFragment extends Fragment implements NetworkCallbacks
     @Override
     public void onDownloadCanceled()
     {
+        m_swiper.setRefreshing(false);
         m_progressBar.setVisibility(View.GONE);
         Toast.makeText(getActivity(), "Download canceled", Toast.LENGTH_SHORT).show();
     }
