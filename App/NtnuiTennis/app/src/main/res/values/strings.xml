@@ -29,4 +29,6 @@
     <string name="notification_cookie_text">Press to renew your login information automatically.</string>
     <string name="menu_back">Back</string>
     <string name="checkbox_notifications_prompt">Receive notification about this session</string>
+    <string name="preferences_title_version">Build version</string>
+    <string name="preferences_title_author">Author</string>
 </resources>

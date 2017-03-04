@@ -142,8 +142,7 @@ public class NotifierService extends IntentService
                 .setContentIntent(pi)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
-                .setVibrate(new long[] { 0, 200, 500, 200 })
-                .setLights(Color.GREEN, 100, 3000)                  // doesn't work
+                .setDefaults(Notification.DEFAULT_ALL)  // vibro, sound, lights
                 .build();
         NotificationManagerCompat nm = NotificationManagerCompat.from(this);
         nm.notify(id, note);

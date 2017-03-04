@@ -2,11 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
         android:key="version"
-        android:title="Build version"
+        android:title="@string/preferences_title_version"
         />
     <Preference
         android:key="author"
-        android:title="Author"
+        android:title="@string/preferences_title_author"
         />
 
 </PreferenceScreen>

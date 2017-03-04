@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NTNUI Tennis</string>
+    <string name="menu_prev_week">Forrige uke</string>
+    <string name="menu_next_week">Neste uke</string>
+    <string name="menu_refresh">Oppdater</string>
+    <string name="menu_login">Innlogging</string>
+    <string name="menu_about">Om appen</string>
+    <string name="slot_btn_attend">Meld meg på</string>
+    <string name="slot_btn_attend_not">Meld meg av</string>
+    <string name="menu_notifications">Notifikasjoner</string>
+    <string name="notifications_title">Motta notifikasjoner om valgte timer:</string>
+    <string name="menu_not_save">Lagre</string>
+    <string name="home_url">http://org.ntnu.no/tennisgr/</string>
+    <string name="email_prompt">Tast inn din epost adresse:</string>
+    <string name="password_prompt">Tast inn passord:</string>
+    <string name="password_hint">Skriv din PIN-kode her...</string>
+    <string name="email_hint">Skriv din email her...</string>
+    <string name="credentials_dialog_title">Innlogging</string>
+    <string name="lang_prompt">Velg språk:</string>
+    <string name="login_toast">Du er nå logget inn!</string>
+    <string-array name="lang_array">
+        <item>Norsk</item>
+        <item>Engelsk</item>
+    </string-array>
+    <string name="notification_ticker">Tennis</string>
+    <string name="notification_title">Tennistime er ledig</string>
+    <string name="notification_text">Ledig plass på %1s tennis time!</string>
+    <string name="notification_cookie_title">Innloggingsfeil</string>
+    <string name="notification_cookie_text">Trykk for å oppdatere din innloggingsinfo automatisk.</string>
+    <string name="menu_back">Tilbake</string>
+    <string name="checkbox_notifications_prompt">Motta notifikasjon om denne timen</string>
+    <string name="preferences_title_version">Versjon</string>
+    <string name="preferences_title_author">Laget av</string>
+</resources>
