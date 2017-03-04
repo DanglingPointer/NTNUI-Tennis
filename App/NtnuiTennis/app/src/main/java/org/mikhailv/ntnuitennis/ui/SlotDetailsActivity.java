@@ -101,7 +101,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.acticity_slot_details);
+        setContentView(R.layout.activity_slot_details);
         final String link = getIntent().getStringExtra(EXTRA_URL_INFO);
 
         m_data = null;

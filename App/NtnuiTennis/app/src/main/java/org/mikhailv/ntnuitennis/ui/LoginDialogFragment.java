@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.mikhailv.ntnuitennis.AppManager;
 import org.mikhailv.ntnuitennis.R;
@@ -129,6 +131,9 @@ public class LoginDialogFragment extends DialogFragment implements AdapterView.O
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
     {
+        int colorRes = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) ?
+                getActivity().getColor(R.color.white) : getActivity().getResources().getColor(R.color.white);
 
+        ((TextView) m_spinner.getSelectedView()).setTextColor(colorRes);
     }
 }
