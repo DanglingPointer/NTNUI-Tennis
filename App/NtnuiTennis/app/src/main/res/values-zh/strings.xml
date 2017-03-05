@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NTNUI网球</string>
+    <string name="menu_prev_week">上周</string>
+    <string name="menu_next_week">下周</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="menu_login">登录</string>
+    <string name="menu_about">关于</string>
+    <string name="slot_btn_attend">出席</string>
+    <string name="slot_btn_attend_not">不去</string>
+    <string name="menu_notifications">通知</string>
+    <string name="notifications_title">接收有关所选时间的通知：</string>
+    <string name="menu_not_save">保存</string>
+    <string name="home_url">http://org.ntnu.no/tennisgr/</string>
+    <string name="email_prompt">输入你的电子邮箱：</string>
+    <string name="password_prompt">输入你的密码：</string>
+    <string name="password_hint">在此处输入你的PIN码...</string>
+    <string name="email_hint">在此输入你的电子邮件...</string>
+    <string name="credentials_dialog_title">登录</string>
+    <string name="lang_prompt">选择语言：</string>
+    <string name="login_toast">登陆成功！</string>
+    <string-array name="lang_array">
+        <item>挪威语</item>
+        <item>英语</item>
+    </string-array>
+    <string name="notification_ticker">网球</string>
+    <string name="notification_title">有空位</string>
+    <string name="notification_text">在%1s有空位！</string>
+    <string name="notification_cookie_title">登陆错误</string>
+    <string name="notification_cookie_text">按下可自动更新你的登录信息。</string>
+    <string name="menu_back">返回</string>
+    <string name="checkbox_notifications_prompt">接收有关此空位的通知</string>
+    <string name="preferences_title_version">构建版本</string>
+    <string name="preferences_title_author">作者</string>
+</resources>

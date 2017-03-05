@@ -5,24 +5,33 @@
               android:background="@color/darkGreen"
               android:orientation="horizontal"
               android:paddingBottom="4dp"
-              android:paddingRight="4dp"
-              android:paddingLeft="4dp">
+              android:paddingLeft="4dp"
+              android:paddingRight="4dp">
 
     <TextView
         android:id="@+id/slot_text_hour"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:background="@color/lightGreen"
         android:gravity="center"
         />
 
-    <!--android:textColor="@color/white"-->
+    <ImageView
+        android:id="@+id/slot_image_checked"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/lightGreen"
+        android:paddingBottom="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp"
+        android:src="@drawable/ic_attend"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="4"
+        android:layout_weight="8"
         android:orientation="vertical">
 
         <LinearLayout
@@ -34,8 +43,8 @@
                 android:id="@+id/slot_btn_details"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
                 android:layout_marginLeft="2dp"
+                android:layout_weight="3"
                 android:background="@color/lightGreen"
                 android:gravity="center"
                 android:textColor="@color/extraDarkGreen"
@@ -45,11 +54,11 @@
                 android:id="@+id/slot_btn_expand"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_marginLeft="2dp"
+                android:layout_weight="1"
                 android:background="@color/lightGreen"
-                android:src="@drawable/ic_expand"
                 />
+            <!--android:src="@drawable/ic_expand"-->
 
         </LinearLayout>
 
@@ -59,12 +68,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
             android:layout_marginTop="2dp"
+            android:background="@color/white"
+            android:gravity="left|top"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:gravity="left|top"
-            android:background="@color/white"
-            android:visibility="gone"
             android:textStyle="italic"
+            android:visibility="gone"
             />
 
     </LinearLayout>

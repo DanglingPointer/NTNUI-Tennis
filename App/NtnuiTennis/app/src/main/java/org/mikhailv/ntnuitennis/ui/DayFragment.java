@@ -1,7 +1,6 @@
 package org.mikhailv.ntnuitennis.ui;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,12 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mikhailv.ntnuitennis.R;
 import org.mikhailv.ntnuitennis.TennisApp;
+import org.mikhailv.ntnuitennis.data.DBManager;
 import org.mikhailv.ntnuitennis.data.Slot;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
 import org.mikhailv.ntnuitennis.data.Week;
@@ -156,6 +157,12 @@ public class DayFragment extends Fragment implements NetworkCallbacks
         return root;
     }
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        m_adapter.notifyDataSetChanged();
+    }
+    @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
@@ -214,7 +221,8 @@ public class DayFragment extends Fragment implements NetworkCallbacks
 
 class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
 {
-    private FragmentActivity m_context;
+    private final FragmentActivity m_context;
+    private final DBManager m_db;
     private int m_dayIndex;
     private boolean[] m_expanded;
 
@@ -227,6 +235,7 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
         m_context = context;
         m_dayIndex = dayIndex;
         m_expanded = savedState;
+        m_db = new DBManager(context);
     }
     @Override
     public SlotHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -239,7 +248,9 @@ class SlotAdapter extends RecyclerView.Adapter<SlotHolder>
     public void onBindViewHolder(SlotHolder holder, int position)
     {
         int hour = position + INIT_HOUR;
-        holder.bind(TennisApp.getManager(m_context).getCurrentWeek().getDay(m_dayIndex).getSlot(hour), hour);
+        Slot s = TennisApp.getManager(m_context).getCurrentWeek().getDay(m_dayIndex).getSlot(hour);
+        String link = s.getLink();
+        holder.bind(s, hour, link != null && m_db.containsLink(link));
     }
     @Override
     public int getItemCount()
@@ -275,6 +286,7 @@ class SlotHolder extends RecyclerView.ViewHolder
 
     private ImageButton m_expandBtn;
     private Button m_detailsBtn;
+    private ImageView m_imageChecked;
 
     private Slot m_slotData;
     private final SlotAdapter m_adapter;
@@ -287,6 +299,7 @@ class SlotHolder extends RecyclerView.ViewHolder
         m_hourText = (TextView)root.findViewById(R.id.slot_text_hour);
         m_reservedText = (TextView)root.findViewById(R.id.slot_text_reserved);
 
+        m_imageChecked = (ImageView)root.findViewById(R.id.slot_image_checked);
         m_expandBtn = (ImageButton)root.findViewById(R.id.slot_btn_expand);
         m_detailsBtn = (Button)root.findViewById(R.id.slot_btn_details);
 
@@ -318,7 +331,7 @@ class SlotHolder extends RecyclerView.ViewHolder
             }
         });
     }
-    public void bind(Slot slot, int hour)
+    public void bind(Slot slot, int hour, boolean checked)
     {
         m_hourText.setText(hour + ":00");
         boolean expanded = m_adapter.getExpandedAt(getAdapterPosition());
@@ -334,6 +347,7 @@ class SlotHolder extends RecyclerView.ViewHolder
         m_detailsBtn.setEnabled(!m_slotData.isExpired() && m_slotData.getLevel() != null);
         m_expandBtn.setEnabled(m_slotData.getLevel() != null);
         m_detailsBtn.setText(slot.getLevel());
+        m_imageChecked.setImageResource(checked ? R.drawable.ic_attend : 0);
 
         setExpiredBackground(slot.isExpired());
         setNoavailableTextColor(slot.hasAvailable());

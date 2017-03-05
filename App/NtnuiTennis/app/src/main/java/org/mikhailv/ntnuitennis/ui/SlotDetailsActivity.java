@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -54,16 +55,15 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     private static final String EXTRA_URL_INFO = "SlotDetailsActivity.URL_INFO";
     private static final String EXTRA_PAGER_POSITION = "SlotDetailsActivity.PAGER_POSITION";
     private static final String SAVED_DATA = "SlotDetailsActivity.Data";
+    private static final String TAG_NOTIFICATION_DIALOG = "SlotDetailsActivity.TAG_NOTIFICATION_DIALOG";
 
     private ProgressBar m_progress;
     private LinearLayout m_rootView;
     private Button m_attendBtn;
     private SwipeRefreshLayout m_swiper;
-    private CheckBox m_notifications;
 
     private NetworkFragment m_networker;
     private SlotDetailsInfo m_data;
-    private DBManager m_db;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -74,12 +74,17 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        String link = getIntent().getStringExtra(EXTRA_URL_INFO);
         switch (item.getItemId()) {
             case R.id.menu_back_btn:
                 finish();
                 return true;
+            case R.id.menu_notifications_btn:
+                NotificationDialogFragment dialog = NotificationDialogFragment.newInstance(link);
+                FragmentManager fm = getSupportFragmentManager();
+                dialog.show(fm, TAG_NOTIFICATION_DIALOG);
+                return true;
             case R.id.menu_refresh_btn:
-                String link = getIntent().getStringExtra(EXTRA_URL_INFO);
                 m_networker.downloadSlot(link);
                 return true;
             case R.id.menu_login_btn:
@@ -105,7 +110,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         final String link = getIntent().getStringExtra(EXTRA_URL_INFO);
 
         m_data = null;
-        m_db = new DBManager(this);
         m_networker = NetworkFragment.addInstance(getSupportFragmentManager());
         m_progress = (ProgressBar)findViewById(R.id.activity_slot_progress);
 
@@ -144,9 +148,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         m_swiper.setColorSchemeResources(R.color.darkGreen);
         m_swiper.setProgressBackgroundColorSchemeResource(R.color.green);
 
-        m_notifications = (CheckBox)findViewById(R.id.notifications_checkbox);
-        m_notifications.setChecked(m_db.containsLink(link));
-
         Intent i = new Intent();
         i.putExtra(EXTRA_PAGER_POSITION, getIntent().getIntExtra(EXTRA_PAGER_POSITION, 0));
         setResult(RESULT_OK, i);
@@ -165,40 +166,13 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     {
         super.onStop();
         m_networker.cancelDownload();
-
-        String link = getIntent().getStringExtra(EXTRA_URL_INFO);
-        boolean isAlarmOn = NotifierService.isAlarmOn(this);
-        boolean isChecked = m_notifications.isChecked();
-        boolean inDB = m_db.containsLink(link);
-
-        if (isChecked && !inDB) {
-            List<SessionInfo> allHours = TennisApp.getManager(this).getCurrentWeek().getHours();
-            SessionInfo.ShortForm shortInfo = null;
-            for (SessionInfo fullInfo : allHours) {
-                if (fullInfo.getLink().equals(link)) {
-                    shortInfo = fullInfo.getShortForm();
-                    break;
-                }
-            }
-            if (shortInfo != null) {
-                m_db.insertTuple(shortInfo);
-                if (!isAlarmOn)
-                    NotifierService.setAlarm(this);
-            }
-        }
-        else if (!isChecked && inDB) {
-            m_db.deleteTuple(link);
-            if (isAlarmOn && m_db.getTableSize() == 0)
-                NotifierService.cancelAlarm(this);
-
-        }
     }
     //-----------Helpers----------------------------------------------------------------------------
     private void createLayout(SlotDetailsInfo data)
     {
         int childrenCount = m_rootView.getChildCount();
-        if (childrenCount > 2) {
-            m_rootView.removeViewsInLayout(2, childrenCount - 2);
+        if (childrenCount > 1) {
+            m_rootView.removeViewsInLayout(1, childrenCount - 1);
         }
         boolean hasSubstitutes = data.getSubstitutesTitle() != null;
 

@@ -6,6 +6,12 @@
         android:title="@string/menu_back"
         app:showAsAction="always|withText"
         />
+
+    <item
+        android:id="@+id/menu_notifications_btn"
+        android:title="@string/menu_notifications"
+        app:showAsAction="never"
+        />
     <item
         android:id="@+id/menu_refresh_btn"
         android:title="@string/menu_refresh"
