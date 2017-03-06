@@ -2,26 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_back_btn"
-        android:title="@string/menu_back"
-        app:showAsAction="always|withText"
-        />
-    <item
         android:id="@+id/menu_notifications_btn"
-        android:icon="@drawable/ic_notification_set"
         android:title="@string/menu_notifications"
         app:showAsAction="ifRoom"
         />
     <item
-        android:id="@+id/menu_refresh_btn"
-        android:icon="@drawable/ic_refresh"
-        android:title="@string/menu_refresh"
-        app:showAsAction="never"
-        />
-    <item
-        android:id="@+id/menu_login_btn"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/menu_login"
-        app:showAsAction="never"
+        android:id="@+id/menu_back_btn"
+        android:title="@string/menu_back"
+        app:showAsAction="always|withText"
         />
 </menu>

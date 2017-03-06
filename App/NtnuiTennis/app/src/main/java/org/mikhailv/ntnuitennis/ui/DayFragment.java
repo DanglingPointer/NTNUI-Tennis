@@ -331,7 +331,7 @@ class SlotHolder extends RecyclerView.ViewHolder
             }
         });
     }
-    public void bind(Slot slot, int hour, boolean checked)
+    public void bind(Slot slot, int hour, boolean alarmSet)
     {
         m_hourText.setText(hour + ":00");
         boolean expanded = m_adapter.getExpandedAt(getAdapterPosition());
@@ -344,10 +344,18 @@ class SlotHolder extends RecyclerView.ViewHolder
         }
         m_slotData = slot;
 
-        m_detailsBtn.setEnabled(!m_slotData.isExpired() && m_slotData.getLevel() != null);
-        m_expandBtn.setEnabled(m_slotData.getLevel() != null);
+        boolean isSession = m_slotData.getLevel() != null;
+        m_detailsBtn.setEnabled(!m_slotData.isExpired() && isSession);
+        m_expandBtn.setEnabled(isSession);
         m_detailsBtn.setText(slot.getLevel());
-        m_imageChecked.setImageResource(checked ? R.drawable.ic_notification_set : 0);
+
+        if (isSession) {
+            m_imageChecked.setImageResource(alarmSet ? R.drawable.ic_notification_set
+                    : R.drawable.ic_notification_not_set);
+        }
+        else {
+            m_imageChecked.setImageResource(0);
+        }
 
         setExpiredBackground(slot.isExpired());
         setNoavailableTextColor(slot.hasAvailable());
