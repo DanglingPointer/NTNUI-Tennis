@@ -347,7 +347,7 @@ class SlotHolder extends RecyclerView.ViewHolder
         m_detailsBtn.setEnabled(!m_slotData.isExpired() && m_slotData.getLevel() != null);
         m_expandBtn.setEnabled(m_slotData.getLevel() != null);
         m_detailsBtn.setText(slot.getLevel());
-        m_imageChecked.setImageResource(checked ? R.drawable.ic_attend : 0);
+        m_imageChecked.setImageResource(checked ? R.drawable.ic_notification_set : 0);
 
         setExpiredBackground(slot.isExpired());
         setNoavailableTextColor(slot.hasAvailable());
