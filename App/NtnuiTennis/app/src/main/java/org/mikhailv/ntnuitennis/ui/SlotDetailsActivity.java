@@ -61,6 +61,7 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     private LinearLayout m_rootView;
     private Button m_attendBtn;
     private SwipeRefreshLayout m_swiper;
+    private MenuItem m_alarmMenuBtn;
 
     private NetworkFragment m_networker;
     private SlotDetailsInfo m_data;
@@ -69,6 +70,8 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.menu_slot_details, menu);
+        m_alarmMenuBtn = menu.findItem(R.id.menu_notifications_btn);
+        updateAlarmIcon();
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -83,20 +86,6 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
                 NotificationDialogFragment dialog = NotificationDialogFragment.newInstance(link);
                 FragmentManager fm = getSupportFragmentManager();
                 dialog.show(fm, TAG_NOTIFICATION_DIALOG);
-                return true;
-            case R.id.menu_refresh_btn:
-                m_networker.downloadSlot(link);
-                return true;
-            case R.id.menu_login_btn:
-                m_networker.authenticate(new AppManager.Credentials()
-                {
-                    @Override
-                    public String getPassword() { return null; }
-                    @Override
-                    public String getEmail() { return null; }
-                    @Override
-                    public String getLanguage() { return null; }
-                });
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -167,6 +156,12 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
         super.onStop();
         m_networker.cancelDownload();
     }
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        updateAlarmIcon();
+    }
     //-----------Helpers----------------------------------------------------------------------------
     private void createLayout(SlotDetailsInfo data)
     {
@@ -226,15 +221,16 @@ public class SlotDetailsActivity extends AppCompatActivity implements NetworkCal
 
         m_rootView.addView(infoLine);
     }
-//    private int countOccurrences(char of, CharSequence in)
-//    {
-//        int count = 0;
-//        for (int i = 0; i < in.length(); ++i) {
-//            if (in.charAt(i) == of)
-//                ++count;
-//        }
-//        return count;
-//    }
+    private void updateAlarmIcon()
+    {
+        if (m_alarmMenuBtn == null)
+            return;
+        String link = getIntent().getStringExtra(EXTRA_URL_INFO);
+        if (new DBManager(this).containsLink(link))
+            m_alarmMenuBtn.setIcon(R.drawable.ic_alarm_not_set);
+        else
+            m_alarmMenuBtn.setIcon(R.drawable.ic_alarm_set);
+    }
     //-----------Network callbacks------------------------------------------------------------------
     @Override
     public void onProgressChanged(int progress)

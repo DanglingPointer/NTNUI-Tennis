@@ -78,7 +78,7 @@ public class NotificationDialogFragment extends DialogFragment implements
         outState.putBoolean(SAVED_CHECKED, m_checkbox.isChecked());
     }
     /**
-     * Save-button handler
+     * Save-button handler. Writes to DB, turns alarm on/off and invalidates OptionsMenu in Activity
      */
     @Override
     public void onClick(DialogInterface dialog, int which)
@@ -108,5 +108,6 @@ public class NotificationDialogFragment extends DialogFragment implements
             if (isAlarmOn && m_db.getTableSize() == 0)
                 NotifierService.cancelAlarm(getActivity());
         }
+        getActivity().invalidateOptionsMenu();
     }
 }
