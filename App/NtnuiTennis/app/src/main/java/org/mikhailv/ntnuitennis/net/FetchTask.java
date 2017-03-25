@@ -10,6 +10,7 @@ import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ import java.util.List;
 
 abstract class FetchTask extends NetworkTask
 {
-    protected static final int BUFFER_SIZE = 1024*60;
+    protected static final int INIT_BUFFER_SIZE = 1024 * 40;
     protected static final int MAX_READ = 4000;
 
     public FetchTask(NetworkCallbacks callbacks)
@@ -51,20 +52,27 @@ abstract class FetchTask extends NetworkTask
             inStream = conn.getInputStream();
             if (inStream != null) {
                 InputStreamReader reader = new InputStreamReader(inStream, "ISO-8859-1");
-                char[] buffer = new char[BUFFER_SIZE];
+
+                int bufferSize = INIT_BUFFER_SIZE;
+                char[] buffer = new char[bufferSize];
 
                 int lastRead = 0, offset = 0;
-                while (lastRead != -1 && offset < BUFFER_SIZE && !isCancelled()) {
-                    publishProgress(offset * 100 / BUFFER_SIZE);
-                    lastRead = reader.read(buffer, offset, Math.min(MAX_READ, BUFFER_SIZE - offset));
+                while (lastRead != -1 && !isCancelled()) {
+                    publishProgress(offset * 100 / bufferSize);
+                    lastRead = reader.read(buffer, offset, Math.min(MAX_READ, bufferSize - offset));
                     offset += lastRead;
+                    if (offset >= bufferSize) {
+                        bufferSize += INIT_BUFFER_SIZE;
+                        buffer = Arrays.copyOf(buffer, bufferSize);
+                    }
                 }
                 if (offset != -1)
-                    rawResult = new String(buffer, 0, offset); // last read decrements offset
+                    rawResult = new String(buffer, 0, offset);
                 inStream.close();
             }
             return parse(rawResult);
-        } finally {
+        }
+        finally {
             if (conn != null)
                 conn.disconnect();
         }
