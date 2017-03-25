@@ -61,7 +61,7 @@ abstract class FetchTask extends NetworkTask
                     publishProgress(offset * 100 / bufferSize);
                     lastRead = reader.read(buffer, offset, Math.min(MAX_READ, bufferSize - offset));
                     offset += lastRead;
-                    if (offset >= bufferSize) {
+                    if (offset == bufferSize) {
                         bufferSize += INIT_BUFFER_SIZE;
                         buffer = Arrays.copyOf(buffer, bufferSize);
                     }
