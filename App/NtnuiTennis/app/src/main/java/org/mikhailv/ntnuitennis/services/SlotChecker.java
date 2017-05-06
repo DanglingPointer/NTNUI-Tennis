@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +27,7 @@ public class SlotChecker
 {
     private static final int READ_TIMEOUT = 10000;
     private static final int CONNECT_TIMEOUT = 15000;
-    private static final int BUFFER_SIZE = 40000;
+    private static final int INIT_BUFFER_SIZE = 40000;
 
     private String m_cookies;
     /**
@@ -76,12 +77,17 @@ public class SlotChecker
 
             if (inStream != null) {
                 InputStreamReader reader = new InputStreamReader(inStream, "ISO-8859-1");
-                char[] buffer = new char[BUFFER_SIZE];
+                int bufferSize = INIT_BUFFER_SIZE;
+                char[] buffer = new char[bufferSize];
 
                 int lastRead = 0, offset = 0;
-                while (lastRead != -1 && offset < BUFFER_SIZE) {
-                    lastRead = reader.read(buffer, offset, BUFFER_SIZE - offset);
+                while (lastRead != -1) {
+                    lastRead = reader.read(buffer, offset, bufferSize - offset);
                     offset += lastRead;
+                    if (offset == bufferSize) {
+                        bufferSize += INIT_BUFFER_SIZE;
+                        buffer = Arrays.copyOf(buffer, bufferSize);
+                    }
                 }
                 if (offset != -1)
                     rawResult = new String(buffer, 0, offset);
