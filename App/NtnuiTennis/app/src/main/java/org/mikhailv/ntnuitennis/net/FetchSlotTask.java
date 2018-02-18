@@ -1,17 +1,45 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017-2018 Mikhail Vasilyev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package org.mikhailv.ntnuitennis.net;
 
-import android.util.Xml;
+import android.util.Log;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.mikhailv.ntnuitennis.data.SlotDetailsInfo;
-import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mikhailv.ntnuitennis.AppManager.TAG_LOG;
 
 /**
  * Created by MikhailV on 21.01.2017.
@@ -31,10 +59,8 @@ class FetchSlotTask extends FetchTask
     {
         SlotParser parser;
         try {
-            int openingTagIndex = rawData.indexOf("<table>");
-            rawData = rawData.substring(openingTagIndex);
-            parser = new SlotParser(rawData);
-            parser.parse(BASE_URL);
+            parser = new SlotParser();
+            parser.parse(rawData, BASE_URL);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -51,119 +77,61 @@ class FetchSlotTask extends FetchTask
 
     private static class SlotParser implements SlotDetailsInfo, Serializable
     {
-        private static final int IND_INFO = 0;      // session info
-        private static final int IND_REGS = 1;      // regular players
-        private static final int IND_SUBST = 2;     // substitutes
-        private static final int TITLE = 0;
+        private static final int IND_INFO  = 0;      // session info
+        private static final int IND_REGS  = 1;      // regular players
+        private static final int IND_SUBST = 2;      // substitutes
+        private static final int TITLE     = 0;
 
-        private XmlPullParser m_parser;
         private final List<List<List<String>>> m_data = new ArrayList<>(3);
         private String m_link;
 
-        public SlotParser(String rawHtml) throws XmlPullParserException
+        public SlotParser() throws XmlPullParserException
         {
-            rawHtml = rawHtml.replace("&nbsp;", " ").replace("&Oslash;", "Ø")
-                    .replace("&oslash;", "ø").replace("&Aring;", "Å")
-                    .replace("&aring;", "å").replace("&AElig;", "Æ")
-                    .replace("&aelig;", "æ").replace("&#9990", "")
-                    .replace("&ldquo;", "").replace("&rdquo;", "")
-                    .replaceAll("</tr>[\\s]+<td", "</tr>\n" + "\t<tr>\n" + "\t\t<td");
-//                    .replaceAll("[0-9]+\\)</span></span>", ")</span>");
-            // The last two because of malformed html on some sessions
-
             m_link = null;
 
             m_data.add(IND_INFO, new ArrayList<List<String>>());
             m_data.add(IND_REGS, new ArrayList<List<String>>());
             m_data.add(IND_SUBST, new ArrayList<List<String>>());
-
-            m_parser = Xml.newPullParser();
-            m_parser.setInput(new StringReader(rawHtml));
         }
         /**
          * One-shot
          */
-        public void parse(String baseURL) throws XmlPullParserException, IOException, NullPointerException
+        public void parse(String rawHtml, String baseURL) throws IOException, NullPointerException
         {
-            if (m_parser.nextTag() != XmlPullParser.START_TAG)
-                throw new XmlPullParserException("Malformed raw html slot table");
+            Document doc = Jsoup.parse(rawHtml, baseURL);
+            Element content = doc.getElementById("content");
 
-            boolean newLine = false;
-            int depth = 1;
             int what = IND_INFO;
-            List<String> links = new ArrayList<>();
             List<String> currentLine = null;
-            int ignoreText = 0;
 
-            while (depth != 0) {
-                switch (m_parser.next()) {
-                    case XmlPullParser.START_TAG:
-                        ++depth;
-                        if (m_parser.getName().equals("tr")) {
-                            currentLine = new ArrayList<>();
-                        }
-                        else if (m_parser.getAttributeCount() == 2 &&
-                                m_parser.getAttributeName(1).equals("rowspan")) {
-                            newLine = true;
-                            ++what;
-                        }
-                        else if (m_parser.getAttributeCount() > 0 &&
-                                m_parser.getAttributeName(0).equals("href")) {
-                            links.add(m_parser.getAttributeValue(0).substring(1).replace("&amp;", "&"));
-                            if (m_parser.getAttributeCount() == 1)
-                                ignoreText = 1;
-                        }
-                        break;
-                    case XmlPullParser.END_TAG:
-                        --depth;
-                        if (m_parser.getName().equals("tr")) {
-                            m_data.get(what).add(currentLine);
-                            currentLine = null; // just in case
-                        }
-                        break;
-                    case XmlPullParser.TEXT:
-                        if (ignoreText > 0) {
-                            --ignoreText;
-                        }
-                        else {
-                            if (depth > 2) {
-                                String text = m_parser.getText().replace("|", "").trim();
-                                currentLine.add(text);
-                            }
-                            if (newLine) {
-                                newLine = false;
-                                m_data.get(what).add(currentLine);
-                                currentLine = new ArrayList<>();
-                            }
-                        }
-                        break;
-                }
-            }
-            for (int i = 0; i < 2; ++i) {
-                while (m_parser.next() != XmlPullParser.START_TAG)
-                    ;
-                depth++;
-                while (depth != 0) {
-                    int token = m_parser.next();
+            // 1 line = 1 <tr> element
+            Elements lines = content.getElementsByTag("tr");
+            for (Element line : lines) { // tr
+                currentLine = new ArrayList<>();
 
-                    if (token == XmlPullParser.START_TAG) {
-                        ++depth;
-                        if (m_parser.getAttributeCount() > 0 && m_parser.getAttributeName(0).equals("href"))
-                            links.add(m_parser.getAttributeValue(0).substring(1).replace("&amp;", "&"));
+                // 1 sentence = 1 <th> or 1 <td> element
+                Elements row = line.getElementsByTag("th");
+                if (row.isEmpty()) row = line.getElementsByTag("td");
+                for (Element text : row) { // td
+
+                    currentLine.add(text.text().replace("|", ""));
+                    if (text.hasAttr("rowspan")) {
+                        m_data.get(++what).add(currentLine);
+                        currentLine = new ArrayList<>();
                     }
-                    else if (token == XmlPullParser.END_TAG) {
-                        --depth;
-                    }
-                }
-            }
-            for (String link : links) {
+                } // td
+                m_data.get(what).add(currentLine);
+            } // tr
+
+            Elements urls = content.getElementsByTag("a");
+            for (Element url : urls) {
+                String link = url.attr("abs:href");
                 if (link.contains("leggtilvikarid") || link.contains("fjernvikarid")
-                        || link.contains("bekrefteid") || link.contains("kommerikkeid")) {
-                    m_link = baseURL + link;
+                    || link.contains("bekrefteid") || link.contains("kommerikkeid")) {
+                    m_link = link;
                     break;
                 }
             }
-            m_parser = null; // let the parser be collected by GC
         }
         @Override
         public int getInfoSize() // row count, doesn't include title
